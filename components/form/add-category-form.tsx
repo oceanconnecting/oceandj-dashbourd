@@ -1,65 +1,81 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { addCategory, fetchCategoryTypes } from "@/app/redux/features/categories/categoriesSlice";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form/form-error";
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { RootState } from "@/app/redux/store";
+import {
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-export function AddCategoryForm() {
+export function AddCategoryForm({ onClose }: { onClose: () => void }) {
+  const { toast } = useToast();
+  const dispatch = useAppDispatch();
+
+  const loading = useAppSelector((state: RootState) => state.categories.loading_add);
+  const error = useAppSelector((state: RootState) => state.categories.error_add);
+  const types = useAppSelector((state: RootState) => state.categories.types);
+  // const typesLoading = useAppSelector((state: RootState) => state.categories.loading_types);
+
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [typeId, setTypeId] = useState<number | null>(null); // Set typeId to number | null
+
+  useEffect(() => {
+    dispatch(fetchCategoryTypes());
+  }, [dispatch]);
 
   const resetForm = () => {
     setTitle("");
     setImage("");
-    setError(null);
+    setTypeId(null); // Reset typeId
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!title || !image) {
-      setError("Both title and image are required.");
+    if (!title || !image || typeId === null) {
+      console.error("Error: Title, image, and type are required.");
       return;
     }
-
-    setLoading(true);
-    setError(null); // Clear any previous errors
-
     try {
-      const res = await fetch("/api/categories/add-category", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          image,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to create category.");
-      }
-
-      const data = await res.json();
-      if (data.success) {
-        // Call the onAddSuccess callback to refresh data
-        // onAddSuccess();
-        // Reset form after successful submission
+      const action = await dispatch(addCategory({ title, image, typeId: Number(typeId) })); // Convert typeId to number
+      if (addCategory.fulfilled.match(action)) {
+        toast({
+          title: "Category added",
+          description: "The Category has been successfully added.",
+        });
         resetForm();
       } else {
-        setError("Failed to create category.");
+        toast({
+          title: "Error",
+          description: "Failed to add the category. Please try again.",
+        });
+        console.error("Failed to add category");
       }
     } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to create the category. Please try again.",
+      });
       console.error("Error creating category:", err);
-      setError("Error creating category. Please try again.");
     } finally {
-      setLoading(false);
+      onClose();
     }
   };
 
@@ -71,17 +87,18 @@ export function AddCategoryForm() {
           Fill out the form to add a new category to your store.
         </DialogDescription>
       </DialogHeader>
-      
-      <form className="grid gap-6 mt-6 mb-4" onSubmit={handleSubmit}>
+
+      <form className="grid gap-6 mt-6">
         <div className="grid gap-3">
           <Label htmlFor="title">Category Title</Label>
           <Input
             id="title"
             type="text"
-            placeholder="Enter category title"
+            placeholder="Enter Category title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)} // Bind state to input
+            onChange={(e) => setTitle(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
 
@@ -92,21 +109,39 @@ export function AddCategoryForm() {
             type="text"
             placeholder="Enter category IMAGE link"
             value={image}
-            onChange={(e) => setImage(e.target.value)} // Bind state to input
+            onChange={(e) => setImage(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
 
-        {error && <FormError message={error} />} {/* Show error message */}
-      </form>
+        <div className="grid gap-3">
+          <Label htmlFor="type">Category Type</Label>
+          <Select onValueChange={(value) => setTypeId(Number(value))}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder={typeId ? types.find(type => type.id === typeId)?.title : "Select a type"} />
+            </SelectTrigger>
+            <SelectContent>
+              {types.map((type) => (
+                <SelectItem key={type.id} value={String(type.id)}>
+                  {type.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-      <Button
-        variant="edit"
-        disabled={loading}
-        onClick={handleSubmit}
-      >
-        {loading ? "Creating..." : "Create"}
-      </Button>
+        {error && <FormError message={error} />}
+
+      </form>
+      <DialogFooter>
+        <Button variant="outline" onClick={onClose} disabled={loading}>
+          Cancel
+        </Button>
+        <Button variant="edit" type="submit" disabled={loading} onClick={handleSubmit}>
+          {loading ? "Creating..." : "Create"}
+        </Button>
+      </DialogFooter>
     </DialogContent>
   );
 }

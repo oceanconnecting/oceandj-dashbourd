@@ -1,37 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Label } from "@/components/ui/label";
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import axios from "axios";
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { fetchCategoryDetails } from "@/app/redux/features/categories/categoriesSlice";
+import { RootState } from "@/app/redux/store";
 
-interface Category {
-  id: number;
-  title: string;
-  image: string;
+interface ViewCategoryFormProps {
+  categoryId: number;
+  onClose: () => void;
 }
 
-export function ViewCategoryForm({ categoryId }: { categoryId: number }) {
-  const [category, setCategory] = useState<Category | null>(null);
+export function ViewCategoryForm({ categoryId, onClose }: ViewCategoryFormProps) {
+  const dispatch = useAppDispatch();
+  
+  const { currentCategory, loading, error } = useAppSelector((state: RootState) => ({
+    currentCategory: state.categories.currentCategory,
+    loading: state.categories.loading_details,
+    error: state.categories.error_details,
+  }));
 
   useEffect(() => {
-    async function fetchCategory() {
-      try {
-        const response = await axios.get(`/api/categories/category-details?id=${categoryId}`);
-        if (response.data.success) {
-          setCategory(response.data.category);
-          console.log(response.data.category);
-        } else {
-          console.log("Category not found");
-        }
-      } catch (error) {
-        console.log("Error : ", error);
-        console.log("Failed to fetch category details");
-      }
+    if (categoryId) {
+      dispatch(fetchCategoryDetails(categoryId));
     }
-
-    fetchCategory();
-  }, [categoryId]);
+  }, [dispatch, categoryId]);
 
   return (
     <DialogContent>
@@ -41,18 +36,32 @@ export function ViewCategoryForm({ categoryId }: { categoryId: number }) {
           The details of the selected category are displayed below.
         </DialogDescription>
       </DialogHeader>
-      {category && (
+      
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error: {error}</p>
+      ) : currentCategory ? (
         <div className="grid gap-6 mt-6 mb-4">
-          <Label htmlFor="id">Category ID : <span className="text-gray-400">{category.id}</span></Label>
-          <Label htmlFor="title">Category Title : <span className="text-gray-400">{category.title}</span></Label>
+          <Label htmlFor="id">Category ID: <span className="text-gray-400">{currentCategory.id}</span></Label>
+          <Label htmlFor="title">Category Title: <span className="text-gray-400">{currentCategory.title}</span></Label>
+          <Label htmlFor="title">Type ID: <span className="text-gray-400">{currentCategory.typeId}</span></Label>
+          <Label htmlFor="title">Products: <span className="text-gray-400">{currentCategory.productCount}</span></Label>
           <div className="grid gap-2">
             <Label htmlFor="image">Category Image</Label>
             <div className="w-full rounded-lg">
-              <img src={category.image} alt="Category" className="rounded-lg max-h-40 object-cover" />
+              <img src={currentCategory.image} alt="Category" className="rounded-lg max-h-40 object-cover" />
             </div>
           </div>
         </div>
+      ) : (
+        <p>No Category selected</p>
       )}
+      {/* <DialogFooter>
+        <Button variant="destructive" onClick={onClose} disabled={loading}>
+          Close
+        </Button>
+      </DialogFooter> */}
     </DialogContent>
   );
 }

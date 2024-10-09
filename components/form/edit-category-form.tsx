@@ -1,42 +1,69 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import axios from "axios";
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { updateCategory, fetchCategoryTypes } from "@/app/redux/features/categories/categoriesSlice"; // Adjust the import based on your project structure
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { RootState } from "@/app/redux/store";
+import { useToast } from "@/hooks/use-toast";
+import { FormError } from "@/components/form/form-error";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 
-export function EditCategoryForm({ categoryId, currentTitle, currentImage, onUpdateSuccess }) {
-  // State for form inputs
-  const [title, setTitle] = useState(currentTitle || ""); // Prefill with current title
-  const [image, setImage] = useState(currentImage || ""); // Prefill with current image
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+export function EditCategoryForm({
+  categoryId,
+  currentTitle,
+  currentImage,
+  currentTypeId,
+  onClose,
+}: {
+  categoryId: number;
+  currentTitle: string;
+  currentImage: string;
+  currentTypeId: number;
+  onClose: () => void;
+}) {
+  const { toast } = useToast();
+  const dispatch = useAppDispatch();
+  const [title, setTitle] = useState(currentTitle || "");
+  const [image, setImage] = useState(currentImage || "");
+  const [typeId, setTypeId] = useState<number | null>(currentTypeId || null);
+  const loading = useAppSelector((state: RootState) => state.categories.loading_update);
+  const error = useAppSelector((state: RootState) => state.categories.error_update);
+  const types = useAppSelector((state: RootState) => state.categories.types); // Assuming types are fetched into the Redux store
 
-  // Function to handle form submission
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    dispatch(fetchCategoryTypes());
+  }, [dispatch]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-
+    if (!title || !image || !typeId) {
+      console.error("Error: Title, image, and type are required.");
+      return;
+    }
     try {
-      const response = await axios.put(`/api/categories/update-category?id=${categoryId}`, {
-        title,
-        image,
-      });
-
-      if (response.data.success) {
-        // Call the callback function on successful update
-        onUpdateSuccess();
+      const resultAction = await dispatch(updateCategory({ categoryId, title, image, typeId }));
+      if (updateCategory.fulfilled.match(resultAction)) {
+        toast({
+          title: "Category updated",
+          description: "The category has been successfully updated.",
+        });
+        onClose();
       } else {
-        setError("Failed to update category");
+        toast({
+          title: "Error",
+          description: "Failed to update the category. Please try again.",
+        });
       }
     } catch (error) {
-      console.error("Error updating category:", error);
-      setError("An error occurred while updating the category.");
-    } finally {
-      setLoading(false);
+      toast({
+        title: "Error",
+        description: "Failed to update the category. Please try again.",
+      });
+      console.error("Error updating Category:", error);
     }
   };
 
@@ -44,12 +71,10 @@ export function EditCategoryForm({ categoryId, currentTitle, currentImage, onUpd
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Edit Category</DialogTitle>
-        <DialogDescription>
-          Fill out the form to update the category details.
-        </DialogDescription>
+        <DialogDescription>Fill out the form to update the category details.</DialogDescription>
       </DialogHeader>
-      
-      <form className="grid gap-6 mt-6 mb-4" onSubmit={handleSubmit}>
+
+      <form className="grid gap-6 mt-6">
         <div className="grid gap-3">
           <Label htmlFor="title">Category Title</Label>
           <Input
@@ -57,7 +82,7 @@ export function EditCategoryForm({ categoryId, currentTitle, currentImage, onUpd
             type="text"
             placeholder="Enter category title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)} // Update state when input changes
+            onChange={(e) => setTitle(e.target.value)}
             required
           />
         </div>
@@ -69,17 +94,40 @@ export function EditCategoryForm({ categoryId, currentTitle, currentImage, onUpd
             type="text"
             placeholder="Enter category image link"
             value={image}
-            onChange={(e) => setImage(e.target.value)} // Update state when input changes
+            onChange={(e) => setImage(e.target.value)}
             required
           />
         </div>
 
-        {error && <p className="text-red-600">{error}</p>}
+        <div className="grid gap-3">
+          <Label htmlFor="type">Category Type</Label>
+          <Select onValueChange={(value) => setTypeId(Number(value))}>
+            <SelectTrigger className="w-full">
+              <SelectValue
+                placeholder={typeId ? types.find((type) => type.id === typeId)?.title : "Select a type"}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {types.map((type) => (
+                <SelectItem key={type.id} value={String(type.id)}>
+                  {type.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-        <Button variant="edit" type="submit" disabled={loading}>
+        {error && <FormError message={error} />}
+
+      </form>
+      <DialogFooter>
+        <Button variant="ghost" onClick={onClose} disabled={loading}>
+          Cancel
+        </Button>
+        <Button variant="edit" type="submit" disabled={loading} onClick={handleSubmit}>
           {loading ? "Updating..." : "Update"}
         </Button>
-      </form>
+      </DialogFooter>
     </DialogContent>
   );
 }

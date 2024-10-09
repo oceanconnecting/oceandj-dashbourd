@@ -1,7 +1,7 @@
 import {
   Tag,
   Bookmark,
-  SquarePen,
+  // SquarePen,
   LayoutGrid,
   LucideIcon
 } from "lucide-react";
@@ -57,32 +57,46 @@ export function getMenuList(pathname: string): Group[] {
           submenus: []
         },
         {
-          href: "",
-          label: "Posts",
-          active: pathname.includes("/dashboard/posts"),
-          icon: SquarePen,
-          submenus: [
-            {
-              href: "/dashboard/posts",
-              label: "All Posts",
-              active: pathname === "/dashboard/posts"
-            },
-            {
-              href: "/dashboard/posts/new",
-              label: "New Post",
-              active: pathname === "/dashboard/posts/new"
-            }
-          ]
-        }
+          href: "/dashboard/types",
+          label: "Types",
+          active: pathname.includes("/dashboard/types"),
+          icon: Bookmark,
+          submenus: []
+        },
+        // {
+        //   href: "",
+        //   label: "Posts",
+        //   active: pathname.includes("/dashboard/posts"),
+        //   icon: SquarePen,
+        //   submenus: [
+        //     {
+        //       href: "/dashboard/posts",
+        //       label: "All Posts",
+        //       active: pathname === "/dashboard/posts"
+        //     },
+        //     {
+        //       href: "/dashboard/posts/new",
+        //       label: "New Post",
+        //       active: pathname === "/dashboard/posts/new"
+        //     }
+        //   ]
+        // }
       ]
     },
     {
       groupLabel: "Settings",
       menus: [
         {
-          href: "/dashboard/apis",
-          label: "Apis",
-          active: pathname.includes("/dashboard/apis"),
+          href: "/dashboard/settings/admins",
+          label: "Admins Setting",
+          active: pathname.includes("/dashboard/settings/admins"),
+          icon: Tag,
+          submenus: []
+        },
+        {
+          href: "/dashboard/settings/apis",
+          label: "Apis Setting",
+          active: pathname.includes("/dashboard/settings/apis"),
           icon: Tag,
           submenus: []
         },

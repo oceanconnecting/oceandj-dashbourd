@@ -1,56 +1,63 @@
-"use client";
-
-import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import {
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { deleteCategory } from '@/app/redux/features/categories/categoriesSlice';
+import { RootState } from "@/app/redux/store";
 
-export function DeleteCategoryForm({ categoryId, onDeleteSuccess }: { categoryId: number, onDeleteSuccess: () => void }) {
-  const [isDeleting, setIsDeleting] = useState(false);
+export function DeleteCategoryForm({
+  categoryId,
+  onClose,
+}: {
+  categoryId: number;
+  onClose: () => void;
+}) {
+  const { toast } = useToast();
+  const dispatch = useAppDispatch();
+  const loading = useAppSelector((state: RootState) => state.categories.loading_delete);
+  // const error = useAppSelector((state: RootState) => state.categories.error_delete);
 
   const handleDelete = async () => {
-    setIsDeleting(true);
     try {
-      const response = await fetch(`/api/categories/delete-category?id=${categoryId}`, {
-        method: "DELETE",
+      await dispatch(deleteCategory(categoryId)).unwrap();
+      toast({
+        title: "Category deleted",
+        description: "The Category has been successfully deleted.",
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete the category");
-      }
-
-      // Optionally, trigger a callback after successful deletion
-      if (onDeleteSuccess) {
-        onDeleteSuccess();
-      }
     } catch (error) {
       console.error("Error deleting category:", error);
-      alert("Failed to delete the category.");
+      toast({
+        title: "Error",
+        description: "Failed to delete the category. Please try again.",
+      });
     } finally {
-      setIsDeleting(false);
+      onClose();
     }
   };
 
   return (
-    <AlertDialogContent>
-      <AlertDialogHeader>
-        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-        <AlertDialogDescription>
-          This action cannot be undone. This will permanently delete the category and remove it from our database.
-        </AlertDialogDescription>
-      </AlertDialogHeader>
-      <AlertDialogFooter>
-        <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <AlertDialogAction disabled={isDeleting} onClick={handleDelete}>
-          {isDeleting ? "Deleting..." : "Delete"}
-        </AlertDialogAction>
-      </AlertDialogFooter>
-    </AlertDialogContent>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Are you absolutely sure?</DialogTitle>
+        <DialogDescription>
+          This action cannot be undone. This will permanently delete the Category
+          and remove it from our database.
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <Button variant="outline" onClick={onClose} disabled={loading}>
+          Cancel
+        </Button>
+        <Button variant="destructive" disabled={loading} onClick={handleDelete}>
+          {loading ? "Deleting..." : "Delete"}
+        </Button>
+      </DialogFooter>
+    </DialogContent>
   );
 }

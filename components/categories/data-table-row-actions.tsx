@@ -35,9 +35,8 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
+        <DropdownMenuItem>Details</DropdownMenuItem>
         <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
         <DropdownMenuSeparator />
         {/* <DropdownMenuSub>
           <DropdownMenuSubTrigger>Priorities</DropdownMenuSubTrigger>
