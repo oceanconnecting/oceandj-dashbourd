@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 // Inspired by react-hot-toast library
@@ -13,7 +14,6 @@ const TOAST_REMOVE_DELAY = 1000000
 
 type ToasterToast = ToastProps & {
   id: string
-  icon?: ToastActionElement
   title?: React.ReactNode
   description?: React.ReactNode
   action?: ToastActionElement
