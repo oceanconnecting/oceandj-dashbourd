@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+// Define an interface for the type object
+interface Type {
+  id: number;
+  title: string;
+  image: string;
+  _count: {
+    categories: number;
+  };
+}
+
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   
@@ -33,7 +43,7 @@ export const GET = async (req: Request) => {
 
   try {
     // Fetch types along with their category counts with pagination
-    const types = await db.type.findMany({
+    const types: Type[] = await db.type.findMany({
       where: {
         title: {
           contains: searchQuery,
@@ -71,7 +81,7 @@ export const GET = async (req: Request) => {
     const totalPages = Math.ceil(totalTypes / limit); // Calculate total pages
 
     // Map the types to include categoryCount
-    const typesWithCategoryCount = types.map(type => ({
+    const typesWithCategoryCount = types.map((type: Type) => ({
       id: type.id,
       title: type.title,
       image: type.image,
