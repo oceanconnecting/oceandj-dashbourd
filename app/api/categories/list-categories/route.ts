@@ -1,9 +1,25 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+// Define an interface for the category object
+interface Category {
+  id: number;
+  title: string;
+  image: string;
+  typeId: number;
+  _count: {
+    products: number;
+  };
+  type: {
+    id: number;
+    title: string;
+    image: string;
+  } | null; // Include null if type can be null
+}
+
 export const GET = async () => {
   try {
-    const categories = await db.category.findMany({
+    const categories: Category[] = await db.category.findMany({
       include: {
         type: {
           select: {
@@ -20,7 +36,7 @@ export const GET = async () => {
       },
     });
 
-    const categoriesWithProductCount = categories.map(category => ({
+    const categoriesWithProductCount = categories.map((category: Category) => ({
       id: category.id,
       title: category.title,
       image: category.image,
