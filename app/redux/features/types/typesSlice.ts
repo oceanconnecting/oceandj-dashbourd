@@ -20,7 +20,7 @@ interface Type {
 export const fetchTypes = createAsyncThunk(
   'types/fetchTypes',
   async ({ searchTerm, page, limit, sort }: FetchTypesParams) => {
-    const response = await axios.get('http://localhost:3000/api/types/list-types', {
+    const response = await axios.get('/api/types/list-types', {
       params: {
         search: searchTerm,
         page,
@@ -48,7 +48,7 @@ export const addType = createAsyncThunk(
   'types/addType',
   async ({ title, image }: { title: string; image: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/types/add-type', {
+      const response = await axios.post('/api/types/add-type', {
         title,
         image,
       });
@@ -74,7 +74,7 @@ export const updateType = createAsyncThunk(
   'types/updateType',
   async ({ typeId, title, image }: { typeId: number; title: string; image: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`http://localhost:3000/api/types/update-type/${typeId}`, {
+      const response = await axios.put(`/api/types/update-type/${typeId}`, {
         title,
         image,
       });
@@ -100,7 +100,7 @@ export const fetchTypeDetails = createAsyncThunk(
   'types/fetchTypeDetails',
   async (typeId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/types/type-details/${typeId}`);
+      const response = await axios.get(`/api/types/type-details/${typeId}`);
       if (response.status >= 400) {
         throw new Error('Failed to fetch type details');
       }
@@ -124,7 +124,7 @@ export const deleteType = createAsyncThunk(
   'types/deleteType',
   async (typeId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/api/types/delete-type/${typeId}`);
+      const response = await axios.delete(`/api/types/delete-type/${typeId}`);
       if (response.status !== 200) {
         throw new Error('Failed to delete the type');
       }
@@ -147,7 +147,7 @@ export const deleteMultiTypes = createAsyncThunk(
   'types/deleteMultiTypes',
   async (typeIds: number[], { rejectWithValue }) => {
     try {
-      const response = await axios.delete('http://localhost:3000/api/types/delete-multi-types', {
+      const response = await axios.delete('/api/types/delete-multi-types', {
         data: { ids: typeIds }, // Send the array of IDs in the request body
       });
       console.log("From the slice : ", typeIds)
