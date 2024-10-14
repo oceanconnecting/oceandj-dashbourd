@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db'; // Adjust the path to your db config
+import { db } from '@/lib/db';
 
 export const GET = async (req: Request, { params }: { params: { id: string } }) => {
   try {
@@ -9,7 +9,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
         id: Number(id),
       },
       include: {
-        type: true, // Include category details in the category response
+        type: true,
         products: true,
       },
     });

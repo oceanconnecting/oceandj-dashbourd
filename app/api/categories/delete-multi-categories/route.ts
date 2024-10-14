@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db'; // Adjust the path to your db config
+import { db } from '@/lib/db';
 
 export const DELETE = async (req: Request) => {
   try {
@@ -13,7 +13,6 @@ export const DELETE = async (req: Request) => {
       );
     }
 
-    // Convert ids to numbers and filter out invalid values
     const validIds = ids.map(Number).filter((id) => !isNaN(id));
 
     if (validIds.length === 0) {
@@ -23,7 +22,6 @@ export const DELETE = async (req: Request) => {
       );
     }
 
-    // Find the existing categories
     const existingCategories = await db.category.findMany({
       where: {
         id: { in: validIds },
@@ -37,7 +35,6 @@ export const DELETE = async (req: Request) => {
       );
     }
 
-    // Delete the categories
     await db.category.deleteMany({
       where: {
         id: { in: validIds },

@@ -29,7 +29,7 @@ function Component() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Create Product</h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline">Cancel</Button>
+          <Button variant="outline">Back</Button>
           <Button>Save Product</Button>
         </div>
       </div>
