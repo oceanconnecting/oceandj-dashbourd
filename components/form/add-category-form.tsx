@@ -32,10 +32,9 @@ export function AddCategoryForm({ onClose }: { onClose: () => void }) {
   const error = useAppSelector((state: RootState) => state.categories.error_add);
   const types = useAppSelector((state: RootState) => state.categories.types);
   // const typesLoading = useAppSelector((state: RootState) => state.categories.loading_types);
-
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
-  const [typeId, setTypeId] = useState<number | null>(null); // Set typeId to number | null
+  const [typeId, setTypeId] = useState<number | null>(null);
 
   useEffect(() => {
     dispatch(fetchCategoryTypes());
@@ -44,7 +43,7 @@ export function AddCategoryForm({ onClose }: { onClose: () => void }) {
   const resetForm = () => {
     setTitle("");
     setImage("");
-    setTypeId(null); // Reset typeId
+    setTypeId(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,7 +53,7 @@ export function AddCategoryForm({ onClose }: { onClose: () => void }) {
       return;
     }
     try {
-      const action = await dispatch(addCategory({ title, image, typeId: Number(typeId) })); // Convert typeId to number
+      const action = await dispatch(addCategory({ title, image, typeId: Number(typeId) }));
       if (addCategory.fulfilled.match(action)) {
         toast({
           title: "Category added",

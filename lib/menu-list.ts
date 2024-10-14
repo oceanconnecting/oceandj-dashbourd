@@ -1,9 +1,10 @@
 import {
+  LayoutDashboard,
   Tag,
-  Bookmark,
-  // SquarePen,
-  LayoutGrid,
-  LucideIcon
+  WalletCards,
+  Layers3,
+  KeyRound,
+  LucideIcon,
 } from "lucide-react";
 
 type Submenu = {
@@ -34,7 +35,7 @@ export function getMenuList(pathname: string): Group[] {
           href: "/dashboard",
           label: "Dashboard",
           active: pathname.includes("/dashboard"),
-          icon: LayoutGrid,
+          icon: LayoutDashboard,
           submenus: []
         }
       ]
@@ -53,14 +54,14 @@ export function getMenuList(pathname: string): Group[] {
           href: "/dashboard/categories",
           label: "Categories",
           active: pathname.includes("/dashboard/categories"),
-          icon: Bookmark,
+          icon: WalletCards,
           submenus: []
         },
         {
           href: "/dashboard/types",
           label: "Types",
           active: pathname.includes("/dashboard/types"),
-          icon: Bookmark,
+          icon: Layers3,
           submenus: []
         },
         // {
@@ -90,14 +91,7 @@ export function getMenuList(pathname: string): Group[] {
           href: "/dashboard/settings/admins",
           label: "Admins Setting",
           active: pathname.includes("/dashboard/settings/admins"),
-          icon: Tag,
-          submenus: []
-        },
-        {
-          href: "/dashboard/settings/apis",
-          label: "Apis Setting",
-          active: pathname.includes("/dashboard/settings/apis"),
-          icon: Tag,
+          icon: KeyRound,
           submenus: []
         },
       ]

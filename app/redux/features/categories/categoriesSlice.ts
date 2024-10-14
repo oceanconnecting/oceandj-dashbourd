@@ -3,16 +3,46 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Fetch categories including product count
-export const fetchCategories = createAsyncThunk('categories/fetchCategories', async () => {
-  const response = await axios.get('http://localhost:3000/api/categories/list-categories');
-  console.log(response.data.categories);
-  // Return categories with countProduct included
-  return response.data.categories.map(category => ({
-    ...category,
-    countProduct: category.countProduct || 0, // Default to 0 if countProduct is not provided
-  }));
-});
+interface FetchCategoriesParams {
+  searchTerm?: string;
+  page?: number;
+  limit?: number;
+  sort?: string;
+}
+
+interface Category {
+  id: number;
+  title: string;
+  image: string;
+  typeId: number;
+  productCount: number;
+}
+
+export const fetchCategories = createAsyncThunk(
+  'categories/fetchCategories',
+  async ({ searchTerm, page, limit, sort }: FetchCategoriesParams) => {
+    const response = await axios.get('http://localhost:3000/api/categories/list-categories', {
+      params: {
+        search: searchTerm,
+        page,
+        limit,
+        sort,
+      },
+    });
+
+    return {
+      categories: response.data.categories.map((category: Category) => ({
+        ...category,
+        categoryCount: category.productCount || 0,
+      })),
+      total: response.data.total,
+      page: response.data.page,
+      limit: response.data.limit,
+      totalPages: response.data.totalPages,
+      sort
+    };
+  }
+);
 
 // Add a category
 export const addCategory = createAsyncThunk(
@@ -27,10 +57,16 @@ export const addCategory = createAsyncThunk(
       if (response.status >= 400) {
         throw new Error('Failed to add the category');
       }
-      return { ...response.data.category, countProduct: 0 }; // Initialize countProduct to 0
+      return { ...response.data.category, countProduct: 0 };
     } catch (error) {
       console.error('Error:', error);
-      return rejectWithValue(error.message);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
   }
 );
@@ -48,10 +84,16 @@ export const updateCategory = createAsyncThunk(
       if (response.status >= 400) {
         throw new Error('Failed to update the category');
       }
-      return { categoryId, title, image, typeId }; // Return the updated category details
+      return { categoryId, title, image, typeId };
     } catch (error) {
       console.error("Error : ", error);
-      return rejectWithValue(error.message);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
   }
 );
@@ -65,10 +107,16 @@ export const fetchCategoryDetails = createAsyncThunk(
       if (response.status >= 400) {
         throw new Error('Failed to fetch category details');
       }
-      return { ...response.data.category, countProduct: response.data.category.countProduct || 0 }; // Ensure countProduct is included
+      return { ...response.data.category, countProduct: response.data.category.countProduct || 0 };
     } catch (error) {
       console.error('Error:', error);
-      return rejectWithValue(error.message);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
   }
 );
@@ -85,7 +133,13 @@ export const deleteCategory = createAsyncThunk(
       return categoryId;
     } catch (error) {
       console.error("Error : ", error);
-      return rejectWithValue(error.message);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
   }
 );
@@ -98,22 +152,60 @@ export const fetchCategoryTypes = createAsyncThunk(
       const response = await axios.get('http://localhost:3000/api/types/list-types');
       return response.data.types;
     } catch (error) {
-      return rejectWithValue(error.message);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
   }
 );
+
+// Delete multiple categories
+export const deleteMultiCategories = createAsyncThunk(
+  'categories/deleteMultiCategories',
+  async (categoryIds: number[], { rejectWithValue }) => {
+    try {
+      const response = await axios.delete('http://localhost:3000/api/categories/delete-multi-categories', {
+        data: { ids: categoryIds }, // Send the array of IDs in the request body
+      });
+      console.log("From the slice : ", categoryIds)
+      if (response.status !== 200) {
+        throw new Error('Failed to delete categories');
+      }
+      return categoryIds; // Return the deleted IDs
+    } catch (error) {
+      console.error("Error:", error);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
+    }
+  }
+);
+
+
+interface CategoryType {
+  id: number;  // Assuming 'id' is a number
+  title: string;
+}
 
 interface Category {
   id: number;
   title: string;
   image: string;
-  typeId: string;
-  countProduct: number; // Ensure countProduct is included in the Category interface
+  typeId: number; // Use number instead of string for typeId
+  countProduct: number;
 }
 
 interface CategoriesState {
-  categories: [];
-  types: [],
+  categories: Category[]; // Specify Category[] instead of []
+  types: CategoryType[]; // Specify types as string[] or whatever type they are
   currentCategory: Category | null;
   loading: boolean;
   loading_details: boolean;
@@ -127,6 +219,11 @@ interface CategoriesState {
   error_update: string | null;
   error_delete: string | null;
   error_types: string | null;
+  total: number;        // Total number of types
+  page: number;         // Current page number
+  limit: number;        // Limit of items per page
+  totalPages: number;   // Total number of pages
+  sort: string | null;
 }
 
 const initialState: CategoriesState = {
@@ -145,6 +242,11 @@ const initialState: CategoriesState = {
   error_update: null,
   error_delete: null,
   error_types: null,
+  total: 0,             // Initial total
+  page: 1,              // Initial current page
+  limit: 10,            // Initial limit
+  totalPages: 0,        // Initial total pages
+  sort: null
 };
 
 const categoriesSlice = createSlice({
@@ -158,8 +260,13 @@ const categoriesSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
-        state.categories = action.payload; // Categories now include countProduct
         state.loading = false;
+        state.categories = action.payload.categories;
+        state.total = action.payload.total;
+        state.page = action.payload.page;
+        state.limit = action.payload.limit;
+        state.sort = action.payload.sort ?? null;
+        state.totalPages = action.payload.totalPages;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
         state.loading = false;
@@ -170,7 +277,7 @@ const categoriesSlice = createSlice({
         state.error_add = null;
       })
       .addCase(addCategory.fulfilled, (state, action) => {
-        state.categories.push(action.payload); // countProduct is initialized to 0
+        state.categories.push(action.payload);
         state.loading_add = false;
       })
       .addCase(addCategory.rejected, (state, action) => {
@@ -188,7 +295,6 @@ const categoriesSlice = createSlice({
           existingCategory.title = title;
           existingCategory.image = image;
           existingCategory.typeId = typeId;
-          // countProduct does not change, so it's not updated here
         }
         state.loading_update = false;
       })
@@ -201,7 +307,7 @@ const categoriesSlice = createSlice({
         state.error_details = null;
       })
       .addCase(fetchCategoryDetails.fulfilled, (state, action) => {
-        state.currentCategory = action.payload; // countProduct included in details
+        state.currentCategory = action.payload;
         state.loading_details = false;
       })
       .addCase(fetchCategoryDetails.rejected, (state, action) => {
@@ -222,6 +328,7 @@ const categoriesSlice = createSlice({
       })
       .addCase(fetchCategoryTypes.pending, (state) => {
         state.loading_types = true;
+        state.error_types = null;
       })
       .addCase(fetchCategoryTypes.fulfilled, (state, action) => {
         state.loading_types = false;
@@ -229,7 +336,19 @@ const categoriesSlice = createSlice({
       })
       .addCase(fetchCategoryTypes.rejected, (state, action) => {
         state.loading_types = false;
-        state.error_types = action.payload;
+        state.error_types = action.payload as string;
+      })
+      .addCase(deleteMultiCategories.pending, (state) => {
+        state.loading_delete = true;
+        state.error_delete = null;
+      })
+      .addCase(deleteMultiCategories.fulfilled, (state, action) => {
+        state.categories = state.categories.filter(category => !action.payload.includes(category.id));
+        state.loading_delete = false;
+      })
+      .addCase(deleteMultiCategories.rejected, (state, action) => {
+        state.loading_delete = false;
+        state.error_delete = action.payload as string;
       });
   },
 });

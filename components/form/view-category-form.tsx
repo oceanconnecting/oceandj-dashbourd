@@ -2,18 +2,17 @@
 
 import { useEffect } from "react";
 import { Label } from "@/components/ui/label";
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { fetchCategoryDetails } from "@/app/redux/features/categories/categoriesSlice";
 import { RootState } from "@/app/redux/store";
+import Image from "next/image";
 
 interface ViewCategoryFormProps {
   categoryId: number;
-  onClose: () => void;
 }
 
-export function ViewCategoryForm({ categoryId, onClose }: ViewCategoryFormProps) {
+export function ViewCategoryForm({ categoryId }: ViewCategoryFormProps) {
   const dispatch = useAppDispatch();
   
   const { currentCategory, loading, error } = useAppSelector((state: RootState) => ({
@@ -50,7 +49,7 @@ export function ViewCategoryForm({ categoryId, onClose }: ViewCategoryFormProps)
           <div className="grid gap-2">
             <Label htmlFor="image">Category Image</Label>
             <div className="w-full rounded-lg">
-              <img src={currentCategory.image} alt="Category" className="rounded-lg max-h-40 object-cover" />
+              <Image width={250} height={250} src={currentCategory.image} alt="Category" className="rounded-lg max-h-40 object-cover" />
             </div>
           </div>
         </div>

@@ -3,9 +3,9 @@ import { z } from 'zod';
 export const ProductSchema = z.object({
   title: z.string(),
   description: z.string(),
-  images: z.array(z.string()), // Updated to an array of strings
+  images: z.array(z.string()),
   price: z.number().nonnegative(),
-  discount: z.number().optional(), // Discount is optional
+  discount: z.number().optional(),
   stock: z.number().int().nonnegative(),
   categoryId: z.number().int(),
 });

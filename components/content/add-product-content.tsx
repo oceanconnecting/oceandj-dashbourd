@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -47,16 +49,16 @@ function Component() {
               <Input id="price" type="number" placeholder="Enter price" />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="image">Images</Label>
+              <Label htmlFor="discount">Discount</Label>
               <div className="flex items-center">
-                <Input id="image" type="file" multiple />
+                <Input id="discount" type="number" placeholder="Enter discount" />
               </div>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-6">
             <div className="grid gap-2">
               <Label htmlFor="category">Category</Label>
-              <Select id="category">
+              <Select>
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -69,10 +71,18 @@ function Component() {
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="tags">Tags</Label>
-              <Input id="tags" placeholder="Enter tags (separated by commas)" />
+              <Label htmlFor="stock">Stock</Label>
+              <Input type="number" id="stock" placeholder="Enter stock" />
             </div>
           </div>
+          <div className="grid gap-2">
+            <Label >Product Images Links</Label>
+            <Input type="text" placeholder="Image number 1" />
+            <Input type="text" placeholder="Image number 2" />
+            <Input type="text" placeholder="Image number 3" />
+            <Input type="text" placeholder="Image number 4" />
+            <Input type="text" placeholder="Image number 5" />
+        </div>
         </CardContent>
       </Card>
     </div>

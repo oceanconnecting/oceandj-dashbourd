@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 
-const LogoutButton = ({ isOpen }) => {
+const LogoutButton = ({ isOpen }: { isOpen: boolean}) => {
   return (
     <Button
       onClick={() => signOut()}

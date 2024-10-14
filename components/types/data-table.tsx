@@ -25,11 +25,15 @@ import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import { Spinner } from "@/components/ui/spinner";
 
-interface DataTableProps<TData, TValue> {
+interface Identifiable {
+  id: number;
+}
+
+interface DataTableProps<TData extends Identifiable, TValue> {
   searchTerm: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   columns: ColumnDef<TData, TValue>[]; 
-  data: TData[]; // The current page data
+  data: TData[];
   loading: boolean;
   page: number;
   limit: number;
@@ -37,10 +41,10 @@ interface DataTableProps<TData, TValue> {
   totalPages: number;
   handlePreviousPage: () => void;
   handleNextPage: () => void;
-  handleLimitChange: (limit: number) => void; // Add handleLimitChange prop
+  handleLimitChange: (limit: number) => void;
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends Identifiable, TValue>({
   searchTerm,
   onChange,
   columns,
@@ -52,14 +56,13 @@ export function DataTable<TData, TValue>({
   totalPages,
   handlePreviousPage,
   handleNextPage,
-  handleLimitChange, // Include in props
+  handleLimitChange,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  // Table instance setup
   const table = useReactTable({
     data,
     columns,
@@ -68,10 +71,10 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       columnFilters,
-      pagination: { pageIndex: page - 1, pageSize: limit }, // Adjust pageIndex for 0-based index
+      pagination: { pageIndex: page - 1, pageSize: limit },
     },
-    manualPagination: true, // Enable manual pagination
-    pageCount: totalPages, // Set the total number of pages manually
+    manualPagination: true,
+    pageCount: totalPages, 
     enableRowSelection: true,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -83,10 +86,9 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
   });
 
-  // Sync the table's pagination state with external props (page and limit)
   useEffect(() => {
-    table.setPageIndex(page - 1); // Set the correct page index (0-based)
-    table.setPageSize(limit); // Set the page size
+    table.setPageIndex(page - 1); 
+    table.setPageSize(limit); 
   }, [page, limit, table]);
 
   return (
@@ -140,7 +142,7 @@ export function DataTable<TData, TValue>({
         totalPages={totalPages}
         handlePreviousPage={handlePreviousPage}
         handleNextPage={handleNextPage}
-        handleLimitChange={handleLimitChange} // Pass the handleLimitChange to the pagination
+        handleLimitChange={handleLimitChange}
       />
     </div>
   );

@@ -11,13 +11,13 @@ import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "./data-table-view-options";
 import { PlusIcon } from "@radix-ui/react-icons";
 
-interface DataTableToolbarProps<TData> {
+interface DataTableToolbarProps<TData extends { id: number }> {
   table: Table<TData>;
   searchTerm: string; // Ensure searchTerm prop is typed
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Ensure onChange prop is typed
 }
 
-export function DataTableToolbar<TData>({ table, searchTerm, onChange }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData extends { id: number }>({ table, searchTerm, onChange }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
   const [isDialogOpenAdd, setIsDialogOpenAdd] = useState(false);
   const [isDialogOpenDeletes, setIsDialogOpenDeletes] = useState(false);

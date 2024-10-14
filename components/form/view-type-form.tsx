@@ -2,18 +2,17 @@
 
 import { useEffect } from "react";
 import { Label } from "@/components/ui/label";
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { fetchTypeDetails } from "@/app/redux/features/types/typesSlice";
 import { RootState } from "@/app/redux/store";
+import Image from "next/image";
 
 interface ViewTypeFormProps {
   typeId: number;
-  onClose: () => void;
 }
 
-export function ViewTypeForm({ typeId, onClose }: ViewTypeFormProps) {
+export function ViewTypeForm({ typeId }: ViewTypeFormProps) {
   const dispatch = useAppDispatch();
   
   const { currentType, loading, error } = useAppSelector((state: RootState) => ({
@@ -50,7 +49,7 @@ export function ViewTypeForm({ typeId, onClose }: ViewTypeFormProps) {
           <div className="grid gap-2">
             <Label htmlFor="image">Type Image</Label>
             <div className="w-full rounded-lg">
-              <img src={currentType.image} alt="Type" className="rounded-lg max-h-40 object-cover" />
+              <Image width={250} height={250} src={currentType.image} alt="Type" className="rounded-lg max-h-40 object-cover" />
             </div>
           </div>
         </div>

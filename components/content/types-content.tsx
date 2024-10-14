@@ -16,12 +16,11 @@ export function TypesContent() {
   const router = useRouter();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(1); // Current page
-  const [limit, setLimit] = useState(10); // Items per page
-  // const [sortKey, setSortKey] = useState(""); // Column to sort by
-  // const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  // const [sortKey, setSortKey] = useState(""); 
+  // const [sortOrder, setSortOrder] = useState("asc");
 
-  // Reset to page 1 when searchTerm changes
   useEffect(() => {
     setPage(1);
   }, [searchTerm]);
@@ -29,49 +28,42 @@ export function TypesContent() {
   useEffect(() => {
     const params = new URLSearchParams();
 
-    // Update URL parameters based on the searchTerm
     if (searchTerm) {
       params.set("search", searchTerm);
     }
     
-    // Update URL parameters based on the page
     if (page > 1) {
       params.set("page", String(page));
     }
     
-    // Update URL parameters based on the limit
     if(limit > 10) {
-      params.set("limit", String(limit)); // Always add limit
+      params.set("limit", String(limit));
     }
     
-    // params.set("sort", sortKey ? `${sortKey}:${sortOrder}` : ""); // Set sorting if defined
+    // params.set("sort", sortKey ? `${sortKey}:${sortOrder}` : "");
 
-    // Change the URL using router.push
     router.push(`/dashboard/types?${params.toString()}`);
 
-    // Dispatch fetchTypes with the updated search term and pagination
     dispatch(fetchTypes({ searchTerm, page, limit }));
   }, [searchTerm, page, limit, router, dispatch]);
 
-  // Pagination control handlers
   const handleNextPage = () => {
-    setPage((prev) => Math.min(prev + 1, totalPages)); // Prevent going beyond total pages
+    setPage((prev) => Math.min(prev + 1, totalPages));
   };
 
   const handlePreviousPage = () => {
-    setPage((prev) => Math.max(prev - 1, 1)); // Prevent going to page 0
+    setPage((prev) => Math.max(prev - 1, 1));
   };
 
   const handleLimitChange = (newLimit: number) => {
     setLimit(newLimit);
-    setPage(1); // Reset to the first page when limit changes
+    setPage(1); 
   };
 
   // const handleSortChange = (key: string) => {
-  //   // Toggle sort order between 'asc' and 'desc'
   //   setSortKey(key);
   //   setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
-  //   setPage(1); // Reset to first page on sort change
+  //   setPage(1);
   // };
 
   return (
@@ -97,7 +89,7 @@ export function TypesContent() {
                   limit={limit}
                   handlePreviousPage={handlePreviousPage}
                   handleNextPage={handleNextPage}
-                  handleLimitChange={handleLimitChange} // Pass the limit change handler
+                  handleLimitChange={handleLimitChange}
                 />
               )}
             </div>

@@ -18,7 +18,7 @@ export function EditTypeForm({ typeId, currentTitle, currentImage, onClose } : {
   const [image, setImage] = useState(currentImage || "");
   const loading = useAppSelector((state: RootState) => state.types.loading_update);
   const error = useAppSelector((state: RootState) => state.types.error_update);
-  const types = useAppSelector((state: RootState) => state.categories.types);
+  // const types = useAppSelector((state: RootState) => state.categories.types);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

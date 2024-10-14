@@ -3,33 +3,45 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+interface FetchTypesParams {
+  searchTerm?: string;
+  page?: number;
+  limit?: number;
+  sort?: string;
+}
+
+interface Type {
+  id: number;
+  title: string;
+  image: string;
+  categoryCount: number;
+}
+
 export const fetchTypes = createAsyncThunk(
   'types/fetchTypes',
-  async ({ searchTerm, page, limit, sort }) => {
+  async ({ searchTerm, page, limit, sort }: FetchTypesParams) => {
     const response = await axios.get('http://localhost:3000/api/types/list-types', {
       params: {
-        search: searchTerm, // Search query parameter
-        page, // Current page
-        limit, // Number of items per page
-        sort, // Add sort parameter for sorting
+        search: searchTerm,
+        page,
+        limit,
+        sort,
       },
     });
 
-    // Return an object with types and additional data
     return {
-      types: response.data.types.map(type => ({
+      types: response.data.types.map((type: Type) => ({
         ...type,
         categoryCount: type.categoryCount || 0,
       })),
-      total: response.data.total, // Include total count
-      page: response.data.page,   // Current page
-      limit: response.data.limit, // Limit of items per page
-      totalPages: response.data.totalPages // Include total pages
+      total: response.data.total,
+      page: response.data.page,
+      limit: response.data.limit,
+      totalPages: response.data.totalPages,
+      sort
     };
   }
 );
-
-
 
 // Add a type
 export const addType = createAsyncThunk(
@@ -46,7 +58,13 @@ export const addType = createAsyncThunk(
       return { ...response.data.type, categoryCount: 0 }; // Initialize categoryCount to 0
     } catch (error) {
       console.error('Error:', error);
-      return rejectWithValue(error.message);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
   }
 );
@@ -66,7 +84,13 @@ export const updateType = createAsyncThunk(
       return { typeId, title, image }; // Return the updated type details
     } catch (error) {
       console.error("Error : ", error);
-      return rejectWithValue(error.message);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
   }
 );
@@ -83,7 +107,13 @@ export const fetchTypeDetails = createAsyncThunk(
       return response.data.type; // Should now include categoryCount
     } catch (error) {
       console.error('Error:', error);
-      return rejectWithValue(error.message);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
   }
 );
@@ -101,7 +131,13 @@ export const deleteType = createAsyncThunk(
       return typeId;
     } catch (error) {
       console.error("Error : ", error);
-      return rejectWithValue(error.message);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
   }
 );
@@ -121,7 +157,13 @@ export const deleteMultiTypes = createAsyncThunk(
       return typeIds; // Return the deleted IDs
     } catch (error) {
       console.error("Error:", error);
-      return rejectWithValue(error.message);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
     }
   }
 );
@@ -188,12 +230,12 @@ const typesSlice = createSlice({
         state.total = action.payload.total;
         state.page = action.payload.page;
         state.limit = action.payload.limit;
-        state.sort = action.payload.sort;
+        state.sort = action.payload.sort ?? null;
         state.totalPages = action.payload.totalPages;
       })
       .addCase(fetchTypes.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.error.message || 'Failed to fetch types';
       })
       .addCase(addType.pending, (state) => {
         state.loading_add = true;
