@@ -27,7 +27,7 @@ export const addProduct = createAsyncThunk(
   async (productData: AddProductParams, { rejectWithValue }) => {
     try {
       const response = await axios.post<{ success: boolean; product: Product }>(
-        'http://localhost:3000/api/products/add-product',
+        '/api/products/add-product',
         productData
       );
 
@@ -53,7 +53,7 @@ export const fetchProductCategories = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get<{ success: boolean; categories: { id: number; title: string }[] }>(
-        'http://localhost:3000/api/categories/list-categories'
+        '/api/categories/list-categories'
       );
 
       if (response.status < 200 || response.status >= 300) {

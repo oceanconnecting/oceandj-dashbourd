@@ -21,7 +21,7 @@ interface Category {
 export const fetchCategories = createAsyncThunk(
   'categories/fetchCategories',
   async ({ searchTerm, page, limit, sort }: FetchCategoriesParams) => {
-    const response = await axios.get('http://localhost:3000/api/categories/list-categories', {
+    const response = await axios.get('/api/categories/list-categories', {
       params: {
         search: searchTerm,
         page,
@@ -49,7 +49,7 @@ export const addCategory = createAsyncThunk(
   'categories/addCategory',
   async ({ title, image, typeId }: { title: string; image: string; typeId: number }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/categories/add-category', {
+      const response = await axios.post('/api/categories/add-category', {
         title,
         image,
         typeId,
@@ -76,7 +76,7 @@ export const updateCategory = createAsyncThunk(
   'categories/updateCategory',
   async ({ categoryId, title, image, typeId }: { categoryId: number; title: string; image: string; typeId: number }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`http://localhost:3000/api/categories/update-category/${categoryId}`, {
+      const response = await axios.put(`/api/categories/update-category/${categoryId}`, {
         title,
         image,
         typeId,
@@ -103,7 +103,7 @@ export const fetchCategoryDetails = createAsyncThunk(
   'categories/fetchCategoryDetails',
   async (categoryId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/categories/category-details/${categoryId}`);
+      const response = await axios.get(`/api/categories/category-details/${categoryId}`);
       if (response.status >= 400) {
         throw new Error('Failed to fetch category details');
       }
@@ -126,7 +126,7 @@ export const deleteCategory = createAsyncThunk(
   'categories/deleteCategory',
   async (categoryId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/api/categories/delete-category/${categoryId}`);
+      const response = await axios.delete(`/api/categories/delete-category/${categoryId}`);
       if (response.status !== 200) {
         throw new Error('Failed to delete the category');
       }
@@ -149,7 +149,7 @@ export const fetchCategoryTypes = createAsyncThunk(
   'categories/fetchCategoryTypes',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('http://localhost:3000/api/types/list-types');
+      const response = await axios.get('/api/types/list-types');
       return response.data.types;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -168,7 +168,7 @@ export const deleteMultiCategories = createAsyncThunk(
   'categories/deleteMultiCategories',
   async (categoryIds: number[], { rejectWithValue }) => {
     try {
-      const response = await axios.delete('http://localhost:3000/api/categories/delete-multi-categories', {
+      const response = await axios.delete('/api/categories/delete-multi-categories', {
         data: { ids: categoryIds }, // Send the array of IDs in the request body
       });
       console.log("From the slice : ", categoryIds)
