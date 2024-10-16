@@ -4,13 +4,13 @@ import { TrashIcon, InfoCircledIcon, Pencil2Icon } from "@radix-ui/react-icons";
 import { ViewCategoryForm } from "@/components/form/view-category-form";
 import { EditCategoryForm } from "@/components/form/edit-category-form";
 import { DeleteCategoryForm } from "@/components/form/delete-category-form";
-import { Row } from "@tanstack/react-table"; // Import the Row Category
-import { CategorySchema } from "@/schemas/category"; // Assuming CategorySchemaCategory is the inferred Category from your Zod schema
+import { Row } from "@tanstack/react-table";
+import { CategorySchema } from "@/schemas/category";
 import { z } from "zod"
 
 type CategorySchemaCategory = z.infer<typeof CategorySchema>
 
-// This is the new component for the cell
+
 const CellActions = ({ row }: { row: Row<CategorySchemaCategory> }) => {
   const [isDialogOpenView, setIsDialogOpenView] = useState(false);
   const [isDialogOpenEdit, setIsDialogOpenEdit] = useState(false);

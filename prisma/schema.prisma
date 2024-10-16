@@ -22,18 +22,46 @@ model User {
   email    String @unique
   password String
 }
+model Order {
+  id          Int         @id @default(autoincrement())
+  name        String
+  reference   String      @unique
+  phone       String
+  email       String
+  address     String
+  status      Status      @default(Waiting)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  items       OrderItem[]
+}
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   title       String
   description String
   images      String[]
-  price       Int       @default(0)
-  discount    Float     
-  stock       Int       @default(0)
-
+  price       Int         @default(0)
+  discount    Float       
+  stock       Int         @default(0)
   categoryId  Int
-  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category    Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[] 
+}
+
+model OrderItem {
+  id          Int         @id @default(autoincrement())
+  orderId     Int
+  productId   Int
+
+  title       String
+  price       Int
+  quantity    Int         @default(1) 
+  discount    Float?    
+
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([orderId, productId])
 }
 
 model Category {
@@ -57,4 +85,10 @@ model Type {
   updatedAt  DateTime  @updatedAt
 
   categories Category[]
+}
+
+enum Status {
+  Waiting 
+  Cancelled 
+  Reseved
 }

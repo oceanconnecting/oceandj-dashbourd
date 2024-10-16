@@ -31,7 +31,7 @@ export function DataTablePagination({
   handleLimitChange,
 }: DataTablePaginationProps) {
   const { pageIndex, pageSize } = table.getState().pagination;
-
+  console.log(table.getFilteredSelectedRowModel().rows)
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">

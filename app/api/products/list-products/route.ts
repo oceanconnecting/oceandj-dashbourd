@@ -1,39 +1,117 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db'; // Adjust the path to your db config
+import { db } from '@/lib/db';
+
+interface Product {
+  id: number;
+  title: string;
+  images: string[];
+  categoryId: number;
+  description: string;
+  price: number;
+  discount: number;
+  stock: number;
+  category: {
+    id: number;
+    title: string;
+    image: string;
+  } | null;
+  orderCount: number;
+}
 
 export const GET = async (req: Request) => {
-  try {
-    // Parse query params for pagination (optional)
-    const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page") || "1", 10); // Default to page 1
-    const limit = parseInt(searchParams.get("limit") || "10", 10); // Default to 10 products per page
-    const skip = (page - 1) * limit;
+  const { searchParams } = new URL(req.url);
 
-    // Fetch products with pagination
-    const products = await db.product.findMany({
-      skip,
-      take: limit,
-      include: {
-        category: true, // Include category details in the product list
+  const searchQuery = searchParams.get('search') || '';
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const limit = parseInt(searchParams.get('limit') || '10', 10);
+  const offset = (page - 1) * limit;
+
+  const sortParam = searchParams.get('sort') || 'title.asc';
+  const [sortField, sortOrder] = sortParam.split('.');
+
+  const validSortFields = ['title', 'id'];
+  const validSortOrders = ['asc', 'desc'];
+
+  if (!validSortFields.includes(sortField)) {
+    return NextResponse.json(
+      { success: false, message: 'Invalid sort field' },
+      { status: 400 }
+    );
+  }
+
+  if (!validSortOrders.includes(sortOrder)) {
+    return NextResponse.json(
+      { success: false, message: 'Invalid sort order' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const totalProduct = await db.product.count({
+      where: {
+        title: {
+          contains: searchQuery,
+          mode: 'insensitive',
+        },
       },
     });
 
-    // Get total number of products for pagination info
-    const totalProducts = await db.product.count();
-    const totalPages = Math.ceil(totalProducts / limit);
+    const products: Product[] = await db.product.findMany({
+      where: {
+        title: {
+          contains: searchQuery,
+          mode: 'insensitive',
+        },
+      },
+      include: {
+        category: {
+          select: {
+            id: true,
+            title: true,
+            image: true,
+          },
+        },
+        _count: {
+          select: {
+            orderItems: true,
+          },
+        },
+      },
+      take: limit,
+      skip: offset,
+      orderBy: {
+        [sortField]: sortOrder,
+      },
+    });
+
+    const totalPages = Math.ceil(totalProduct / limit);
+
+    const productsWithOrderCount = products.map((product: any) => ({
+      id: product.id,
+      title: product.title,
+      images: product.images,
+      categoryId: product.categoryId,
+      description: product.description,
+      price: product.price,
+      discount: product.discount,
+      stock: product.stock,
+      category: product.category,
+      orderCount: product._count.orderItems,
+    }));
 
     return NextResponse.json({
       success: true,
-      products,
-      pagination: {
-        page,
-        limit,
-        totalPages,
-        totalProducts,
-      },
+      products: productsWithOrderCount,
+      total: totalProduct,
+      page,
+      limit,
+      totalPages,
     });
   } catch (error) {
     console.error('Error fetching products:', error);
-    return NextResponse.json({ success: false, message: 'Failed to fetch products' }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: 'Failed to fetch products' },
+      { status: 500 }
+    );
   }
 };

@@ -2,48 +2,26 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTableColumnHeader } from "./data-table-column-header"
-// import { Checkbox } from "@/components/ui/checkbox";
-import CellActions from '@/components/categories/cell-actions';
+import CellActions from '@/components/products/cell-actions';
 import Image from "next/image"
 
-interface Category {
+interface Product {
   id: number;
-  image: string;
+  images: string[];
   title: string;
-  productCount: number;
-  typeId: number;
+  description: string;
+  price: number;
+  discount: number;
+  stock: number;
+  categoryId: number;
 }
 
-export const columns: ColumnDef<Category>[] = [
+export const columns: ColumnDef<Product>[] = [
   {
     id: "select",
     enableSorting: false,
     enableHiding: false,
   },
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <Checkbox
-  //       checked={
-  //         table.getIsAllPageRowsSelected() ||
-  //         (table.getIsSomePageRowsSelected() && "indeterminate")
-  //       }
-  //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //       aria-label="Select all"
-  //       className="ml-2 translate-y-[2px]"
-  //     />
-  //   ),
-  //   cell: ({ row }) => (
-  //     <Checkbox
-  //       checked={row.getIsSelected()}
-  //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //       aria-label="Select row"
-  //       className="ml-2 translate-y-[2px]"
-  //     />
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
   {
     accessorKey: "id",
     header: ({ column }) => (
@@ -54,14 +32,14 @@ export const columns: ColumnDef<Category>[] = [
     enableHiding: true,
   },
   {
-    accessorKey: "image",
+    accessorKey: "images[0]",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="image" />
+      <DataTableColumnHeader column={column} title="images[0]" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
-          <Image width={100} height={100} src={row.getValue("image")} alt={row.getValue("title")} className="w-14 h-14 truncate font-medium" />
+          <Image width={100} height={100} src={row.getValue("images[0]")} alt={row.getValue("title")} className="w-14 h-14 truncate font-medium" />
         </div>
       )
     },
@@ -86,15 +64,15 @@ export const columns: ColumnDef<Category>[] = [
     enableHiding: true,
   },
   {
-    accessorKey: "typeId",
+    accessorKey: "price",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="typeId" />
+      <DataTableColumnHeader column={column} title="price" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
           <span className="max-w-[600px] truncate font-medium">
-            {row.getValue("typeId")}
+            {row.getValue("price")}
           </span>
         </div>
       )
@@ -103,15 +81,49 @@ export const columns: ColumnDef<Category>[] = [
     enableHiding: true,
   },
   {
-    accessorKey: "productCount",
+    accessorKey: "discount",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="productCount" />
+      <DataTableColumnHeader column={column} title="discount" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
           <span className="max-w-[600px] truncate font-medium">
-            {row.getValue("productCount")}
+            {row.getValue("discount")}
+          </span>
+        </div>
+      )
+    },
+    enableSorting: false,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "stock",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="stock" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[600px] truncate font-medium">
+            {row.getValue("stock")}
+          </span>
+        </div>
+      )
+    },
+    enableSorting: false,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "categoryId",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="categoryId" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[600px] truncate font-medium">
+            {row.getValue("categoryId")}
           </span>
         </div>
       )

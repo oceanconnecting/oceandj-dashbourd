@@ -5,21 +5,19 @@ export const GET = async (req: Request, { params }: { params: { category: string
   try {
     let { category } = params;
 
-    // Replace '+' with spaces and make the search case-insensitive
     category = category.replace(/\+/g, ' ').toLowerCase();
 
-    // Query the database for categories filtered by category (case-insensitive)
     const products = await db.product.findMany({
       where: {
         category: {
           title: {
-            equals: category, // Ensure category title is compared case-insensitively
-            mode: 'insensitive', // Case-insensitive search in Prisma
+            equals: category, 
+            mode: 'insensitive',
           },
         },
       },
       include: {
-        category: true, // Include category information if needed
+        category: true,
       },
     });
 

@@ -5,6 +5,7 @@ import {
   Layers3,
   KeyRound,
   LucideIcon,
+  ShoppingBag,
 } from "lucide-react";
 
 type Submenu = {
@@ -43,6 +44,13 @@ export function getMenuList(pathname: string): Group[] {
     {
       groupLabel: "Contents",
       menus: [
+        {
+          href: "/dashboard/orders",
+          label: "Orders",
+          active: pathname.includes("/dashboard/orders"),
+          icon: ShoppingBag,
+          submenus: []
+        },
         {
           href: "/dashboard/products",
           label: "Products",
@@ -88,9 +96,9 @@ export function getMenuList(pathname: string): Group[] {
       groupLabel: "Settings",
       menus: [
         {
-          href: "/dashboard/settings/admins",
-          label: "Admins Setting",
-          active: pathname.includes("/dashboard/settings/admins"),
+          href: "/dashboard/settings/apis",
+          label: "Apis Setting",
+          active: pathname.includes("/dashboard/settings/apis"),
           icon: KeyRound,
           submenus: []
         },
