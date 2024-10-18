@@ -45,48 +45,48 @@ export function getMenuList(pathname: string): Group[] {
       groupLabel: "Contents",
       menus: [
         {
-          href: "/dashboard/orders",
+          href: "/orders",
           label: "Orders",
-          active: pathname.includes("/dashboard/orders"),
+          active: pathname.includes("/orders"),
           icon: ShoppingBag,
           submenus: []
         },
         {
-          href: "/dashboard/products",
+          href: "/products",
           label: "Products",
-          active: pathname.includes("/dashboard/products"),
+          active: pathname.includes("/products"),
           icon: Tag,
           submenus: []
         },
         {
-          href: "/dashboard/categories",
+          href: "/categories",
           label: "Categories",
-          active: pathname.includes("/dashboard/categories"),
+          active: pathname.includes("/categories"),
           icon: WalletCards,
           submenus: []
         },
         {
-          href: "/dashboard/types",
+          href: "/types",
           label: "Types",
-          active: pathname.includes("/dashboard/types"),
+          active: pathname.includes("/types"),
           icon: Layers3,
           submenus: []
         },
         // {
         //   href: "",
         //   label: "Posts",
-        //   active: pathname.includes("/dashboard/posts"),
+        //   active: pathname.includes("/posts"),
         //   icon: SquarePen,
         //   submenus: [
         //     {
-        //       href: "/dashboard/posts",
+        //       href: "/posts",
         //       label: "All Posts",
-        //       active: pathname === "/dashboard/posts"
+        //       active: pathname === "/posts"
         //     },
         //     {
-        //       href: "/dashboard/posts/new",
+        //       href: "/posts/new",
         //       label: "New Post",
-        //       active: pathname === "/dashboard/posts/new"
+        //       active: pathname === "/posts/new"
         //     }
         //   ]
         // }
@@ -96,9 +96,9 @@ export function getMenuList(pathname: string): Group[] {
       groupLabel: "Settings",
       menus: [
         {
-          href: "/dashboard/settings/apis",
+          href: "/settings/apis",
           label: "Apis Setting",
-          active: pathname.includes("/dashboard/settings/apis"),
+          active: pathname.includes("/settings/apis"),
           icon: KeyRound,
           submenus: []
         },

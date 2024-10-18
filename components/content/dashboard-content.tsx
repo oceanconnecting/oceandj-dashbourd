@@ -1,13 +1,17 @@
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Tabs,
   TabsContent
 } from "@/components/ui/tabs"
+import { RecentSales } from "@/components/recent-sales";
+import { OverView } from "@/components/over-view";
+import { Sales } from "@/components/sales";
 
 export const DashboardContent = () => {
   return (
     <div className="flex flex-col">
-      <div className="flex-1 space-y-4 pt-4">
+      <h1 className="text-2xl font-semibold py-1">Hi, Welcome back 👋</h1>
+      <div className="flex-1 space-y-4 pt-2">
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -114,25 +118,15 @@ export const DashboardContent = () => {
               </Card>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="col-span-4">
-                <CardHeader>
-                  <CardTitle>Overview</CardTitle>
-                </CardHeader>
-                <CardContent className="pl-2">
-                  {/* <Overview /> */}
-                </CardContent>
-              </Card>
-              <Card className="col-span-4 lg:col-span-3">
-                <CardHeader>
-                  <CardTitle>Recent Sales</CardTitle>
-                  <CardDescription>
-                    You made 265 sales this month.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {/* <RecentSales /> */}
-                </CardContent>
-              </Card>
+              <div className="col-span-4">
+                <OverView />
+              </div>
+              <div className="col-span-4 lg:col-span-3">
+                <RecentSales />
+              </div>
+            </div>
+            <div>
+              <Sales />
             </div>
           </TabsContent>
         </Tabs>

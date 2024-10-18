@@ -42,7 +42,7 @@ export function CategoriesContent() {
     
     // params.set("sort", sortKey ? `${sortKey}:${sortOrder}` : "");
 
-    router.push(`/dashboard/categories?${params.toString()}`);
+    router.push(`/categories?${params.toString()}`);
 
     dispatch(fetchCategories({ searchTerm, page, limit }));
   }, [searchTerm, page, limit, router, dispatch]);
@@ -69,7 +69,7 @@ export function CategoriesContent() {
 
   return (
     <Card className="rounded-lg border-none mt-6">
-      <CardContent className="">
+      <CardContent className="p-6">
         <div className="flex justify-center items-start min-h-[calc(100vh-56px-56px-20px-24px-48px)]">
           <div className="overflow-auto w-full flex items-start relative">
             <div className="h-full flex-1 flex-col space-y-8 flex">

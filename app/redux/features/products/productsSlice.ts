@@ -1,5 +1,14 @@
+"use client";
+
 import axios from 'axios';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+interface FetchProductsParams {
+  searchTerm?: string;
+  page?: number;
+  limit?: number;
+  sort?: string;
+}
 
 interface Product {
   id: number;
@@ -10,13 +19,7 @@ interface Product {
   price: number;
   discount: number;
   stock: number;
-}
-
-interface FetchProductsParams {
-  searchTerm?: string;
-  page?: number;
-  limit?: number;
-  sort?: string;
+  orderCount: number;
 }
 
 export const fetchProducts = createAsyncThunk(
@@ -31,39 +34,72 @@ export const fetchProducts = createAsyncThunk(
       },
     });
 
+    const productsData = response.data || {};
+    const products = productsData.products || [];
+    const total = productsData.total || 0;
+    const totalPages = productsData.totalPages || 1;
+    const currentPage = productsData.page || 1;
+
     return {
-      products: response.data.products.map((product: Product) => ({
-        ...product
-      })),
-      total: response.data.total,
-      page: response.data.page,
-      limit: response.data.limit,
-      totalPages: response.data.totalPages,
-      sort
+      products,
+      total,
+      page: currentPage,
+      limit,
+      totalPages,
+      sort,
     };
   }
 );
 
-export const addProducts = createAsyncThunk(
-  'products/addProducts',
+
+export const addProduct = createAsyncThunk(
+  'products/addProduct',
   async (productData: Product, { rejectWithValue }) => {
     try {
-      const response = await axios.post<{ success: boolean; products: Product }>(
+      const response = await axios.post<{ success: boolean; product: Product }>(
         '/api/products/add-product',
         productData
       );
 
       if (response.status >= 400) {
         console.error('Failed to add the product');
+        return rejectWithValue('Failed to add the product');
       }
 
-      return response.data.products;
+      return response.data.product;
     } catch (error) {
       console.error('Error:', error);
       if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || 'Something went wrong';
         return rejectWithValue(errorMessage);
       } else {
+        return rejectWithValue('An unexpected error occurred');
+      }
+    }
+  }
+);
+
+export const updateProduct = createAsyncThunk(
+  'products/updateProduct',
+  async (productData: Product, { rejectWithValue }) => {
+    try {
+      const response = await axios.put<{ success: boolean; product: Product }>(
+        '/api/products/update-product',
+        productData
+      );
+
+      if (response.status >= 400) {
+        throw new Error('Failed to update the product');
+      }
+
+      return response.data.product;
+    } catch (error) {
+      console.error("Error : ", error);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
         return rejectWithValue('An unexpected error occurred');
       }
     }
@@ -95,34 +131,115 @@ export const fetchProductsCategories = createAsyncThunk(
   }
 );
 
+export const fetchProductDetails = createAsyncThunk(
+  'products/fetchProductDetails',
+  async (productId: number, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`/api/products/product-details/${productId}`);
+      if (response.status >= 400) {
+        throw new Error('Failed to fetch product details');
+      }
+      return response.data.product;
+    } catch (error) {
+      console.error('Error:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
+    }
+  }
+);
+
+export const deleteProduct = createAsyncThunk(
+  'products/deleteProduct',
+  async (productId: number, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`/api/products/delete-product/${productId}`);
+      if (response.status !== 200) {
+        throw new Error('Failed to delete the product');
+      }
+      return productId;
+    } catch (error) {
+      console.error("Error : ", error);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
+    }
+  }
+);
+
+export const deleteMultiProducts = createAsyncThunk(
+  'products/deleteMultiProducts',
+  async (productIds: number[], { rejectWithValue }) => {
+    try {
+      const response = await axios.delete('/api/products/delete-multi-products', {
+        data: { ids: productIds },
+      });
+      if (response.status !== 200) {
+        throw new Error('Failed to delete products');
+      }
+      return productIds;
+    } catch (error) {
+      console.error("Error:", error);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
+    }
+  }
+);
+
 interface ProductsState {
   products: Product[];
-  loading: boolean;
-  error: string | null;
-  loading_add: boolean;
-  error_add: string | null;
-  categories: { id: number; title: string }[]; 
+  categories: { id: number; title: string }[];
   loadingCategories: boolean;
   errorCategories: string | null;
-  total: number;    
-  page: number;     
-  limit: number;    
+  loading: boolean;
+  loading_details: boolean;
+  loading_add: boolean;
+  loading_update: boolean;
+  loading_delete: boolean;
+  error: string | null;
+  error_details: string | null;
+  error_add: string | null;
+  error_update: string | null;
+  error_delete: string | null;
+  total: number;
+  page: number;
+  limit: number;
   totalPages: number;
   sort: string | null;
+  currentProduct?: Product;
 }
 
 const initialState: ProductsState = {
   products: [],
-  loading_add: false,
-  error_add: null,
-  loading: false,
-  error: null,
-  categories: [], 
+  categories: [],
   loadingCategories: false,
   errorCategories: null,
+  loading: false,
+  loading_details: false,
+  loading_add: false,
+  loading_update: false,
+  loading_delete: false,
+  error: null,
+  error_details: null,
+  error_add: null,
+  error_update: null,
+  error_delete: null,
   total: 0,
-  page: 1,      
-  limit: 10,    
+  page: 1,
+  limit: 10,
   totalPages: 0,
   sort: null,
 };
@@ -135,44 +252,83 @@ const productsSlice = createSlice({
     builder
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.products = action.payload.products;
         state.total = action.payload.total;
         state.page = action.payload.page;
-        state.limit = action.payload.limit;
+        state.limit = action.payload.limit ?? initialState.limit;
         state.sort = action.payload.sort ?? null;
         state.totalPages = action.payload.totalPages;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch products';
+        state.error = action.error.message || 'Failed to fetch Products';
       })
-      .addCase(addProducts.pending, (state) => {
+      .addCase(addProduct.pending, (state) => {
         state.loading_add = true;
         state.error_add = null;
       })
-      .addCase(addProducts.fulfilled, (state, action) => {
+      .addCase(addProduct.fulfilled, (state, action) => {
         state.products.push(action.payload);
         state.loading_add = false;
       })
-      .addCase(addProducts.rejected, (state, action) => {
+      .addCase(addProduct.rejected, (state, action) => {
         state.loading_add = false;
         state.error_add = action.payload as string;
       })
-      .addCase(fetchProductsCategories.pending, (state) => {
-        state.loadingCategories = true;
-        state.errorCategories = null;
+      .addCase(updateProduct.pending, (state) => {
+        state.loading_update = true;
+        state.error_update = null;
       })
-      .addCase(fetchProductsCategories.fulfilled, (state, action) => {
-        state.loadingCategories = false;
-        state.categories = action.payload;
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        const updatedProduct = action.payload;
+        const existingProductIndex = state.products.findIndex((product) => product.id === updatedProduct.id);
+        if (existingProductIndex >= 0) {
+          state.products[existingProductIndex] = updatedProduct;
+        }
+        state.loading_update = false;
       })
-      .addCase(fetchProductsCategories.rejected, (state, action) => {
-        state.loadingCategories = false;
-        state.errorCategories = action.payload as string;
+      .addCase(updateProduct.rejected, (state, action) => {
+        state.loading_update = false;
+        state.error_update = action.payload as string;
+      })
+      .addCase(fetchProductDetails.pending, (state) => {
+        state.loading_details = true;
+        state.error_details = null;
+      })
+      .addCase(fetchProductDetails.fulfilled, (state, action) => {
+        state.currentProduct = action.payload;
+        state.loading_details = false;
+      })
+      .addCase(fetchProductDetails.rejected, (state, action) => {
+        state.loading_details = false;
+        state.error_details = action.payload as string;
+      })
+      .addCase(deleteProduct.pending, (state) => {
+        state.loading_delete = true;
+        state.error_delete = null;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.products = state.products.filter((product) => product.id !== action.payload);
+        state.loading_delete = false;
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        state.loading_delete = false;
+        state.error_delete = action.payload as string;
+      })
+      .addCase(deleteMultiProducts.pending, (state) => {
+        state.loading_delete = true;
+        state.error_delete = null;
+      })
+      .addCase(deleteMultiProducts.fulfilled, (state, action) => {
+        state.products = state.products.filter((product) => !action.payload.includes(product.id));
+        state.loading_delete = false;
+      })
+      .addCase(deleteMultiProducts.rejected, (state, action) => {
+        state.loading_delete = false;
+        state.error_delete = action.payload as string;
       });
   },
 });

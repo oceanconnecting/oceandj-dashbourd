@@ -1,8 +1,8 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import CellActions from "@/components/products/cell-actions";
 import { DataTableColumnHeader } from "./data-table-column-header"
-import CellActions from '@/components/products/cell-actions';
 import Image from "next/image"
 
 interface Product {
@@ -32,14 +32,23 @@ export const columns: ColumnDef<Product>[] = [
     enableHiding: true,
   },
   {
-    accessorKey: "images[0]",
+    accessorKey: "images",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="images[0]" />
+      <DataTableColumnHeader column={column} title="Image" />
     ),
     cell: ({ row }) => {
+      const images = row.getValue("images") as string[];
       return (
         <div className="flex space-x-2">
-          <Image width={100} height={100} src={row.getValue("images[0]")} alt={row.getValue("title")} className="w-14 h-14 truncate font-medium" />
+          {images.length > 0 && (
+            <Image
+              width={100}
+              height={100}
+              src={images[0]}
+              alt={row.getValue("title")}
+              className="w-14 h-14 truncate font-medium"
+            />
+          )}
         </div>
       )
     },
@@ -66,7 +75,7 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "price",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="price" />
+      <DataTableColumnHeader column={column} title="Price" />
     ),
     cell: ({ row }) => {
       return (
@@ -83,7 +92,7 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "discount",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="discount" />
+      <DataTableColumnHeader column={column} title="Discount" />
     ),
     cell: ({ row }) => {
       return (
@@ -100,7 +109,7 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "stock",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="stock" />
+      <DataTableColumnHeader column={column} title="Stock" />
     ),
     cell: ({ row }) => {
       return (
@@ -117,7 +126,7 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "categoryId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="categoryId" />
+      <DataTableColumnHeader column={column} title="Category ID" />
     ),
     cell: ({ row }) => {
       return (
@@ -133,6 +142,6 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <CellActions row={row} />
-  } 
+    cell: ({ row }) => <CellActions id={row.getValue("id")} />,
+  },
 ]

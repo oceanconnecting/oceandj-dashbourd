@@ -81,7 +81,7 @@ export const updateType = createAsyncThunk(
       if (response.status >= 400) {
         throw new Error('Failed to update the type');
       }
-      return { typeId, title, image }; // Return the updated type details
+      return { typeId, title, image };
     } catch (error) {
       console.error("Error : ", error);
       if (axios.isAxiosError(error)) {
@@ -95,7 +95,6 @@ export const updateType = createAsyncThunk(
   }
 );
 
-// Fetch type details
 export const fetchTypeDetails = createAsyncThunk(
   'types/fetchTypeDetails',
   async (typeId: number, { rejectWithValue }) => {
@@ -104,7 +103,7 @@ export const fetchTypeDetails = createAsyncThunk(
       if (response.status >= 400) {
         throw new Error('Failed to fetch type details');
       }
-      return response.data.type; // Should now include categoryCount
+      return response.data.type;
     } catch (error) {
       console.error('Error:', error);
       if (axios.isAxiosError(error)) {

@@ -28,7 +28,7 @@ export default function AddProductPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <Link href="/dashboard/products">Products</Link>
+            <Link href="/products">Products</Link>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

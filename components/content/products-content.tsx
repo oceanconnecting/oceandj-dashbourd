@@ -14,7 +14,7 @@ export const ProductsContent = () => {
   const dispatch = useAppDispatch();
   const { products, loading, error, total, totalPages } = useAppSelector((state: RootState) => state.products);
   const router = useRouter();
-
+  console.log(products);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -38,7 +38,7 @@ export const ProductsContent = () => {
       params.set("limit", String(limit));
     }
     
-    router.push(`/dashboard/products?${params.toString()}`);
+    router.push(`/products?${params.toString()}`);
 
     dispatch(fetchProducts({ searchTerm, page, limit }));
   }, [searchTerm, page, limit, router, dispatch]);
@@ -62,7 +62,7 @@ export const ProductsContent = () => {
         <div className="flex justify-center items-start min-h-[calc(100vh-56px-56px-20px-24px-48px)]">
           <div className="overflow-auto w-full flex items-start relative">
             <div className="h-full flex-1 flex-col space-y-8 flex">
-              {/* {error ? (
+              {error ? (
                 <div className="text-red-500 min-h-[calc(100vh-56px-56px-20px-24px-48px)] flex justify-center items-center">
                   <FormError message={error} />
                 </div>
@@ -81,7 +81,7 @@ export const ProductsContent = () => {
                   handleNextPage={handleNextPage}
                   handleLimitChange={handleLimitChange}
                 />
-              )} */}
+              )}
             </div>
           </div>
         </div>

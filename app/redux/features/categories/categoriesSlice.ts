@@ -44,7 +44,6 @@ export const fetchCategories = createAsyncThunk(
   }
 );
 
-// Add a category
 export const addCategory = createAsyncThunk(
   'categories/addCategory',
   async ({ title, image, typeId }: { title: string; image: string; typeId: number }, { rejectWithValue }) => {
@@ -71,7 +70,6 @@ export const addCategory = createAsyncThunk(
   }
 );
 
-// Update a category
 export const updateCategory = createAsyncThunk(
   'categories/updateCategory',
   async ({ categoryId, title, image, typeId }: { categoryId: number; title: string; image: string; typeId: number }, { rejectWithValue }) => {
@@ -98,7 +96,6 @@ export const updateCategory = createAsyncThunk(
   }
 );
 
-// Fetch category details
 export const fetchCategoryDetails = createAsyncThunk(
   'categories/fetchCategoryDetails',
   async (categoryId: number, { rejectWithValue }) => {
@@ -121,7 +118,6 @@ export const fetchCategoryDetails = createAsyncThunk(
   }
 );
 
-// Delete a category
 export const deleteCategory = createAsyncThunk(
   'categories/deleteCategory',
   async (categoryId: number, { rejectWithValue }) => {
@@ -144,7 +140,6 @@ export const deleteCategory = createAsyncThunk(
   }
 );
 
-// Fetch category types from API
 export const fetchCategoryTypes = createAsyncThunk(
   'categories/fetchCategoryTypes',
   async (_, { rejectWithValue }) => {
@@ -169,7 +164,7 @@ export const deleteMultiCategories = createAsyncThunk(
   async (categoryIds: number[], { rejectWithValue }) => {
     try {
       const response = await axios.delete('/api/categories/delete-multi-categories', {
-        data: { ids: categoryIds }, // Send the array of IDs in the request body
+        data: { ids: categoryIds },
       });
       console.log("From the slice : ", categoryIds)
       if (response.status !== 200) {
@@ -191,7 +186,7 @@ export const deleteMultiCategories = createAsyncThunk(
 
 
 interface CategoryType {
-  id: number;  // Assuming 'id' is a number
+  id: number; 
   title: string;
 }
 
@@ -199,13 +194,13 @@ interface Category {
   id: number;
   title: string;
   image: string;
-  typeId: number; // Use number instead of string for typeId
+  typeId: number; 
   countProduct: number;
 }
 
 interface CategoriesState {
-  categories: Category[]; // Specify Category[] instead of []
-  types: CategoryType[]; // Specify types as string[] or whatever type they are
+  categories: Category[];
+  types: CategoryType[]; 
   currentCategory: Category | null;
   loading: boolean;
   loading_details: boolean;
@@ -219,10 +214,10 @@ interface CategoriesState {
   error_update: string | null;
   error_delete: string | null;
   error_types: string | null;
-  total: number;        // Total number of types
-  page: number;         // Current page number
-  limit: number;        // Limit of items per page
-  totalPages: number;   // Total number of pages
+  total: number;   
+  page: number;    
+  limit: number;   
+  totalPages: number;
   sort: string | null;
 }
 
@@ -242,10 +237,10 @@ const initialState: CategoriesState = {
   error_update: null,
   error_delete: null,
   error_types: null,
-  total: 0,             // Initial total
-  page: 1,              // Initial current page
-  limit: 10,            // Initial limit
-  totalPages: 0,        // Initial total pages
+  total: 0,
+  page: 1,
+  limit: 10,        
+  totalPages: 0,    
   sort: null
 };
 

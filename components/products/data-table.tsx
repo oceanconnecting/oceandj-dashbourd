@@ -92,11 +92,11 @@ export function DataTable<TData extends Identifiable, TValue>({
   }, [page, limit, table]);
 
   return (
-    <div className="space-y-4 pt-6">
+    <div className="space-y-4">
       <DataTableToolbar searchTerm={searchTerm} onChange={onChange} table={table} />
       <div className="rounded-lg border">
         {loading ? (
-          <div className="w-full min-h-[calc(100vh-56px-56px-20px-24px-48px)] flex items-center justify-center">
+          <div className="w-full min-h-[calc(100vh-56px-56px-28px-24px-48px-100px)] flex items-center justify-center">
             <Spinner className="text-primary" size="lg" />
           </div>
         ) : (

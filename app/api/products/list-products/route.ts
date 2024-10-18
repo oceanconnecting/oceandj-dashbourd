@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
@@ -56,7 +57,7 @@ export const GET = async (req: Request) => {
       },
     });
 
-    const products: Product[] = await db.product.findMany({
+    const products = await db.product.findMany({
       where: {
         title: {
           contains: searchQuery,
@@ -86,7 +87,7 @@ export const GET = async (req: Request) => {
 
     const totalPages = Math.ceil(totalProduct / limit);
 
-    const productsWithOrderCount = products.map((product: any) => ({
+    const productsWithOrderCount: Product[] = products.map((product: any) => ({
       id: product.id,
       title: product.title,
       images: product.images,
