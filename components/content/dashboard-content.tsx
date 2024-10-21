@@ -6,6 +6,7 @@ import {
 import { RecentSales } from "@/components/recent-sales";
 import { OverView } from "@/components/over-view";
 import { Sales } from "@/components/sales";
+import { Table } from "@/components/top-products/table";
 
 export const DashboardContent = () => {
   return (
@@ -127,6 +128,9 @@ export const DashboardContent = () => {
             </div>
             <div>
               <Sales />
+            </div>
+            <div>
+              <Table />
             </div>
           </TabsContent>
         </Tabs>

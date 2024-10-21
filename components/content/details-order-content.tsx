@@ -40,8 +40,12 @@ export function OrderDetailsContent({ orderId }: ViewOrderFormProps) {
               ) : error ? (
                 <p>Error: {error}</p>
               ) : currentOrder ? (
-                <div className="grid gap-6 mt-6 mb-4">
-                  <Label htmlFor="id">Order ID: <span className="text-gray-400">{currentOrder.id}</span></Label>
+                <div className="w-full">
+                    <h3 className="text-lg md:text-xl lg:text-2xl font-bold">Order information</h3>
+                    <ul className="mt-4 space-y-2">
+                        <li className="text-sm border py-2.5 px-4 rounded-lg">Name <span className="ml-4 float-right">{currentOrder.name}</span></li>
+                        <li className="text-sm border py-2.5 px-4 rounded-lg">Reference <span className="ml-4 float-right">{currentOrder.reference}</span></li>
+                    </ul>
                 </div>
               ) : (
                 <p>No Order selected</p>

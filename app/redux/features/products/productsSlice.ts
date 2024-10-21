@@ -54,16 +54,28 @@ export const fetchProducts = createAsyncThunk(
 
 export const addProduct = createAsyncThunk(
   'products/addProduct',
-  async (productData: Product, { rejectWithValue }) => {
+  async ({title, images, categoryId, description, price, discount, stock}: { 
+    title: string;
+    images: string[];
+    categoryId: number;
+    description: string;
+    price: number;
+    discount: number;
+    stock: number
+  }, { rejectWithValue }) => {
     try {
-      const response = await axios.post<{ success: boolean; product: Product }>(
-        '/api/products/add-product',
-        productData
-      );
+      const response = await axios.post('/api/products/add-product', {
+        title,
+        images,
+        categoryId,
+        description,
+        price,
+        discount,
+        stock,
+      });
 
       if (response.status >= 400) {
-        console.error('Failed to add the product');
-        return rejectWithValue('Failed to add the product');
+        throw new Error('Failed to add the product');
       }
 
       return response.data.product;
@@ -92,7 +104,7 @@ export const updateProduct = createAsyncThunk(
         throw new Error('Failed to update the product');
       }
 
-      return response.data.product;
+      return  { ...response.data.product, countOrder: 0 };
     } catch (error) {
       console.error("Error : ", error);
       if (axios.isAxiosError(error)) {
@@ -106,30 +118,30 @@ export const updateProduct = createAsyncThunk(
   }
 );
 
-export const fetchProductsCategories = createAsyncThunk(
-  'products/fetchCategories',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get<{ success: boolean; categories: { id: number; title: string }[] }>(
-        '/api/categories/list-categories'
-      );
+// export const fetchProductsCategories = createAsyncThunk(
+//   'products/fetchCategories',
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get<{ success: boolean; categories: { id: number; title: string }[] }>(
+//         '/api/categories/list-categories'
+//       );
 
-      if (response.status < 200 || response.status >= 300) {
-        throw new Error('Failed to fetch categories');
-      }
+//       if (response.status < 200 || response.status >= 300) {
+//         throw new Error('Failed to fetch categories');
+//       }
 
-      return response.data.categories;
-    } catch (error) {
-      console.error('Error:', error);
-      if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || 'Something went wrong';
-        return rejectWithValue(errorMessage);
-      } else {
-        return rejectWithValue('An unexpected error occurred');
-      }
-    }
-  }
-);
+//       return response.data.categories;
+//     } catch (error) {
+//       console.error('Error:', error);
+//       if (axios.isAxiosError(error)) {
+//         const errorMessage = error.response?.data?.message || 'Something went wrong';
+//         return rejectWithValue(errorMessage);
+//       } else {
+//         return rejectWithValue('An unexpected error occurred');
+//       }
+//     }
+//   }
+// );
 
 export const fetchProductDetails = createAsyncThunk(
   'products/fetchProductDetails',
@@ -199,9 +211,56 @@ export const deleteMultiProducts = createAsyncThunk(
   }
 );
 
+export const fetchProductCategories = createAsyncThunk(
+  'products/fetchProductCategories',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get('/api/categories/list-categories');
+      return response.data.categories;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
+    }
+  }
+);
+
+export const fetchTopProducts = createAsyncThunk(
+  'products/fetchTopProducts',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get('/api/products/top-products'); // Update the API endpoint as needed
+
+      if (response.status >= 400) {
+        throw new Error('Failed to fetch top products');
+      }
+
+      return response.data.products; // Adjust based on your API response structure
+    } catch (error) {
+      console.error('Error:', error);
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || 'Something went wrong';
+        return rejectWithValue(errorMessage);
+      } else {
+        return rejectWithValue('An unexpected error occurred');
+      }
+    }
+  }
+);
+
+
+interface ProductCategory {
+  id: number; 
+  title: string;
+}
+
 interface ProductsState {
   products: Product[];
-  categories: { id: number; title: string }[];
+  categories: ProductCategory[]; 
   loadingCategories: boolean;
   errorCategories: string | null;
   loading: boolean;
@@ -329,6 +388,29 @@ const productsSlice = createSlice({
       .addCase(deleteMultiProducts.rejected, (state, action) => {
         state.loading_delete = false;
         state.error_delete = action.payload as string;
+      })
+      .addCase(fetchProductCategories.pending, (state) => {
+        state.loadingCategories = true;
+        state.errorCategories = null;
+      })
+      .addCase(fetchProductCategories.fulfilled, (state, action) => {
+        state.loadingCategories = false;
+        state.categories = action.payload;
+      })
+      .addCase(fetchProductCategories.rejected, (state, action) => {
+        state.loadingCategories = false;
+        state.errorCategories = action.payload as string;
+      })
+      .addCase(fetchTopProducts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchTopProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = action.payload;
+      })
+      .addCase(fetchTopProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });

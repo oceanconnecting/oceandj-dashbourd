@@ -56,7 +56,7 @@ export const addCategory = createAsyncThunk(
       if (response.status >= 400) {
         throw new Error('Failed to add the category');
       }
-      return { ...response.data.category, countProduct: 0 };
+      return response.data.category;
     } catch (error) {
       console.error('Error:', error);
       if (axios.isAxiosError(error)) {
