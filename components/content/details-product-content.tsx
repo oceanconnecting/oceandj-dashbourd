@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { fetchProductDetails } from "@/app/redux/features/products/productsSlice";
 import { RootState } from "@/app/redux/store";
-import Image from "next/image";
 
 interface ViewProductFormProps {
   productId: number;
