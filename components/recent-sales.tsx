@@ -21,50 +21,66 @@ import {
 
 export const description = "A donut chart with text"
 
-const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 190, fill: "var(--color-other)" },
-]
-
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  orderCount: {
+    label: "Orders",
   },
-  chrome: {
-    label: "Chrome",
+  type10: {
+    label: "Type 10",
     color: "hsl(var(--chart-1))",
   },
-  safari: {
-    label: "Safari",
+  type12: {
+    label: "Type 12",
     color: "hsl(var(--chart-2))",
   },
-  firefox: {
-    label: "Firefox",
+  type11: {
+    label: "Type 11",
     color: "hsl(var(--chart-3))",
-  },
-  edge: {
-    label: "Edge",
-    color: "hsl(var(--chart-4))",
-  },
-  other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))",
   },
 } satisfies ChartConfig
 
 export function RecentSales() {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
-  }, [])
+  const [chartData, setChartData] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/dashboard/pie-chart");
+        const data = await response.json();
+
+        if (data.success) {
+          const transformedData = data.ordersPerType.map(order => ({
+            type: `Type ${order.typeId}`,
+            orders: order.orderCount,
+            fill: order.color,
+          }));
+          console.log(data.ordersPerType)
+          setChartData(transformedData);
+        }
+      } catch (err) {
+        setError("Failed to fetch data : ", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChartData();
+  }, []);
+
+  const totalOrders = React.useMemo(() => {
+    return chartData.reduce((acc, curr) => acc + curr.orders, 0);
+  }, [chartData]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="items-center pb-0">
         <CardTitle>Pie Chart - Donut with Text</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription>Orders Overview</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -78,8 +94,8 @@ export function RecentSales() {
             />
             <Pie
               data={chartData}
-              dataKey="visitors"
-              nameKey="browser"
+              dataKey="orders"
+              nameKey="type"
               innerRadius={60}
               strokeWidth={5}
             >
@@ -98,14 +114,14 @@ export function RecentSales() {
                           y={viewBox.cy}
                           className="fill-foreground text-3xl font-bold"
                         >
-                          {totalVisitors.toLocaleString()}
+                          {totalOrders.toLocaleString()}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Visitors
+                          Orders
                         </tspan>
                       </text>
                     )
@@ -117,11 +133,11 @@ export function RecentSales() {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
+        {/* <div className="flex items-center gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
+        </div> */}
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing total orders for the last period
         </div>
       </CardFooter>
     </Card>

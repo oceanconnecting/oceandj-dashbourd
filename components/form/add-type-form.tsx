@@ -244,8 +244,8 @@ export function AddTypeForm({ onClose }: { onClose: () => void }) {
             <Image
               src={uploadedImageUrl}
               alt="Uploaded Image"
-              className="w-56"
-              width={150}
+              className="w-32 object-cover"
+              width={150} 
               height={150}
             />
           </div>

@@ -11,6 +11,7 @@ interface FetchProductsParams {
 }
 
 interface Product {
+  category: any;
   id: number;
   title: string;
   images: string[];

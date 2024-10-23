@@ -49,8 +49,8 @@ export function ViewCategoryForm({ categoryId }: ViewCategoryFormProps) {
           <div className="grid gap-2">
             <Label htmlFor="image">Category Image</Label>
             <div className="w-full rounded-lg">
-              <Image width={250} height={250} src={currentCategory.image} alt="Category" className="rounded-lg max-h-40 object-cover" />
-            </div>
+            <Image width={150} height={150} src={currentCategory.image} alt="Type" className="w-32 object-cover" />
+          </div>
           </div>
         </div>
       ) : (

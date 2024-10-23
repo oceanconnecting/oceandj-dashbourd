@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 interface Order {
+  items: any;
   id: number;
   name: string;
   reference: string;
@@ -9,6 +11,13 @@ interface Order {
   email: string;
   address: string;
   status: string;
+  totalPrice?: string; // totalPrice is optional because it's not included for all orders
+}
+
+interface OrderItem {
+  price: number;
+  quantity: number;
+  discount: number;
 }
 
 export const GET = async (req: Request) => {
@@ -64,7 +73,7 @@ export const GET = async (req: Request) => {
         email: true,
         address: true,
         status: true,
-        items: true,
+        items: true, // Ensure items include price, quantity, and discount
       },
       take: limit,
       skip: offset,
@@ -73,11 +82,29 @@ export const GET = async (req: Request) => {
       },
     });
 
+    // Filter orders with status "Waiting" or "Reserved" and calculate totalPrice
+    const ordersWithTotalPrice = orders.map(order => {
+      // if (order.status === 'Waiting' || order.status === 'Reserved') {
+        const totalPrice = order.items.reduce((total: number, item: OrderItem) => {
+          const itemTotal = item.price * item.quantity * (1 - item.discount / 100);
+          return total + itemTotal;
+        }, 0);
+
+        return {
+          ...order,
+          totalPrice: totalPrice.toFixed(2), // Round to 2 decimal places
+        };
+      // }
+
+      // // Return the order without totalPrice if status is not "Waiting" or "Reserved"
+      // return order;
+    });
+
     const totalPages = Math.ceil(totalOrders / limit);
 
     return NextResponse.json({
       success: true,
-      orders,
+      orders: ordersWithTotalPrice,
       total: totalOrders,
       page,
       limit,

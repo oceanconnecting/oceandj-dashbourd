@@ -2,6 +2,7 @@
 
 import { UploadIcon } from "@radix-ui/react-icons";
 import React, { useState, useEffect, ChangeEvent } from "react";
+import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { addCategory, fetchCategoryTypes } from "@/app/redux/features/categories/categoriesSlice";
 import { Label } from "@/components/ui/label";
@@ -246,6 +247,18 @@ export function AddCategoryForm({ onClose }: { onClose: () => void }) {
             </div>
           )}
         </div>
+
+        {uploadedImageUrl && (
+          <div className="">
+            <Image
+              src={uploadedImageUrl}
+              alt="Uploaded Image"
+              className="w-32 object-cover"
+              width={150} 
+              height={150}
+            />
+          </div>
+        )}
 
         {error && <FormError message={error} />}
         {sizeError && <FormError message={sizeError} />}

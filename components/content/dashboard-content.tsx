@@ -1,14 +1,51 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import {
-  Tabs,
-  TabsContent
-} from "@/components/ui/tabs"
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { RecentSales } from "@/components/recent-sales";
 import { OverView } from "@/components/over-view";
-import { Sales } from "@/components/sales";
 import { Table } from "@/components/top-products/table";
+import { DollarSign, Package } from "lucide-react";
 
 export const DashboardContent = () => {
+  const [totalRevenue, setTotalRevenue] = useState<number | null>(null);
+  const [totalProducts, setTotalProducts] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchTotalRevenue = async () => {
+      try {
+        const response = await fetch('/api/dashboard/total-revenue');
+        const data = await response.json();
+        if (data.success) {
+          setTotalRevenue(parseFloat(data.totalSum));
+        }
+      } catch (error) {
+        console.error('Failed to fetch total revenue:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    const fetchTotalProducts = async () => {
+      try {
+        const response = await fetch('/api/dashboard/total-products');
+        const data = await response.json();
+        if (data.success) {
+          setTotalProducts(parseFloat(data.count));
+        }
+      } catch (error) {
+        console.error('Failed to fetch total products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTotalRevenue();
+    fetchTotalProducts();
+  }, []);
+
   return (
     <div className="flex flex-col">
       <h1 className="text-2xl font-semibold py-1">Hi, Welcome back 👋</h1>
@@ -18,103 +55,68 @@ export const DashboardContent = () => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
+                  <CardTitle className="">
                     Total Revenue
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
+                  <DollarSign className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
-                  <p className="text-xs text-muted-foreground">
+                  {loading ? (
+                    <div className="text-2xl font-bold">Loading...</div>
+                  ) : (
+                    <div className="text-3xl font-bold pt-1">
+                      ${totalRevenue?.toFixed(2) ?? "N/A"}
+                    </div>
+                  )}
+                  {/* <p className="text-xs text-muted-foreground">
                     +20.1% from last month
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Subscriptions
+                  <CardTitle className="">
+                    Total Products
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
+                  <Package className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+2350</div>
-                  <p className="text-xs text-muted-foreground">
+                  {loading ? (
+                    <div className="text-2xl font-bold">Loading...</div>
+                  ) : (
+                    <div className="text-3xl font-bold pt-1">
+                      +{totalProducts ?? "N/A"}
+                    </div>
+                  )}
+                  {/* <p className="text-xs text-muted-foreground">
                     +180.1% from last month
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <rect width="20" height="14" x="2" y="5" rx="2" />
-                    <path d="M2 10h20" />
-                  </svg>
+                  <CardTitle className="">Sales</CardTitle>
+                  <Package className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+12,234</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-3xl font-bold pt-1">+12,234</div>
+                  {/* <p className="text-xs text-muted-foreground">
                     +19% from last month
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
+                  <CardTitle className="">
                     Active Now
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                  </svg>
+                  <Package className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-3xl font-bold pt-1">+573</div>
+                  {/* <p className="text-xs text-muted-foreground">
                     +201 since last hour
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
             </div>
@@ -125,9 +127,6 @@ export const DashboardContent = () => {
               <div className="col-span-4 lg:col-span-3">
                 <RecentSales />
               </div>
-            </div>
-            <div>
-              <Sales />
             </div>
             <div>
               <Table />

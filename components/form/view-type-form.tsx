@@ -49,18 +49,13 @@ export function ViewTypeForm({ typeId }: ViewTypeFormProps) {
           <div className="grid gap-2">
             <Label htmlFor="image">Type Image</Label>
             <div className="w-full rounded-lg">
-              <Image width={250} height={250} src={currentType.image} alt="Type" className="rounded-lg max-h-40 object-cover" />
+              <Image width={150} height={150} src={currentType.image} alt="Type" className="w-32 object-cover" />
             </div>
           </div>
         </div>
       ) : (
         <p>No type selected</p>
       )}
-      {/* <DialogFooter>
-        <Button variant="destructive" onClick={onClose} disabled={loading}>
-          Close
-        </Button>
-      </DialogFooter> */}
     </DialogContent>
   );
 }

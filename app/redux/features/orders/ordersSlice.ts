@@ -16,7 +16,9 @@ interface Order {
   email: string;
   phone: string;
   address: string;
-  items: { id: number; quantity: number }[];
+  items: {
+    title: ReactNode; id: number; quantity: number 
+}[];
 }
 
 export const fetchOrders = createAsyncThunk(
