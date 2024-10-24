@@ -25,7 +25,7 @@ export async function POST(request: Request) {
         <div style="max-width: 600px; background-color: #ffffff; margin: auto; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
             <h2 style="text-align: center; color: #333333;">Order Confirmation</h2>
             
-            <p style="font-size: 16px; color: #333333;">Hi [Customer Name],</p>
+            <p style="font-size: 16px; color: #333333;">Hi ${clientName},</p>
             <p style="font-size: 16px; color: #333333;">Thank you for your purchase! We're excited to let you know that we've received your order and it's now being processed. Below are the details:</p>
 
             <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">

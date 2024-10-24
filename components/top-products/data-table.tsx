@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/table";
 import { Spinner } from "@/components/ui/spinner";
 import { CardTitle, CardDescription } from "@/components/ui/card";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface Identifiable {
   id: number;
@@ -113,6 +115,12 @@ export function DataTable<TData extends Identifiable, TValue>({
             </TableBody>
           </Table>
         )}
+      </div>
+      <div className="w-full flex justify-end">
+        <Link href="/products" className="flex items-center gap-1 text-sm text-blue-500 underline ">
+          <span>All products</span>
+          <ArrowRight className="w-4 h-4"/>
+        </Link>
       </div>
     </div>
   );

@@ -9,20 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form/form-error";
 import { RootState } from "@/app/redux/store";
-import {
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { storage } from "../../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export function AddTypeForm({ onClose }: { onClose: () => void }) {
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state: RootState) => state.types.loading_add);
   const error = useAppSelector((state: RootState) => state.types.error_add);
@@ -103,21 +96,17 @@ export function AddTypeForm({ onClose }: { onClose: () => void }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !imageFile) {
-      console.error("Error: Title and image are required.");
+      toast.error("Error: Title and image are required.");
       return;
     }
 
     if (sizeError) {
-      console.error("Error: " + sizeError);
+      toast.error("Error: " + sizeError);
       return; 
     }
 
     if (!isImageUploaded) {
-      console.error("Error: Image has not been uploaded.");
-      toast({
-        title: "Error",
-        description: "Please upload the image before creating the type.",
-      });
+      toast.error("Error: Image has not been uploaded.");
       return;
     }
 
@@ -127,31 +116,19 @@ export function AddTypeForm({ onClose }: { onClose: () => void }) {
       const action = await dispatch(addType({ title, image: urlToUse }));
 
       if (!title) {
-        toast({
-          title: "",
-          description: "The type has been successfully added.",
-        });
+        toast.success("The type has been successfully added.");
       }
       
       if (addType.fulfilled.match(action)) {
-        toast({
-          title: "Type added",
-          description: "The type has been successfully added.",
-        });
+        toast.success("The type has been successfully added.");
         resetForm();
       } else {
-        toast({
-          title: "Error",
-          description: "Failed to add the type. Please try again.",
-        });
+        toast.error("Failed to add the type. Please try again.");
         console.error("Failed to add type:", action.error);
       }
     } catch (err) {
       console.error("Error creating type:", err);
-      toast({
-        title: "Error",
-        description: "Failed to create the type. Please try again.",
-      });
+      toast.error("Failed to create the type. Please try again.");
     } finally {
       onClose();
     }
