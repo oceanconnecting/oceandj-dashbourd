@@ -9,8 +9,10 @@ import { Table } from "@/components/top-products/table";
 import { DollarSign, Package } from "lucide-react";
 
 export const DashboardContent = () => {
+  const [ordersReseved, setOrdersReseved] = useState<number | null>(null);
   const [totalRevenue, setTotalRevenue] = useState<number | null>(null);
-  const [totalProducts, setTotalProducts] = useState<number | null>(null);
+  const [yourStock, setYourStock] = useState<number | null>(null);
+  const [productsSales, setProductsSales] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -28,12 +30,26 @@ export const DashboardContent = () => {
       }
     };
     
-    const fetchTotalProducts = async () => {
+    const fetchYourStock = async () => {
       try {
-        const response = await fetch('/api/dashboard/total-products');
+        const response = await fetch('/api/dashboard/your-stock');
         const data = await response.json();
         if (data.success) {
-          setTotalProducts(parseFloat(data.count));
+          setYourStock(data.totalStock);
+        }
+      } catch (error) {
+        console.error('Failed to fetch total stock:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchOrdersReseved = async () => {
+      try {
+        const response = await fetch('/api/dashboard/orders-reseved');
+        const data = await response.json();
+        if (data.success) {
+          setOrdersReseved(data.count);
         }
       } catch (error) {
         console.error('Failed to fetch total products:', error);
@@ -41,9 +57,25 @@ export const DashboardContent = () => {
         setLoading(false);
       }
     };
+    
+    const fetchProductsSales = async () => {
+      try {
+        const response = await fetch('/api/dashboard/products-sales');
+        const data = await response.json();
+        if (data.success) {
+          setProductsSales(data.totalProducts);
+        }
+      } catch (error) {
+        console.error('Failed to fetch products sales:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchOrdersReseved();
     fetchTotalRevenue();
-    fetchTotalProducts();
+    fetchYourStock();
+    fetchProductsSales();
   }, []);
 
   return (
@@ -68,9 +100,6 @@ export const DashboardContent = () => {
                       ${totalRevenue?.toFixed(2) ?? "N/A"}
                     </div>
                   )}
-                  {/* <p className="text-xs text-muted-foreground">
-                    +20.1% from last month
-                  </p> */}
                 </CardContent>
               </Card>
               <Card>
@@ -85,38 +114,41 @@ export const DashboardContent = () => {
                     <div className="text-2xl font-bold">Loading...</div>
                   ) : (
                     <div className="text-3xl font-bold pt-1">
-                      +{totalProducts ?? "N/A"}
+                      +{yourStock ?? "N/A"}
                     </div>
                   )}
-                  {/* <p className="text-xs text-muted-foreground">
-                    +180.1% from last month
-                  </p> */}
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="">Sales</CardTitle>
+                  <CardTitle className="">Orders Reseved</CardTitle>
                   <Package className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold pt-1">+12,234</div>
-                  {/* <p className="text-xs text-muted-foreground">
-                    +19% from last month
-                  </p> */}
+                  {loading ? (
+                    <div className="text-2xl font-bold">Loading...</div>
+                  ) : (
+                    <div className="text-3xl font-bold pt-1">
+                      +{ordersReseved ?? "N/A"}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="">
-                    Active Now
+                    Products Sales
                   </CardTitle>
                   <Package className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold pt-1">+573</div>
-                  {/* <p className="text-xs text-muted-foreground">
-                    +201 since last hour
-                  </p> */}
+                  {loading ? (
+                    <div className="text-2xl font-bold">Loading...</div>
+                  ) : (
+                    <div className="text-3xl font-bold pt-1">
+                      +{productsSales ?? "N/A"}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

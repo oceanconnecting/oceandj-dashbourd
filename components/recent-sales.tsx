@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import * as React from "react"
-import { TrendingUp } from "lucide-react"
 import { Label, Pie, PieChart } from "recharts"
 
 import {
@@ -21,6 +21,12 @@ import {
 
 export const description = "A donut chart with text"
 
+type ChartData = {
+  type: string;
+  orders: number;
+  fill: string;
+};
+
 const chartConfig = {
   orderCount: {
     label: "Orders",
@@ -37,12 +43,12 @@ const chartConfig = {
     label: "Type 11",
     color: "hsl(var(--chart-3))",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function RecentSales() {
-  const [chartData, setChartData] = React.useState([]);
+  const [chartData, setChartData] = React.useState<ChartData[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const fetchChartData = async () => {
@@ -51,16 +57,16 @@ export function RecentSales() {
         const data = await response.json();
 
         if (data.success) {
-          const transformedData = data.ordersPerType.map(order => ({
+          const transformedData = data.ordersPerType.map((order: { typeId: any; orderCount: any; color: any }) => ({
             type: `Type ${order.typeId}`,
             orders: order.orderCount,
             fill: order.color,
           }));
-          console.log(data.ordersPerType)
+          console.log(data.ordersPerType);
           setChartData(transformedData);
         }
-      } catch (err) {
-        setError("Failed to fetch data : ", err);
+      } catch (error) {
+        setError(`Failed to fetch data: ${error}`);
       } finally {
         setLoading(false);
       }
@@ -124,7 +130,7 @@ export function RecentSales() {
                           Orders
                         </tspan>
                       </text>
-                    )
+                    );
                   }
                 }}
               />
@@ -133,13 +139,10 @@ export function RecentSales() {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        {/* <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div> */}
         <div className="leading-none text-muted-foreground">
           Showing total orders for the last period
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }

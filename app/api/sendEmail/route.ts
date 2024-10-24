@@ -20,23 +20,50 @@ export async function POST(request: Request) {
   ];
 
   const htmlMessage = `
-    <div style="font-family: 'Arial', sans-serif; background-color: #f9fafb; padding: 20px; max-width: 600px; margin: 0 auto;">
-      <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-        <h2 style="font-size: 24px; font-weight: bold; color: #1f2937;">Welcome, ${clientName}!</h2>
-        <p style="font-size: 16px; color: #4b5563;">We are excited to have you on board. Below is a confirmation of your registration.</p>
-        <div style="margin-top: 10px;">
-          <div style="display: flex; flex-direction: column;">
-            <div style="display: flex; flex-direction: column;">
-              <p style=""><span style="font-size: 14px; color: #6b7280;">Full Name : </span>${clientName}</p>
-            </div>
-            <div style="display: flex; flex-direction: column;">
-              <p style=""><span style="font-size: 14px; color: #6b7280;">Email : </span>${clientEmail}</p>
-            </div>
-          </div>
+    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px;">
+
+        <div style="max-width: 600px; background-color: #ffffff; margin: auto; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <h2 style="text-align: center; color: #333333;">Order Confirmation</h2>
+            
+            <p style="font-size: 16px; color: #333333;">Hi [Customer Name],</p>
+            <p style="font-size: 16px; color: #333333;">Thank you for your purchase! We're excited to let you know that we've received your order and it's now being processed. Below are the details:</p>
+
+            <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #f4f4f4;">
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Product</th>
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Quantity</th>
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">[Product Name 1]</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">[1]</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">$[Price 1]</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">[Product Name 2]</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">[2]</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">$[Price 2]</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: left;" colspan="2"><strong>Total:</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right;"><strong>$[Total]</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <p style="font-size: 16px; color: #333333; margin-top: 20px;">You can track your order and view your order details <a href="#" style="color: #1e90ff; text-decoration: none;">here</a>.</p>
+            
+            <p style="font-size: 16px; color: #333333;">Thank you for shopping with us!</p>
+
+            <p style="font-size: 16px; color: #333333;">Best regards,<br>The [Store Name] Team</p>
         </div>
-        <p style="margin-top: 10px; font-size: 14px; color: #9ca3af;">Thank you for joining us!</p>
-      </div>
-    </div>
+        
+    </body>
   `;
 
   try {

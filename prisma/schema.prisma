@@ -37,12 +37,14 @@ model Order {
 
 model Product {
   id          Int         @id @default(autoincrement())
-  title       String
+  title       String      @unique
   description String
   images      String[]
   price       Int         @default(0)
   discount    Float       
   stock       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   categoryId  Int
   category    Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   orderItems  OrderItem[] 
@@ -66,7 +68,7 @@ model OrderItem {
 
 model Category {
   id         Int       @id @default(autoincrement())
-  title      String
+  title      String    @unique
   image      String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -79,7 +81,7 @@ model Category {
 
 model Type {
   id         Int       @id @default(autoincrement())
-  title      String
+  title      String    @unique
   image      String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt

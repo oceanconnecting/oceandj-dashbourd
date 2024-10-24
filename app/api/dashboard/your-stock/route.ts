@@ -3,20 +3,20 @@ import { db } from '@/lib/db';
 
 export const GET = async () => {
   try {
-    const count = await db.order.count({
-      where: {
-        status: 'Reseved',
+    const totalStock = await db.product.aggregate({
+      _sum: {
+        stock: true,
       },
     });
 
     return NextResponse.json({
       success: true,
-      count: count,
+      totalStock: totalStock._sum.stock || 0,
     });
   } catch (error) {
-    console.error('Error fetching reseved orders count:', error);
+    console.error('Error fetching total stock:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to fetch reseved orders count' },
+      { success: false, message: 'Failed to fetch total stock' },
       { status: 500 }
     );
   }
