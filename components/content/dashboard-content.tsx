@@ -76,7 +76,7 @@ export const DashboardContent = () => {
     fetchTotalRevenue();
     fetchYourStock();
     fetchProductsSales();
-  }, []);
+  }, [ordersReseved, totalRevenue, yourStock, productsSales]);
 
   return (
     <div className="flex flex-col">
@@ -97,7 +97,7 @@ export const DashboardContent = () => {
                     <div className="text-2xl font-bold">Loading...</div>
                   ) : (
                     <div className="text-3xl font-bold pt-1">
-                      ${totalRevenue?.toFixed(2) ?? "N/A"}
+                      ${totalRevenue?.toFixed(2) ?? 0}
                     </div>
                   )}
                 </CardContent>
@@ -114,7 +114,7 @@ export const DashboardContent = () => {
                     <div className="text-2xl font-bold">Loading...</div>
                   ) : (
                     <div className="text-3xl font-bold pt-1">
-                      +{yourStock ?? "N/A"}
+                      +{yourStock ?? 0}
                     </div>
                   )}
                 </CardContent>
@@ -129,7 +129,7 @@ export const DashboardContent = () => {
                     <div className="text-2xl font-bold">Loading...</div>
                   ) : (
                     <div className="text-3xl font-bold pt-1">
-                      +{ordersReseved ?? "N/A"}
+                      +{ordersReseved ?? 0}
                     </div>
                   )}
                 </CardContent>
@@ -146,7 +146,7 @@ export const DashboardContent = () => {
                     <div className="text-2xl font-bold">Loading...</div>
                   ) : (
                     <div className="text-3xl font-bold pt-1">
-                      +{productsSales ?? "N/A"}
+                      +{productsSales ?? 0}
                     </div>
                   )}
                 </CardContent>
