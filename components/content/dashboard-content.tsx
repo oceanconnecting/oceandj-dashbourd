@@ -9,6 +9,11 @@ import { OverView } from "@/components/over-view";
 import { Table } from "@/components/top-products/table";
 import { DollarSign, Package } from "lucide-react";
 
+interface MonthlyOrderCount {
+  month: string;
+  totalOrders: number;
+}
+
 interface Type {
   id: number;
   title: string;
@@ -23,6 +28,7 @@ interface OrderItem {
 interface Order {
   status?: string;
   items: OrderItem[];
+  createdAt: string;
 }
 
 interface Product {
@@ -42,6 +48,7 @@ interface OrdersPerType {
 }
 
 export const DashboardContent = () => {
+  const [monthlyOrderCount, setMonthlyOrderCount] = useState<MonthlyOrderCount[]>([]);
   const [ordersReseved, setOrdersReseved] = useState<number | null>(null);
   const [totalRevenue, setTotalRevenue] = useState<number | null>(null);
   const [yourStock, setYourStock] = useState<number | null>(null);
@@ -55,18 +62,40 @@ export const DashboardContent = () => {
       setLoading(true);
       try {
         // Fetch all orders and products in parallel
-        const [ordersRes, productsRes, topProductsRes] = await Promise.all([
+        const [ordersRes, productsRes] = await Promise.all([
           fetch('/api/orders/list-orders'),
           fetch('/api/products/list-products'),
-          fetch('/api/products/top-products')
         ]);
 
         const ordersData = await ordersRes.json();
         const productsData = await productsRes.json();
-        const topProductsData = await topProductsRes.json();
 
         if (ordersData.success) {
           const allOrders: Order[] = ordersData.orders;
+
+          // Calculate bar chart
+          const monthlyOrderCountMap = new Map<string, number>();
+
+          allOrders.forEach((order) => {
+            // console.log(order)
+            const orderDate = new Date(order.createdAt);
+            const month = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
+
+            if (monthlyOrderCountMap.has(month)) {
+              monthlyOrderCountMap.set(month, monthlyOrderCountMap.get(month)! + 1);
+            } else {
+              monthlyOrderCountMap.set(month, 1);
+            }
+          });
+
+          const monthlyOrderCount: MonthlyOrderCount[] = Array.from(monthlyOrderCountMap, ([month, totalOrders]) => ({
+            month,
+            totalOrders,
+          }));
+
+          // console.log(monthlyOrderCount);
+          setMonthlyOrderCount(monthlyOrderCount);
+
 
           // Calculate total revenue
           const calculatedTotal = allOrders.reduce((sum, order) => {
@@ -118,10 +147,16 @@ export const DashboardContent = () => {
             return acc;
           }, []);
           setOrdersPerType(calculatedOrdersPerType);
-        }
 
-        if (topProductsData) {
-          setTopProducts(topProductsData.products);
+          // Affiche top products
+          // Sort products by orderCount in descending order and select the top 5
+          const topProducts = products
+            .sort((a, b) => b.orderCount - a.orderCount)
+            .slice(0, 5);
+
+          // Display the top product(s)
+          // console.log("Top Product:", topProducts);
+          setTopProducts(topProducts);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -203,7 +238,7 @@ export const DashboardContent = () => {
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
-                <OverView />
+                <OverView data={monthlyOrderCount} />
               </div>
               <div className="col-span-4 lg:col-span-3">
                 <RecentSales ordersPerType={ordersPerType} />

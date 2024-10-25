@@ -11,7 +11,7 @@ interface Category {
   id: number;
   title: string;
   image: string;
-  type: Type | null; // Keep type here as it's part of Category
+  type: Type | null;
 }
 
 interface Product {

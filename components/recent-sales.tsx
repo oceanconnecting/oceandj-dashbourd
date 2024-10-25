@@ -44,9 +44,7 @@ export function RecentSales({ ordersPerType }: RecentSalesProps) {
       orders: order.orderCount,
       fill: order.color,
     }));
-  }, [ordersPerType]);  
-  console.log("****************************")
-  console.log(ordersPerType);
+  }, [ordersPerType]);
 
   const totalOrders = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.orders, 0);

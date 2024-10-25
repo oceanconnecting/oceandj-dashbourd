@@ -11,7 +11,8 @@ interface Order {
   email: string;
   address: string;
   status: string;
-  totalPrice?: string; // totalPrice is optional because it's not included for all orders
+  totalPrice?: string;
+  createdAt: Date;
 }
 
 interface OrderItem {
@@ -73,7 +74,8 @@ export const GET = async (req: Request) => {
         email: true,
         address: true,
         status: true,
-        items: true, // Ensure items include price, quantity, and discount
+        items: true,
+        createdAt: true,
       },
       take: limit,
       skip: offset,

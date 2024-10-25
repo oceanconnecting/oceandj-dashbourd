@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { useEffect, useState } from "react";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -10,49 +10,55 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
-export const description = "A bar chart"
+export const description = "A bar chart";
 
 const chartConfig = {
   desktop: {
     label: "Orders",
     color: "hsl(var(--chart-1))",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
-export function OverView() {
-  const [chartData, setChartData] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+interface MonthlyOrderCount {
+  month: string;
+  totalOrders: number;
+}
+
+interface MonthlyOrderData {
+  data: MonthlyOrderCount[];
+}
+
+export function OverView({ data }: MonthlyOrderData) {
+  const [chartData, setChartData] = useState<{ month: string; desktop: number }[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchOrders() {
       try {
-        const response = await fetch("/api/dashboard/bar-chart")
-        const data = await response.json()
-
-        if (data.success) {
-          const transformedData = data.monthlyOrderCount.map((monthData: any) => ({
+        if (data) {
+          const transformedData = data.map((monthData) => ({
             month: new Date(monthData.month).toLocaleString('default', { month: 'long' }),
             desktop: monthData.totalOrders,
-          }))
-          setChartData(transformedData)
+          }));
+          setChartData(transformedData);
         }
       } catch (error) {
-        console.error("Error fetching monthly orders:", error)
+        console.error("Error fetching monthly orders:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchOrders()
-  }, [])
+    fetchOrders();
+  }, [data]);
 
   return (
     <Card>
@@ -65,7 +71,7 @@ export function OverView() {
           <div>Loading chart...</div>
         ) : (
           <ChartContainer config={chartConfig}>
-            <BarChart accessibilityLayer data={chartData}>
+            <BarChart data={chartData} accessibilityLayer>
               <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="month"
@@ -84,13 +90,10 @@ export function OverView() {
         )}
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        {/* <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div> */}
         <div className="leading-none text-muted-foreground">
           Showing total orders for the last 6 months
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }
