@@ -235,13 +235,13 @@ export const fetchTopProducts = createAsyncThunk(
   'products/fetchTopProducts',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('/api/products/top-products'); // Update the API endpoint as needed
+      const response = await axios.get('/api/products/top-products');
 
       if (response.status >= 400) {
         throw new Error('Failed to fetch top products');
       }
 
-      return response.data.products; // Adjust based on your API response structure
+      return response.data.products;
     } catch (error) {
       console.error('Error:', error);
       if (axios.isAxiosError(error)) {
@@ -253,7 +253,6 @@ export const fetchTopProducts = createAsyncThunk(
     }
   }
 );
-
 
 interface ProductCategory {
   id: number; 

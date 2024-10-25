@@ -3,15 +3,15 @@ import { db } from '@/lib/db';
 
 export const GET = async () => {
   try {
-    const totalStock = await db.product.count({
-      where: {
-        stock: { gt: 0 },
+    const totalStock = await db.product.aggregate({
+      _sum: {
+        stock: true,
       },
     });
     console.log(totalStock);
     return NextResponse.json({
       success: true,
-      totalStock: totalStock || 0,
+      totalStock: totalStock._sum.stock || 0,
     });
   } catch (error) {
     console.error('Error fetching total stock:', error);
