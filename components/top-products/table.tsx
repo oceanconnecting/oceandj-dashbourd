@@ -12,7 +12,7 @@ import { fetchTopProducts } from "@/app/redux/features/products/productsSlice";
 export const Table = () => {
   const dispatch = useAppDispatch();
   const { products, loading, error } = useAppSelector((state: RootState) => state.products);
-
+  console.log(products)
   useEffect(() => {
     dispatch(fetchTopProducts());
   }, [dispatch]);
