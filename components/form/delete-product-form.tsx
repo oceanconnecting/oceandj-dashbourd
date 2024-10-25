@@ -1,4 +1,4 @@
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   DialogContent,
   DialogDescription,
@@ -18,7 +18,6 @@ export function DeleteProductForm({
   productId: number;
   onClose: () => void;
 }) {
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state: RootState) => state.products.loading_delete);
   // const error = useAppSelector((state: RootState) => state.products.error_delete);
@@ -26,16 +25,10 @@ export function DeleteProductForm({
   const handleDelete = async () => {
     try {
       await dispatch(deleteProduct(productId)).unwrap();
-      toast({
-        title: "Product deleted",
-        description: "The Product has been successfully deleted.",
-      });
+      toast.success("The Product has been successfully deleted.");
     } catch (error) {
       console.error("Error deleting product:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete the product. Please try again.",
-      });
+      toast.error("Failed to delete the product. Please try again.");
     } finally {
       onClose();
     }

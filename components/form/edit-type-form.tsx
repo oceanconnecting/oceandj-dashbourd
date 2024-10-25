@@ -8,14 +8,13 @@ import { DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFoot
 import { updateType } from "@/app/redux/features/types/typesSlice"; 
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { RootState } from "@/app/redux/store";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { FormError } from "@/components/form/form-error";
 import { storage } from "../../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Image from "next/image";
 
 export function EditTypeForm({ typeId, currentTitle, currentImage, onClose }: { typeId: number, currentTitle: string, currentImage: string, onClose: () => void }) {
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState(currentTitle || "");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -92,10 +91,7 @@ export function EditTypeForm({ typeId, currentTitle, currentImage, onClose }: { 
     if (sizeError) return;
 
     if (imageFile && !isImageUploaded) {
-      toast({
-        title: "Error",
-        description: "Please upload the image before submitting.",
-      });
+      toast.error("Please upload the image before submitting.");
       return;
     }
 
@@ -104,14 +100,14 @@ export function EditTypeForm({ typeId, currentTitle, currentImage, onClose }: { 
       const resultAction = await dispatch(updateType({ typeId, title, image: uploadedImageUrl }));
 
       if (updateType.fulfilled.match(resultAction)) {
-        toast({ title: "Type updated", description: "The type has been successfully updated." });
+        toast.success("The type has been successfully updated.");
         resetForm();
       } else {
-        toast({ title: "Error", description: "Failed to update the type. Please try again." });
+        toast.error("Failed to update the type. Please try again.");
       }
     } catch (error) {
       console.error(error)
-      toast({ title: "Error", description: "Failed to update the type. Please try again." });
+      toast.error("Failed to update the type. Please try again.");
     } finally {
       onClose();
     }

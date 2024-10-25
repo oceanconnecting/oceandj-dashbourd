@@ -24,12 +24,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { storage } from "../../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export function AddCategoryForm({ onClose }: { onClose: () => void }) {
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state: RootState) => state.categories.loading_add);
   const error = useAppSelector((state: RootState) => state.categories.error_add);
@@ -127,24 +126,15 @@ export function AddCategoryForm({ onClose }: { onClose: () => void }) {
       const action = await dispatch(addCategory({ title, image: urlToUse, typeId: Number(typeId) }));
 
       if (addCategory.fulfilled.match(action)) {
-        toast({
-          title: "Category added",
-          description: "The Category has been successfully added.",
-        });
+        toast.success("The Category has been successfully added.");
         resetForm();
       } else {
-        toast({
-          title: "Error",
-          description: "Failed to add the Category. Please try again.",
-        });
+        toast.error("Failed to add the Category. Please try again.");
         console.error("Failed to add Category:", action.error);
       }
     } catch (err) {
       console.error("Error creating Category:", err);
-      toast({
-        title: "Error",
-        description: "Failed to create the Category. Please try again.",
-      });
+      toast.error("Failed to create the Category. Please try again.");
     } finally {
       onClose();
     }

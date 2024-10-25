@@ -7,7 +7,8 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { RecentSales } from "@/components/recent-sales";
 import { OverView } from "@/components/over-view";
 import { Table } from "@/components/top-products/table";
-import { DollarSign, Package } from "lucide-react";
+import { DollarSign, Package, Boxes, CreditCard } from "lucide-react";
+// import NumberTicker from "@/components/ui/number-ticker";
 
 interface MonthlyOrderCount {
   month: string;
@@ -51,7 +52,7 @@ export const DashboardContent = () => {
   const [monthlyOrderCount, setMonthlyOrderCount] = useState<MonthlyOrderCount[]>([]);
   const [ordersReseved, setOrdersReseved] = useState<number | null>(null);
   const [totalRevenue, setTotalRevenue] = useState<number | null>(null);
-  const [yourStock, setYourStock] = useState<number | null>(null);
+  const [yourStock, setYourStock] = useState<number | null>(0);
   const [productsSales, setProductsSales] = useState<number | null>(null);
   const [topProducts, setTopProducts] = useState<any[]>([]);
   const [ordersPerType, setOrdersPerType] = useState<OrdersPerType[]>([]);
@@ -184,6 +185,7 @@ export const DashboardContent = () => {
                   {loading ? (
                     <div className="text-2xl font-bold">Loading...</div>
                   ) : (
+                    // <p className="text-3xl font-bold pt-1">$<NumberTicker value={Number(totalRevenue?.toFixed(2)) ?? 0} /></p>
                     <div className="text-3xl font-bold pt-1">
                       ${totalRevenue?.toFixed(2) ?? 0}
                     </div>
@@ -193,12 +195,13 @@ export const DashboardContent = () => {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle>Total Products</CardTitle>
-                  <Package className="w-6 h-6" />
+                  <Boxes className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
                   {loading ? (
                     <div className="text-2xl font-bold">Loading...</div>
                   ) : (
+                    // <p className="text-3xl font-bold pt-1">+<NumberTicker value={yourStock ?? 0} /></p>
                     <div className="text-3xl font-bold pt-1">
                       +{yourStock ?? 0}
                     </div>
@@ -208,12 +211,13 @@ export const DashboardContent = () => {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle>Orders Reseved</CardTitle>
-                  <Package className="w-6 h-6" />
+                  <CreditCard className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
                   {loading ? (
                     <div className="text-2xl font-bold">Loading...</div>
                   ) : (
+                    // <p className="text-3xl font-bold pt-1">+<NumberTicker value={ordersReseved ?? 0} /></p>
                     <div className="text-3xl font-bold pt-1">
                       +{ordersReseved ?? 0}
                     </div>
@@ -229,6 +233,7 @@ export const DashboardContent = () => {
                   {loading ? (
                     <div className="text-2xl font-bold">Loading...</div>
                   ) : (
+                    // <p className="text-3xl font-bold pt-1">+<NumberTicker value={productsSales ?? 0} /></p>
                     <div className="text-3xl font-bold pt-1">
                       +{productsSales ?? 0}
                     </div>

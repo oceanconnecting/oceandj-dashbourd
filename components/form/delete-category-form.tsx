@@ -1,4 +1,4 @@
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   DialogContent,
   DialogDescription,
@@ -18,7 +18,6 @@ export function DeleteCategoryForm({
   categoryId: number;
   onClose: () => void;
 }) {
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state: RootState) => state.categories.loading_delete);
   // const error = useAppSelector((state: RootState) => state.categories.error_delete);
@@ -26,16 +25,10 @@ export function DeleteCategoryForm({
   const handleDelete = async () => {
     try {
       await dispatch(deleteCategory(categoryId)).unwrap();
-      toast({
-        title: "Category deleted",
-        description: "The Category has been successfully deleted.",
-      });
+      toast.success("The Category has been successfully deleted.");
     } catch (error) {
       console.error("Error deleting category:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete the category. Please try again.",
-      });
+      toast.error("Failed to delete the category. Please try again.");
     } finally {
       onClose();
     }

@@ -2,7 +2,7 @@
 
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { addProduct, fetchProductCategories } from "@/app/redux/features/products/productsSlice";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,7 +34,6 @@ export function AddProductContent() {
 
 function ProductForm() {
   const dispatch = useAppDispatch();
-  const { toast } = useToast();
   const router = useRouter();
   const loading = useAppSelector((state: RootState) => state.products.loading_add);
   // const error = useAppSelector((state: RootState) => state.products.error_add);
@@ -138,25 +137,16 @@ function ProductForm() {
       const action = await dispatch(addProduct(productData));
   
       if (addProduct.fulfilled.match(action)) {
-        toast({
-          title: "Product added",
-          description: "The product has been successfully added.",
-        });
+        toast.success("The product has been successfully added.");
         resetForm();
         router.back();
       } else {
-        toast({
-          title: "Error",
-          description: action.error.message || "Failed to add the product. Please try again.",
-        });
+        toast.error("Failed to add the product. Please try again.");
         console.error("Failed to add product:", action.error);
       }
     } catch (err) {
       console.error("Error adding product:", err);
-      toast({
-        title: "Error",
-        description: "Failed to add the product. Please try again.",
-      });
+      toast.error("Failed to add the product. Please try again.");
     }
   };
   

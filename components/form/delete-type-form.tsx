@@ -1,4 +1,4 @@
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   DialogContent,
   DialogDescription,
@@ -18,7 +18,6 @@ export function DeleteTypeForm({
   typeId: number;
   onClose: () => void;
 }) {
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state: RootState) => state.types.loading_delete);
   // const error = useAppSelector((state: RootState) => state.types.error_delete);
@@ -26,16 +25,10 @@ export function DeleteTypeForm({
   const handleDelete = async () => {
     try {
       await dispatch(deleteType(typeId)).unwrap();
-      toast({
-        title: "Type deleted",
-        description: "The type has been successfully deleted.",
-      });
+      toast.success("The type has been successfully deleted.");
     } catch (error) {
       console.error("Error deleting type:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete the type. Please try again.",
-      });
+      toast.error("Failed to delete the type. Please try again.");
     } finally {
       onClose();
     }

@@ -8,7 +8,7 @@ import { DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFoot
 import { updateCategory, fetchCategoryTypes } from "@/app/redux/features/categories/categoriesSlice"; 
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { RootState } from "@/app/redux/store";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { FormError } from "@/components/form/form-error";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 import { storage } from "../../firebase"; 
@@ -28,7 +28,6 @@ export function EditCategoryForm({
   currentTypeId: number;
   onClose: () => void;
 }) {
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState(currentTitle || "");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -107,22 +106,13 @@ export function EditCategoryForm({
       const imageToUse = imageUrl || (imageFile ? await uploadImage() : currentImage);
       const resultAction = await dispatch(updateCategory({ categoryId, title, image: imageToUse, typeId }));
       if (updateCategory.fulfilled.match(resultAction)) {
-        toast({
-          title: "Category updated",
-          description: "The category has been successfully updated.",
-        });
+        toast.success("The category has been successfully updated.");
         onClose();
       } else {
-        toast({
-          title: "Error",
-          description: "Failed to update the category. Please try again.",
-        });
+        toast.error("Failed to update the category. Please try again.");
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update the category. Please try again.",
-      });
+      toast.error("Failed to update the category. Please try again.");
       console.error("Error updating Category:", error);
     }
   };

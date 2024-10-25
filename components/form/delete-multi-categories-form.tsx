@@ -1,4 +1,4 @@
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   DialogContent,
   DialogDescription,
@@ -19,24 +19,17 @@ export function DeleteMultiCategoriesForm({
   onClose: () => void;
   onDeleteSuccess: () => void; // Callback for successful deletion
 }) {
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state: RootState) => state.categories.loading_delete);
   
   const handleDelete = async () => {
     try {
       await dispatch(deleteMultiCategories(categoryIds)).unwrap();
-      toast({
-        title: "categories deleted",
-        description: `${categoryIds.length} categories have been successfully deleted.`,
-      });
+      toast.success(`${categoryIds.length} categories have been successfully deleted.`);
       onDeleteSuccess(); // Call the callback here
     } catch (error) {
       console.error("Error deleting categories:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete the selected categories. Please try again.",
-      });
+      toast.error("Failed to delete the selected categories. Please try again.");
     } finally {
       onClose();
     }

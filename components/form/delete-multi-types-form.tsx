@@ -1,4 +1,4 @@
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   DialogContent,
   DialogDescription,
@@ -19,24 +19,17 @@ export function DeleteMultiTypesForm({
   onClose: () => void;
   onDeleteSuccess: () => void; // Callback for successful deletion
 }) {
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state: RootState) => state.types.loading_delete);
   
   const handleDelete = async () => {
     try {
       await dispatch(deleteMultiTypes(typeIds)).unwrap();
-      toast({
-        title: "Types deleted",
-        description: `${typeIds.length} types have been successfully deleted.`,
-      });
+      toast.success(`${typeIds.length} types have been successfully deleted.`);
       onDeleteSuccess(); // Call the callback here
     } catch (error) {
       console.error("Error deleting types:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete the selected types. Please try again.",
-      });
+      toast.error("Failed to delete the selected types. Please try again.");
     } finally {
       onClose();
     }

@@ -47,7 +47,7 @@ export const LoginForm = () => {
   
       if (signInData?.ok) {
         console.log("Login Successful");
-        router.push('/dashboard'); // Manually push to dashboard after success
+        router.push('/dashboard');
       }
     } catch (error) {
       console.error('Login error from catch:', error);
