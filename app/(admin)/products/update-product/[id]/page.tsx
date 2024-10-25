@@ -1,5 +1,7 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { UpdateProductContent } from "@/components/content/update-product-content";
 import { ContentLayout } from "@/components/content-layout";
 import {
@@ -8,17 +10,14 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Update Product",
-  description: "Update Product Page",
-};
-export default function AddProductPage() {
+export default function UpdateProductPage() {
+  const { id } = useParams();
+
   return (
-    <ContentLayout title="UpdateProduct">
+    <ContentLayout title={`Update Product - ${id}`}>
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -34,9 +33,13 @@ export default function AddProductPage() {
           <BreadcrumbItem>
             <BreadcrumbPage>Update Product</BreadcrumbPage>
           </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{id}</BreadcrumbPage>
+          </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <UpdateProductContent />
+      <UpdateProductContent productId={Number(id)} />
     </ContentLayout>
   );
 }
