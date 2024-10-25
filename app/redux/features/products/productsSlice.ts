@@ -231,29 +231,29 @@ export const fetchProductCategories = createAsyncThunk(
   }
 );
 
-export const fetchTopProducts = createAsyncThunk(
-  'products/fetchTopProducts',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get('/api/products/top-products');
+// export const fetchTopProducts = createAsyncThunk(
+//   'products/fetchTopProducts',
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get('/api/products/top-products');
 
-      if (response.status >= 400) {
-        throw new Error('Failed to fetch top products');
-      }
+//       if (response.status >= 400) {
+//         throw new Error('Failed to fetch top products');
+//       }
 
-      // return response.data.products.slice(0, 5);
-      return response.data.products;
-    } catch (error) {
-      console.error('Error:', error);
-      if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || 'Something went wrong';
-        return rejectWithValue(errorMessage);
-      } else {
-        return rejectWithValue('An unexpected error occurred');
-      }
-    }
-  }
-);
+//       // return response.data.products.slice(0, 5);
+//       return response.data.products;
+//     } catch (error) {
+//       console.error('Error:', error);
+//       if (axios.isAxiosError(error)) {
+//         const errorMessage = error.response?.data?.message || 'Something went wrong';
+//         return rejectWithValue(errorMessage);
+//       } else {
+//         return rejectWithValue('An unexpected error occurred');
+//       }
+//     }
+//   }
+// );
 
 
 interface ProductCategory {
@@ -403,17 +403,17 @@ const productsSlice = createSlice({
       .addCase(fetchProductCategories.rejected, (state, action) => {
         state.loadingCategories = false;
         state.errorCategories = action.payload as string;
-      })
-      .addCase(fetchTopProducts.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchTopProducts.fulfilled, (state, action) => {
-        state.loading = false;
-        state.products = action.payload;
-      })
-      .addCase(fetchTopProducts.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+      // })
+      // .addCase(fetchTopProducts.pending, (state) => {
+      //   state.loading = true;
+      // })
+      // .addCase(fetchTopProducts.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.products = action.payload;
+      // })
+      // .addCase(fetchTopProducts.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload as string;
       });
   },
 });

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,6 +8,11 @@ import { RecentSales } from "@/components/recent-sales";
 import { OverView } from "@/components/over-view";
 import { Table } from "@/components/top-products/table";
 import { DollarSign, Package } from "lucide-react";
+
+interface Type {
+  id: number;
+  title: string;
+}
 
 interface OrderItem {
   price: number;
@@ -21,6 +27,18 @@ interface Order {
 
 interface Product {
   stock: number;
+  id: number;
+  categoryId: number;
+  category?: {
+    type?: Type | null;
+  };
+  orderCount: number;
+}
+
+interface OrdersPerType {
+  typeId: number | null;
+  orderCount: number;
+  color: string;
 }
 
 export const DashboardContent = () => {
@@ -28,99 +46,92 @@ export const DashboardContent = () => {
   const [totalRevenue, setTotalRevenue] = useState<number | null>(null);
   const [yourStock, setYourStock] = useState<number | null>(null);
   const [productsSales, setProductsSales] = useState<number | null>(null);
+  const [topProducts, setTopProducts] = useState<any[]>([]);
+  const [ordersPerType, setOrdersPerType] = useState<OrdersPerType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchTotalRevenue = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const response = await fetch('/api/orders/list-orders');
-        const data = await response.json();
-        if (data.success) {
-          const allOrders: Order[] = data.orders;
+        // Fetch all orders and products in parallel
+        const [ordersRes, productsRes, topProductsRes] = await Promise.all([
+          fetch('/api/orders/list-orders'),
+          fetch('/api/products/list-products'),
+          fetch('/api/products/top-products')
+        ]);
 
+        const ordersData = await ordersRes.json();
+        const productsData = await productsRes.json();
+        const topProductsData = await topProductsRes.json();
+
+        if (ordersData.success) {
+          const allOrders: Order[] = ordersData.orders;
+
+          // Calculate total revenue
           const calculatedTotal = allOrders.reduce((sum, order) => {
-            const orderTotalPrice = order.items.reduce((total: number, item: OrderItem) => {
+            const orderTotalPrice = order.items.reduce((total, item) => {
               const discount = item.discount ?? 0;
               const itemTotal = item.price * item.quantity * (1 - discount / 100);
               return total + itemTotal;
             }, 0);
-
             return sum + orderTotalPrice;
           }, 0);
-
           setTotalRevenue(parseFloat(calculatedTotal.toFixed(2)));
-        }
-      } catch (error) {
-        console.error('Failed to fetch total revenue:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    const fetchYourStock = async () => {
-      try {
-        const response = await fetch('/api/products/list-products');
-        const data = await response.json();
-        if (data.success) {
-          const products: Product[] = data.products;
 
-          const calculatedTotalStock = products.reduce((sum, product) => {
-            return sum + (product.stock || 0);
-          }, 0);
-
-          setYourStock(calculatedTotalStock);
-        }
-      } catch (error) {
-        console.error('Failed to fetch total stock:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchOrdersReseved = async () => {
-      try {
-        const response = await fetch('/api/orders/list-orders');
-        const data = await response.json();
-        if (data.success) {
-          const orders: Order[] = data;
-          const reservedOrdersCount = orders.filter(order => order.status === 'Reseved').length;
+          // Calculate orders reserved
+          const reservedOrdersCount = allOrders.filter(order => order.status === 'Reseved').length;
           setOrdersReseved(reservedOrdersCount);
-        }
-      } catch (error) {
-        console.error('Failed to fetch total products:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    const fetchProductsSales = async () => {
-      try {
-        const response = await fetch('/api/orders/list-orders');
-        const data = await response.json();
-        if (data.success) {
-          const orders: Order[] = data.orders;
 
-          const totalReservedProducts = orders
+          // Calculate total reserved products
+          const totalReservedProducts = allOrders
             .filter(order => order.status === 'Reseved')
             .reduce((total, order) => {
               const orderTotal = order.items.reduce((sum, item) => sum + item.quantity, 0);
               return total + orderTotal;
             }, 0);
+          setProductsSales(totalReservedProducts);
+        }
 
-            setProductsSales(totalReservedProducts);
+        if (productsData.success) {
+          const products: Product[] = productsData.products;
+
+          // Calculate total stock
+          const calculatedTotalStock = products.reduce((sum, product) => sum + (product.stock || 0), 0);
+          setYourStock(calculatedTotalStock);
+
+          // Calculate orders per type for pie chart
+          const calculatedOrdersPerType: OrdersPerType[] = products.reduce((acc: OrdersPerType[], product) => {
+            const typeId = product.category?.type?.id ?? null;
+            const orderCount = product.orderCount;
+
+            if (typeId !== null) {
+              const existingEntry = acc.find(entry => entry.typeId === typeId);
+              if (existingEntry) {
+                existingEntry.orderCount += orderCount;
+              } else {
+                const colorIndex = acc.length + 1;
+                const color = `hsl(var(--color-type-${colorIndex}))`;
+                acc.push({ typeId, orderCount, color });
+              }
+            }
+            return acc;
+          }, []);
+          setOrdersPerType(calculatedOrdersPerType);
+        }
+
+        if (topProductsData) {
+          setTopProducts(topProductsData.products);
         }
       } catch (error) {
-        console.error('Failed to fetch products sales:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchOrdersReseved();
-    fetchTotalRevenue();
-    fetchYourStock();
-    fetchProductsSales();
-  }, [ordersReseved, totalRevenue, yourStock, productsSales]);
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col">
@@ -131,9 +142,7 @@ export const DashboardContent = () => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="">
-                    Total Revenue
-                  </CardTitle>
+                  <CardTitle>Total Revenue</CardTitle>
                   <DollarSign className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
@@ -148,9 +157,7 @@ export const DashboardContent = () => {
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="">
-                    Total Products
-                  </CardTitle>
+                  <CardTitle>Total Products</CardTitle>
                   <Package className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
@@ -165,7 +172,7 @@ export const DashboardContent = () => {
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="">Orders Reseved</CardTitle>
+                  <CardTitle>Orders Reseved</CardTitle>
                   <Package className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
@@ -180,9 +187,7 @@ export const DashboardContent = () => {
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="">
-                    Products Sales
-                  </CardTitle>
+                  <CardTitle>Products Sales</CardTitle>
                   <Package className="w-6 h-6" />
                 </CardHeader>
                 <CardContent>
@@ -201,15 +206,15 @@ export const DashboardContent = () => {
                 <OverView />
               </div>
               <div className="col-span-4 lg:col-span-3">
-                <RecentSales />
+                <RecentSales ordersPerType={ordersPerType} />
               </div>
             </div>
             <div>
-              <Table />
+              <Table topProducts={topProducts} loading={loading} />
             </div>
           </TabsContent>
         </Tabs>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import * as React from "react"
-import { Label, Pie, PieChart } from "recharts"
-
+import * as React from "react";
+import { Label, Pie, PieChart } from "recharts";
 import {
   Card,
   CardContent,
@@ -11,76 +10,47 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
-export const description = "A donut chart with text"
-
-type ChartData = {
-  type: string;
-  orders: number;
-  fill: string;
-};
+export const description = "A donut chart with text";
 
 const chartConfig = {
   orderCount: {
     label: "Orders",
-  },
-  type10: {
-    label: "Type 10",
-    color: "hsl(var(--chart-1))",
-  },
-  type12: {
-    label: "Type 12",
-    color: "hsl(var(--chart-2))",
-  },
-  type11: {
-    label: "Type 11",
-    color: "hsl(var(--chart-3))",
-  },
+  }
 } satisfies ChartConfig;
 
-export function RecentSales() {
-  const [chartData, setChartData] = React.useState<ChartData[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+interface OrdersPerType {
+  typeId: number | null;
+  orderCount: number;
+  color: string;
+}
 
-  React.useEffect(() => {
-    const fetchChartData = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/api/dashboard/pie-chart");
-        const data = await response.json();
+interface RecentSalesProps {
+  ordersPerType: OrdersPerType[]; 
+}
 
-        if (data.success) {
-          const transformedData = data.ordersPerType.map((order: { typeId: any; orderCount: any; color: any }) => ({
-            type: `Type ${order.typeId}`,
-            orders: order.orderCount,
-            fill: order.color,
-          }));
-          console.log(data.ordersPerType);
-          setChartData(transformedData);
-        }
-      } catch (error) {
-        setError(`Failed to fetch data: ${error}`);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchChartData();
-  }, []);
+export function RecentSales({ ordersPerType }: RecentSalesProps) {
+  const chartData = React.useMemo(() => {
+    return ordersPerType.map(order => ({
+      type: `Type ${order.typeId}`,
+      orders: order.orderCount,
+      fill: order.color,
+    }));
+  }, [ordersPerType]);  
+  console.log("****************************")
+  console.log(ordersPerType);
 
   const totalOrders = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.orders, 0);
   }, [chartData]);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
 
   return (
     <Card className="flex flex-col h-full">

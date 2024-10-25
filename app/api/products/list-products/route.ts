@@ -2,6 +2,18 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+interface Type {
+  id: number;
+  title: string;
+}
+
+interface Category {
+  id: number;
+  title: string;
+  image: string;
+  type: Type | null; // Keep type here as it's part of Category
+}
+
 interface Product {
   id: number;
   title: string;
@@ -11,11 +23,7 @@ interface Product {
   price: number;
   discount: number;
   stock: number;
-  category: {
-    id: number;
-    title: string;
-    image: string;
-  } | null;
+  category: Category | null;
   orderCount: number;
 }
 
@@ -70,6 +78,12 @@ export const GET = async (req: Request) => {
             id: true,
             title: true,
             image: true,
+            type: {
+              select: {
+                id: true,   // Include only the id of type
+                title: true, // Include only the title of type
+              },
+            },
           },
         },
         _count: {
@@ -96,7 +110,15 @@ export const GET = async (req: Request) => {
       price: product.price,
       discount: product.discount,
       stock: product.stock,
-      category: product.category,
+      category: {
+        id: product.category?.id || 0,
+        title: product.category?.title || '',
+        image: product.category?.image || '',
+        type: product.category?.type ? {
+          id: product.category.type.id,
+          title: product.category.type.title,
+        } : null,
+      },
       orderCount: product._count.orderItems,
     }));
 
