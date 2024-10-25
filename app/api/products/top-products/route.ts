@@ -42,7 +42,8 @@ export const GET = async () => {
       b._count.orderItems - a._count.orderItems
     );
 
-    const topProducts: Product[] = sortedProducts.slice(0, 5).map((product: any) => ({
+    // const topProducts: Product[] = sortedProducts.slice(0, 5).map((product: any) => ({
+    const topProducts: Product[] = sortedProducts.map((product: any) => ({
       id: product.id,
       title: product.title,
       images: product.images,

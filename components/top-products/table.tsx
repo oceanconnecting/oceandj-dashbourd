@@ -17,6 +17,7 @@ export const Table = () => {
     dispatch(fetchTopProducts());
   }, [dispatch]);
 
+
   return (
     <Card className="rounded-lg border-none mt-6">
       <CardContent className="p-6">
