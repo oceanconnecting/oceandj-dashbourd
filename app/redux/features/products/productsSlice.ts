@@ -241,6 +241,7 @@ export const fetchTopProducts = createAsyncThunk(
         throw new Error('Failed to fetch top products');
       }
 
+      // return response.data.products.slice(0, 5);
       return response.data.products;
     } catch (error) {
       console.error('Error:', error);
@@ -253,6 +254,7 @@ export const fetchTopProducts = createAsyncThunk(
     }
   }
 );
+
 
 interface ProductCategory {
   id: number; 
