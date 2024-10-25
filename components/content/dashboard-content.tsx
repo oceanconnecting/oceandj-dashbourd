@@ -15,7 +15,12 @@ interface OrderItem {
 }
 
 interface Order {
+  status?: string;
   items: OrderItem[];
+}
+
+interface Product {
+  stock: number;
 }
 
 export const DashboardContent = () => {
@@ -54,10 +59,16 @@ export const DashboardContent = () => {
     
     const fetchYourStock = async () => {
       try {
-        const response = await fetch('/api/dashboard/your-stock');
+        const response = await fetch('/api/products/list-products');
         const data = await response.json();
         if (data.success) {
-          setYourStock(data.totalStock);
+          const products: Product[] = data.products;
+
+          const calculatedTotalStock = products.reduce((sum, product) => {
+            return sum + (product.stock || 0);
+          }, 0);
+
+          setYourStock(calculatedTotalStock);
         }
       } catch (error) {
         console.error('Failed to fetch total stock:', error);
@@ -68,10 +79,12 @@ export const DashboardContent = () => {
 
     const fetchOrdersReseved = async () => {
       try {
-        const response = await fetch('/api/dashboard/orders-reseved');
+        const response = await fetch('/api/orders/list-orders');
         const data = await response.json();
         if (data.success) {
-          setOrdersReseved(data.count);
+          const orders: Order[] = data;
+          const reservedOrdersCount = orders.filter(order => order.status === 'Reseved').length;
+          setOrdersReseved(reservedOrdersCount);
         }
       } catch (error) {
         console.error('Failed to fetch total products:', error);
@@ -82,10 +95,19 @@ export const DashboardContent = () => {
     
     const fetchProductsSales = async () => {
       try {
-        const response = await fetch('/api/dashboard/products-sales');
+        const response = await fetch('/api/orders/list-orders');
         const data = await response.json();
         if (data.success) {
-          setProductsSales(data.totalProducts);
+          const orders: Order[] = data.orders;
+
+          const totalReservedProducts = orders
+            .filter(order => order.status === 'Reseved')
+            .reduce((total, order) => {
+              const orderTotal = order.items.reduce((sum, item) => sum + item.quantity, 0);
+              return total + orderTotal;
+            }, 0);
+
+            setProductsSales(totalReservedProducts);
         }
       } catch (error) {
         console.error('Failed to fetch products sales:', error);
