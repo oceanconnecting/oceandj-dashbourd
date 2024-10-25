@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -15,7 +16,7 @@ export default function NumberTicker({
   value: number;
   direction?: "up" | "down";
   className?: string;
-  delay?: number; // delay in s
+  delay?: number;
   decimalPlaces?: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
