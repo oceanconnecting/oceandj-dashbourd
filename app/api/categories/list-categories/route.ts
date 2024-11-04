@@ -27,6 +27,8 @@ export const GET = async (req: Request) => {
   const sortParam = searchParams.get('sort') || 'title.asc';
   const [sortField, sortOrder] = sortParam.split('.');
 
+  const typeId = searchParams.get('typeId'); // Extract typeId from query parameters
+
   const validSortFields = ['title', 'id'];
   const validSortOrders = ['asc', 'desc'];
 
@@ -51,6 +53,7 @@ export const GET = async (req: Request) => {
           contains: searchQuery,
           mode: 'insensitive',
         },
+        typeId: typeId ? parseInt(typeId, 10) : undefined, // Apply typeId filter if present
       },
     });
 
@@ -60,6 +63,7 @@ export const GET = async (req: Request) => {
           contains: searchQuery,
           mode: 'insensitive',
         },
+        typeId: typeId ? parseInt(typeId, 10) : undefined, // Apply typeId filter if present
       },
       include: {
         type: {
