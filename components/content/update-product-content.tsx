@@ -22,7 +22,6 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  // Selectors for product data and categories
   const { currentProduct, loading, error } = useAppSelector((state: RootState) => ({
     currentProduct: state.products.currentProduct,
     loading: state.products.loading_details,
@@ -30,17 +29,18 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
   }));
   const categories = useAppSelector((state: RootState) => state.products.categories);
 
-  // Form state with initial values from `currentProduct`
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
   const [price, setPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [stock, setStock] = useState(0);
+  const [category, SetCategory] = useState("");
+  const [images, SetImages] = useState<string[]>([]);
+  const [orderCount, SetOrderCount] = useState<number | null>(null);
   const [categoryId, setCategoryId] = useState<number | null>(null);
 
   useEffect(() => {
-    // Fetch product details and categories on component mount
     if (productId) {
       dispatch(fetchProductDetails(productId));
     }
@@ -48,7 +48,6 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
   }, [dispatch, productId]);
 
   useEffect(() => {
-    // Pre-populate form fields once currentProduct is available
     if (currentProduct) {
       setTitle(currentProduct.title);
       setDescription(currentProduct.description);
@@ -56,17 +55,20 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
       setDiscount(currentProduct.discount);
       setStock(currentProduct.stock);
       setCategoryId(currentProduct.category.id);
+      SetCategory(currentProduct.category);
+      SetImages(currentProduct.images);
+      SetOrderCount(currentProduct.orderCount);
     }
   }, [currentProduct]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!title || price <= 0 || stock <= 0 || categoryId === null) {
       console.error("Error: All fields are required and must be valid.");
       return;
     }
-
+  
     const updatedProductData = {
       id: productId,
       title,
@@ -75,11 +77,16 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
       discount,
       categoryId,
       stock,
+      images: images.length > 0 ? images : [], 
+      orderCount: orderCount !== null ? orderCount : 0,
     };
-
+  
     try {
-      const action = await dispatch(updateProduct(updatedProductData));
-
+      const action = await dispatch(updateProduct({
+        ...updatedProductData,
+        category: { id: categoryId!, title: categories.find((cat) => cat.id === categoryId)!.title },
+      }));
+  
       if (updateProduct.fulfilled.match(action)) {
         toast.success("The product has been successfully updated.");
         router.back();
@@ -92,6 +99,7 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
       toast.error("Failed to update the product. Please try again.");
     }
   };
+  
 
   return (
     <Card className="rounded-lg border-none mt-6 shadow-lg">
