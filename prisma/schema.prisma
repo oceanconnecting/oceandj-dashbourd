@@ -47,6 +47,8 @@ model Product {
   updatedAt   DateTime    @updatedAt
   categoryId  Int
   category    Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  brandId     Int
+  brand       Brand       @relation(fields: [brandId], references: [id], onDelete: Cascade)
   orderItems  OrderItem[] 
 }
 
@@ -87,6 +89,16 @@ model Type {
   updatedAt  DateTime  @updatedAt
 
   categories Category[]
+}
+
+model Brand {
+  id         Int       @id @default(autoincrement())
+  title      String    @unique
+  image      String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  products Product[]
 }
 
 enum Status {

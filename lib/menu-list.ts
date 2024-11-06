@@ -3,9 +3,9 @@ import {
   Tag,
   WalletCards,
   Layers3,
-  KeyRound,
   LucideIcon,
   ShoppingBag,
+  Building2,
 } from "lucide-react";
 
 type Submenu = {
@@ -59,6 +59,13 @@ export function getMenuList(pathname: string): Group[] {
           submenus: []
         },
         {
+          href: "/brands",
+          label: "Brands",
+          active: pathname.includes("/brands"),
+          icon: Building2,
+          submenus: []
+        },
+        {
           href: "/categories",
           label: "Categories",
           active: pathname.includes("/categories"),
@@ -70,36 +77,6 @@ export function getMenuList(pathname: string): Group[] {
           label: "Types",
           active: pathname.includes("/types"),
           icon: Layers3,
-          submenus: []
-        },
-        // {
-        //   href: "",
-        //   label: "Posts",
-        //   active: pathname.includes("/posts"),
-        //   icon: SquarePen,
-        //   submenus: [
-        //     {
-        //       href: "/posts",
-        //       label: "All Posts",
-        //       active: pathname === "/posts"
-        //     },
-        //     {
-        //       href: "/posts/new",
-        //       label: "New Post",
-        //       active: pathname === "/posts/new"
-        //     }
-        //   ]
-        // }
-      ]
-    },
-    {
-      groupLabel: "Settings",
-      menus: [
-        {
-          href: "/settings/apis",
-          label: "Apis Setting",
-          active: pathname.includes("/settings/apis"),
-          icon: KeyRound,
           submenus: []
         },
       ]

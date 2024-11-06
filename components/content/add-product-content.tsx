@@ -149,33 +149,25 @@ function ProductForm() {
       toast.error("Failed to add the product. Please try again.");
     }
   };
-  
 
   return (
     <form className="flex flex-col gap-8 w-full" onSubmit={handleSubmit}>
+      <div className="">
+        <h1 className="">Add Product</h1>
+        <p className="">Fill out the form to add a new Product to your store.</p>
+      </div>
       <div className="grid gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="name">Product Title</Label>
-          <Input
-            id="title"
-            placeholder="Enter product title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            placeholder="Enter product description"
-            className="min-h-[120px]"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          <div className="grid gap-2">
+            <Label htmlFor="name">Product Title</Label>
+            <Input
+              id="title"
+              placeholder="Enter product title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="price">Price</Label>
             <Input
@@ -187,7 +179,9 @@ function ProductForm() {
               min={0}
             />
           </div>
+        </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           <div className="grid gap-2">
             <Label htmlFor="discount">Discount</Label>
             <Input
@@ -196,6 +190,17 @@ function ProductForm() {
               placeholder="Enter discount"
               value={discount > 0 ? discount : ""}
               onChange={(e) => setDiscount(Number(e.target.value))}
+              min={0}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="stock">Stock</Label>
+            <Input
+              type="number"
+              id="stock"
+              placeholder="Enter stock"
+              value={stock > 0 ? stock : ""}
+              onChange={(e) => setStock(Number(e.target.value))}
               min={0}
             />
           </div>
@@ -219,16 +224,31 @@ function ProductForm() {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="stock">Stock</Label>
-            <Input
-              type="number"
-              id="stock"
-              placeholder="Enter stock"
-              value={stock > 0 ? stock : ""}
-              onChange={(e) => setStock(Number(e.target.value))}
-              min={0}
-            />
+            <Label htmlFor="brand">Brand</Label>
+            <Select onValueChange={(value) => setCategoryId(Number(value))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={categoryId ? categories.find((cat) => cat.id === categoryId)?.title : "Select a brand"} />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={String(category.id)}>
+                    {category.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+        </div>
+
+        <div className="grid gap-2">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            placeholder="Enter product description"
+            className="min-h-[120px]"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
         </div>
 
         <div className="grid gap-2">
@@ -270,6 +290,8 @@ function ProductForm() {
           </div>
         )}
 
+      </div>
+      <div className="inline-flex items-center justify-end">
         <Button type="submit" className="p-4" disabled={loading}>
           Add Product
         </Button>
