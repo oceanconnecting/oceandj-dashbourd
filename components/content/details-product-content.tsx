@@ -45,6 +45,7 @@ export function ProductDetailsContent({ productId }: ViewProductFormProps) {
                 <li className="">Discount <span className="ml-4 float-right">{currentProduct.discount}</span></li>
                 <li className="">Stock <span className="ml-4 float-right">{currentProduct.stock}</span></li>
                 <li className="">Category <span className="ml-4 float-right">{currentProduct.category.title}</span></li>
+                <li className="">Brand <span className="ml-4 float-right">{currentProduct.brand.title}</span></li>
                 <li className="mt-6 flex items-center gap-4">
                   {currentProduct.images.map((image, index) => (
                     <Image

@@ -5,9 +5,9 @@ import { ProductSchema } from "@/schemas/product";
 export const POST = async (req: Request) => {
   try {
     const body = await req.json();
-    const { title, images, categoryId, description, price, discount, stock } = ProductSchema.parse(body);
+    const { title, images, categoryId, brandId, description, price, discount, stock } = ProductSchema.parse(body);
 
-    if (!title || !images || !categoryId || !description || !price || !discount || !stock) {
+    if (!title || !images || !categoryId || !brandId || !description || !price || !discount || !stock) {
       return NextResponse.json({ success: false, message: 'Title, images, categoryId, description, price, discount, and stock are required' }, { status: 400 });
     }
 
@@ -16,6 +16,7 @@ export const POST = async (req: Request) => {
         title,
         images,
         categoryId,
+        brandId,
         description,
         price,
         discount: discount ?? 0,

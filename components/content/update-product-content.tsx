@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { updateProduct, fetchProductDetails, fetchProductCategories } from "@/app/redux/features/products/productsSlice";
+import { updateProduct, fetchProductDetails, fetchProductCategories, fetchProductBrands } from "@/app/redux/features/products/productsSlice";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/app/redux/store";
@@ -28,6 +28,7 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
     error: state.products.error_details,
   }));
   const categories = useAppSelector((state: RootState) => state.products.categories);
+  const brands = useAppSelector((state: RootState) => state.products.brands);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -36,15 +37,18 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
   const [discount, setDiscount] = useState(0);
   const [stock, setStock] = useState(0);
   const [category, SetCategory] = useState("");
+  const [brand, SetBrand] = useState("");
   const [images, SetImages] = useState<string[]>([]);
   const [orderCount, SetOrderCount] = useState<number | null>(null);
   const [categoryId, setCategoryId] = useState<number | null>(null);
+  const [brandId, setBrandId] = useState<number | null>(null);
 
   useEffect(() => {
     if (productId) {
       dispatch(fetchProductDetails(productId));
     }
     dispatch(fetchProductCategories());
+    dispatch(fetchProductBrands());
   }, [dispatch, productId]);
 
   useEffect(() => {
@@ -56,6 +60,8 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
       setStock(currentProduct.stock);
       setCategoryId(currentProduct.category.id);
       SetCategory(currentProduct.category);
+      setBrandId(currentProduct.brand.id);
+      SetBrand(currentProduct.brand);
       SetImages(currentProduct.images);
       SetOrderCount(currentProduct.orderCount);
     }
@@ -64,7 +70,7 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
-    if (!title || price <= 0 || stock <= 0 || categoryId === null) {
+    if (!title || price <= 0 || stock <= 0 || categoryId === null || brandId === null) {
       console.error("Error: All fields are required and must be valid.");
       return;
     }
@@ -76,6 +82,7 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
       price,
       discount,
       categoryId,
+      brandId,
       stock,
       images: images.length > 0 ? images : [], 
       orderCount: orderCount !== null ? orderCount : 0,
@@ -85,6 +92,7 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
       const action = await dispatch(updateProduct({
         ...updatedProductData,
         category: { id: categoryId!, title: categories.find((cat) => cat.id === categoryId)!.title },
+        brand: { id: brandId!, title: brands.find((cat) => cat.id === brandId)!.title },
       }));
   
       if (updateProduct.fulfilled.match(action)) {
@@ -164,6 +172,21 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={String(category.id)}>
                         {category.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="brand">Brand</Label>
+                <Select onValueChange={(value) => setBrandId(Number(value))}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={brandId ? categories.find((cat) => cat.id === brandId)?.title : "Select a category"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {brands.map((brand) => (
+                      <SelectItem key={brand.id} value={String(brand.id)}>
+                        {brand.title}
                       </SelectItem>
                     ))}
                   </SelectContent>

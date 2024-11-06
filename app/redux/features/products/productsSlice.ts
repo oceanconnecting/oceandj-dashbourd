@@ -13,10 +13,12 @@ interface FetchProductsParams {
 
 interface Product {
   category: any;
+  brand: any;
   id: number;
   title: string;
   images: string[];
   categoryId: number;
+  brandId: number;
   description: string;
   price: number;
   discount: number;
@@ -56,10 +58,11 @@ export const fetchProducts = createAsyncThunk(
 
 export const addProduct = createAsyncThunk(
   'products/addProduct',
-  async ({title, images, categoryId, description, price, discount, stock}: { 
+  async ({title, images, categoryId, brandId, description, price, discount, stock}: { 
     title: string;
     images: string[];
     categoryId: number;
+    brandId: number;
     description: string;
     price: number;
     discount: number;
@@ -70,6 +73,7 @@ export const addProduct = createAsyncThunk(
         title,
         images,
         categoryId,
+        brandId,
         description,
         price,
         discount,
@@ -231,6 +235,24 @@ export const fetchProductCategories = createAsyncThunk(
   }
 );
 
+export const fetchProductBrands = createAsyncThunk(
+  'products/fetchProductBrands',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get('/api/brands/list-brands');
+      return response.data.brands;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
+    }
+  }
+);
+
 // export const fetchTopProducts = createAsyncThunk(
 //   'products/fetchTopProducts',
 //   async (_, { rejectWithValue }) => {
@@ -261,11 +283,19 @@ interface ProductCategory {
   title: string;
 }
 
+interface ProductBrand {
+  id: number; 
+  title: string;
+}
+
 interface ProductsState {
   products: Product[];
   categories: ProductCategory[]; 
+  brands: ProductBrand[]; 
   loadingCategories: boolean;
   errorCategories: string | null;
+  loadingBrands: boolean;
+  errorBrands: string | null;
   loading: boolean;
   loading_details: boolean;
   loading_add: boolean;
@@ -287,8 +317,11 @@ interface ProductsState {
 const initialState: ProductsState = {
   products: [],
   categories: [],
+  brands: [],
   loadingCategories: false,
+  loadingBrands: false,
   errorCategories: null,
+  errorBrands: null,
   loading: false,
   loading_details: false,
   loading_add: false,
@@ -403,6 +436,18 @@ const productsSlice = createSlice({
       .addCase(fetchProductCategories.rejected, (state, action) => {
         state.loadingCategories = false;
         state.errorCategories = action.payload as string;
+      })
+      .addCase(fetchProductBrands.pending, (state) => {
+        state.loadingBrands = true;
+        state.errorBrands = null;
+      })
+      .addCase(fetchProductBrands.fulfilled, (state, action) => {
+        state.loadingBrands = false;
+        state.brands = action.payload;
+      })
+      .addCase(fetchProductBrands.rejected, (state, action) => {
+        state.loadingBrands = false;
+        state.errorBrands = action.payload as string;
       // })
       // .addCase(fetchTopProducts.pending, (state) => {
       //   state.loading = true;

@@ -7,7 +7,7 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
     const { id } = params;
     
     const body = await req.json();
-    const { title, images, categoryId, description, price, discount, stock } = ProductSchema.parse(body);
+    const { title, images, categoryId, brandId, description, price, discount, stock } = ProductSchema.parse(body);
 
     const updatedProduct = await db.product.update({
       where: { id: Number(id) },
@@ -15,6 +15,7 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
         title,
         images,
         categoryId,
+        brandId,
         description,
         price: Math.floor(price),
         discount: discount ?? 0,

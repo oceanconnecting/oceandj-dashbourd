@@ -35,6 +35,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
       title: product.title,
       images: product.images,
       categoryId: product.categoryId,
+      brandId: product.brandId,
       description: product.description,
       price: product.price,
       discount: product.discount,

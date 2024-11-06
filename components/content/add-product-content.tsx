@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { addProduct, fetchProductCategories } from "@/app/redux/features/products/productsSlice";
+import { addProduct, fetchProductCategories, fetchProductBrands } from "@/app/redux/features/products/productsSlice";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,7 @@ function ProductForm() {
   const loading = useAppSelector((state: RootState) => state.products.loading_add);
   // const error = useAppSelector((state: RootState) => state.products.error_add);
   const categories = useAppSelector((state: RootState) => state.products.categories);
+  const brands = useAppSelector((state: RootState) => state.products.brands);
   
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -45,6 +46,7 @@ function ProductForm() {
   const [discount, setDiscount] = useState<number>(0);
   const [stock, setStock] = useState<number>(0);
   const [categoryId, setCategoryId] = useState<number | null>(null);
+  const [brandId, setBrandId] = useState<number | null>(null);
   const [images, setImages] = useState<File[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -52,6 +54,7 @@ function ProductForm() {
 
   useEffect(() => {
     dispatch(fetchProductCategories());
+    dispatch(fetchProductBrands());
   }, [dispatch]);
 
   const resetForm = () => {
@@ -60,6 +63,7 @@ function ProductForm() {
     setPrice(0);
     setDiscount(0);
     setCategoryId(null);
+    setBrandId(null);
     setStock(0);
     setImages([]);
     setImageUrls([]);
@@ -113,7 +117,7 @@ function ProductForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
   
-    if (!title || price <= 0 || stock <= 0 || categoryId === null) {
+    if (!title || price <= 0 || stock <= 0 || categoryId === null || brandId === null) {
       console.error("Error: All fields are required and must be valid.");
       return;
     }
@@ -129,6 +133,7 @@ function ProductForm() {
         price,
         discount: discount || 0,
         categoryId,
+        brandId,
         stock,
         images: imageUrls,
         orderCount: 0,
@@ -225,14 +230,14 @@ function ProductForm() {
 
           <div className="grid gap-2">
             <Label htmlFor="brand">Brand</Label>
-            <Select onValueChange={(value) => setCategoryId(Number(value))}>
+            <Select onValueChange={(value) => setBrandId(Number(value))}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={categoryId ? categories.find((cat) => cat.id === categoryId)?.title : "Select a brand"} />
+                <SelectValue placeholder={brandId ? brands.find((cat) => cat.id === brandId)?.title : "Select a brand"} />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={String(category.id)}>
-                    {category.title}
+                {brands.map((brand) => (
+                  <SelectItem key={brand.id} value={String(brand.id)}>
+                    {brand.title}
                   </SelectItem>
                 ))}
               </SelectContent>

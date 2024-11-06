@@ -19,6 +19,7 @@ interface Product {
   title: string;
   images: string[];
   categoryId: number;
+  brandId: number;
   description: string;
   price: number;
   discount: number;
@@ -39,6 +40,7 @@ export const GET = async (req: Request) => {
   const [sortField, sortOrder] = sortParam.split('.');
 
   const typeId = searchParams.get('typeId');
+  const brandId = searchParams.get('brandId'); // Extract the brandId from the query parameters
   const categoryId = searchParams.get('categoryId'); // Extract the categoryId from the query parameters
 
   const validSortFields = ['title', 'id'];
@@ -69,6 +71,7 @@ export const GET = async (req: Request) => {
         category: {
           type: typeId ? { id: parseInt(typeId, 10) } : undefined,
         },
+        brandId: brandId ? parseInt(brandId, 10) : undefined
       },
     });
 
@@ -82,6 +85,7 @@ export const GET = async (req: Request) => {
         category: {
           type: typeId ? { id: parseInt(typeId, 10) } : undefined,
         },
+        brandId: brandId ? parseInt(brandId, 10) : undefined,
       },
       include: {
         category: {
@@ -117,6 +121,7 @@ export const GET = async (req: Request) => {
       title: product.title,
       images: product.images,
       categoryId: product.categoryId,
+      brandId: product.brandId,
       description: product.description,
       price: product.price,
       discount: product.discount,

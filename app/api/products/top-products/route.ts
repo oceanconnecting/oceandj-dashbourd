@@ -7,6 +7,7 @@ interface Product {
   title: string;
   images: string[];
   categoryId: number;
+  brandId: number;
   description: string;
   price: number;
   discount: number;
@@ -47,6 +48,7 @@ export const GET = async () => {
       title: product.title,
       images: product.images,
       categoryId: product.categoryId,
+      brandId: product.brandId,
       description: product.description,
       price: product.price,
       discount: product.discount,
