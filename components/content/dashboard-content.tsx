@@ -299,7 +299,7 @@ export const DashboardContent = () => {
                 </CardContent>
               </Card>
             </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
                 <OverView data={monthlyOrderCount} />
               </div>
@@ -309,7 +309,7 @@ export const DashboardContent = () => {
             </div>
             <div>
               <Table topProducts={topProducts} loading={loading} />
-            </div>
+            </div> */}
           </TabsContent>
         </Tabs>
       </div>
