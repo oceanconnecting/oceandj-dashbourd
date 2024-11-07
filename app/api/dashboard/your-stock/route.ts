@@ -8,7 +8,6 @@ export const GET = async () => {
         stock: true,
       },
     });
-    console.log(totalStock);
     return NextResponse.json({
       success: true,
       totalStock: totalStock._sum.stock || 0,

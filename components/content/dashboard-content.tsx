@@ -234,70 +234,78 @@ export const DashboardContent = () => {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle>Total Revenue</CardTitle>
-                  <DollarSign className="w-6 h-6" />
-                </CardHeader>
-                <CardContent>
-                  {loading ? (
-                    <div className="text-2xl font-bold">Loading...</div>
-                  ) : (
-                    // <p className="text-3xl font-bold pt-1">$<NumberTicker value={Number(totalRevenue?.toFixed(2)) ?? 0} /></p>
-                    <div className="text-3xl font-bold pt-1">
-                      ${totalRevenue?.toFixed(2) ?? 0}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle>Total Products</CardTitle>
-                  <Boxes className="w-6 h-6" />
-                </CardHeader>
-                <CardContent>
-                  {loading ? (
-                    <div className="text-2xl font-bold">Loading...</div>
-                  ) : (
-                    // <p className="text-3xl font-bold pt-1">+<NumberTicker value={yourStock ?? 0} /></p>
-                    <div className="text-3xl font-bold pt-1">
-                      +{yourStock ?? 0}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle>Orders Delivered</CardTitle>
-                  <CreditCard className="w-6 h-6" />
-                </CardHeader>
-                <CardContent>
-                  {loading ? (
-                    <div className="text-2xl font-bold">Loading...</div>
-                  ) : (
-                    // <p className="text-3xl font-bold pt-1">+<NumberTicker value={ordersDelivered ?? 0} /></p>
-                    <div className="text-3xl font-bold pt-1">
-                      +{ordersDelivered ?? 0}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle>Products Sales</CardTitle>
-                  <Package className="w-6 h-6" />
-                </CardHeader>
-                <CardContent>
-                  {loading ? (
-                    <div className="text-2xl font-bold">Loading...</div>
-                  ) : (
-                    // <p className="text-3xl font-bold pt-1">+<NumberTicker value={productsSales ?? 0} /></p>
-                    <div className="text-3xl font-bold pt-1">
-                      +{productsSales ?? 0}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+            <Card>
+  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <CardTitle>Total Revenue</CardTitle>
+    <DollarSign className="w-6 h-6" />
+  </CardHeader>
+  <CardContent>
+    {loading ? (
+      <div className="text-2xl font-bold">Loading...</div>
+    ) : (
+      totalRevenue && totalRevenue > 0 ? (
+        <div className="text-3xl font-bold pt-1">
+          ${totalRevenue.toFixed(2)}
+        </div>
+      ) : null
+    )}
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <CardTitle>Total Products</CardTitle>
+    <Boxes className="w-6 h-6" />
+  </CardHeader>
+  <CardContent>
+    {loading ? (
+      <div className="text-2xl font-bold">Loading...</div>
+    ) : (
+      yourStock && yourStock > 0 ? (
+        <div className="text-3xl font-bold pt-1">
+          +{yourStock}
+        </div>
+      ) : null
+    )}
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <CardTitle>Orders Delivered</CardTitle>
+    <CreditCard className="w-6 h-6" />
+  </CardHeader>
+  <CardContent>
+    {loading ? (
+      <div className="text-2xl font-bold">Loading...</div>
+    ) : (
+      ordersDelivered && ordersDelivered > 0 ? (
+        <div className="text-3xl font-bold pt-1">
+          +{ordersDelivered}
+        </div>
+      ) : null
+    )}
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <CardTitle>Products Sales</CardTitle>
+    <Package className="w-6 h-6" />
+  </CardHeader>
+  <CardContent>
+    {loading ? (
+      <div className="text-2xl font-bold">Loading...</div>
+    ) : (
+      productsSales && productsSales > 0 ? (
+        <div className="text-3xl font-bold pt-1">
+          +{productsSales}
+        </div>
+      ) : null
+    )}
+  </CardContent>
+</Card>
+
             </div>
             {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
