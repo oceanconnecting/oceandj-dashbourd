@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -183,13 +182,13 @@ export const DashboardContent = () => {
           pieChartRes,
           topProductsRes,
         ] = await Promise.all([
-          fetch('http://localhost:3000/api/dashboard/total-revenue'),
-          fetch('http://localhost:3000/api/dashboard/your-stock'),
-          fetch('http://localhost:3000/api/dashboard/orders-reseved'),
-          fetch('http://localhost:3000/api/dashboard/products-sales'),
-          fetch('http://localhost:3000/api/dashboard/bar-chart'),
-          fetch('http://localhost:3000/api/dashboard/pie-chart'),
-          fetch('http://localhost:3000/api/products/top-products'),
+          fetch('/api/dashboard/total-revenue'),
+          fetch('/api/dashboard/your-stock'),
+          fetch('/api/dashboard/orders-reseved'),
+          fetch('/api/dashboard/products-sales'),
+          fetch('/api/dashboard/bar-chart'),
+          fetch('/api/dashboard/pie-chart'),
+          fetch('/api/products/top-products'),
         ]);
   
         // Parse each response and update state
@@ -234,78 +233,70 @@ export const DashboardContent = () => {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-    <CardTitle>Total Revenue</CardTitle>
-    <DollarSign className="w-6 h-6" />
-  </CardHeader>
-  <CardContent>
-    {loading ? (
-      <div className="text-2xl font-bold">Loading...</div>
-    ) : (
-      totalRevenue && totalRevenue > 0 ? (
-        <div className="text-3xl font-bold pt-1">
-          ${totalRevenue.toFixed(2)}
-        </div>
-      ) : null
-    )}
-  </CardContent>
-</Card>
-
-<Card>
-  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-    <CardTitle>Total Products</CardTitle>
-    <Boxes className="w-6 h-6" />
-  </CardHeader>
-  <CardContent>
-    {loading ? (
-      <div className="text-2xl font-bold">Loading...</div>
-    ) : (
-      yourStock && yourStock > 0 ? (
-        <div className="text-3xl font-bold pt-1">
-          +{yourStock}
-        </div>
-      ) : null
-    )}
-  </CardContent>
-</Card>
-
-<Card>
-  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-    <CardTitle>Orders Delivered</CardTitle>
-    <CreditCard className="w-6 h-6" />
-  </CardHeader>
-  <CardContent>
-    {loading ? (
-      <div className="text-2xl font-bold">Loading...</div>
-    ) : (
-      ordersDelivered && ordersDelivered > 0 ? (
-        <div className="text-3xl font-bold pt-1">
-          +{ordersDelivered}
-        </div>
-      ) : null
-    )}
-  </CardContent>
-</Card>
-
-<Card>
-  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-    <CardTitle>Products Sales</CardTitle>
-    <Package className="w-6 h-6" />
-  </CardHeader>
-  <CardContent>
-    {loading ? (
-      <div className="text-2xl font-bold">Loading...</div>
-    ) : (
-      productsSales && productsSales > 0 ? (
-        <div className="text-3xl font-bold pt-1">
-          +{productsSales}
-        </div>
-      ) : null
-    )}
-  </CardContent>
-</Card>
-
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle>Total Revenue</CardTitle>
+                  <DollarSign className="w-6 h-6" />
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <div className="text-2xl font-bold">Loading...</div>
+                  ) : (
+                    // <p className="text-3xl font-bold pt-1">$<NumberTicker value={Number(totalRevenue?.toFixed(2)) ?? 0} /></p>
+                    <div className="text-3xl font-bold pt-1">
+                      ${totalRevenue?.toFixed(2) ?? 0}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle>Total Products</CardTitle>
+                  <Boxes className="w-6 h-6" />
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <div className="text-2xl font-bold">Loading...</div>
+                  ) : (
+                    // <p className="text-3xl font-bold pt-1">+<NumberTicker value={yourStock ?? 0} /></p>
+                    <div className="text-3xl font-bold pt-1">
+                      +{yourStock ?? 0}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle>Orders Delivered</CardTitle>
+                  <CreditCard className="w-6 h-6" />
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <div className="text-2xl font-bold">Loading...</div>
+                  ) : (
+                    // <p className="text-3xl font-bold pt-1">+<NumberTicker value={ordersDelivered ?? 0} /></p>
+                    <div className="text-3xl font-bold pt-1">
+                      +{ordersDelivered ?? 0}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle>Products Sales</CardTitle>
+                  <Package className="w-6 h-6" />
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <div className="text-2xl font-bold">Loading...</div>
+                  ) : (
+                    // <p className="text-3xl font-bold pt-1">+<NumberTicker value={productsSales ?? 0} /></p>
+                    <div className="text-3xl font-bold pt-1">
+                      +{productsSales ?? 0}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </div>
             {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
