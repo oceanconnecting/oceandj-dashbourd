@@ -15,6 +15,13 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
             image: true,
           },
         },
+        brand: {
+          select: {
+            id: true,
+            title: true,
+            image: true,
+          },
+        },
         _count: {
           select: {
             orderItems: true,
@@ -41,6 +48,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
       discount: product.discount,
       stock: product.stock,
       category: product.category,
+      brand: product.brand,
       orderCount: product._count.orderItems,
     };
 

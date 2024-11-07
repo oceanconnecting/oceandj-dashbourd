@@ -5,7 +5,7 @@ export const GET = async () => {
   try {
     const count = await db.order.count({
       where: {
-        status: 'Reseved',
+        status: 'Delivered',
       },
     });
 
@@ -14,9 +14,9 @@ export const GET = async () => {
       count: count,
     });
   } catch (error) {
-    console.error('Error fetching reseved orders count:', error);
+    console.error('Error fetching Delivered orders count:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to fetch reseved orders count' },
+      { success: false, message: 'Failed to fetch Delivered orders count' },
       { status: 500 }
     );
   }

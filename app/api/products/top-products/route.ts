@@ -17,6 +17,11 @@ interface Product {
     title: string;
     image: string;
   } | null;
+  brand: {
+    id: number;
+    title: string;
+    image: string;
+  } | null;
   orderCount: number;
 }
 
@@ -25,6 +30,13 @@ export const GET = async () => {
     const products = await db.product.findMany({
       include: {
         category: {
+          select: {
+            id: true,
+            title: true,
+            image: true,
+          },
+        },
+        brand: {
           select: {
             id: true,
             title: true,
@@ -54,6 +66,7 @@ export const GET = async () => {
       discount: product.discount,
       stock: product.stock,
       category: product.category,
+      brand: product.brand,
       orderCount: product._count.orderItems,
     }));
 

@@ -94,5 +94,5 @@ model Brand {
 enum Status {
   Waiting 
   Cancelled 
-  Reseved
+  Delivered
 }

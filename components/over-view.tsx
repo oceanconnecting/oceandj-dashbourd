@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface MonthlyOrderCount {
-  month: string;
+  month: string; // Should be in "YYYY-MM" format
   totalOrders: number;
 }
 
@@ -40,31 +40,56 @@ export function OverView({ data }: MonthlyOrderData) {
   const [chartData, setChartData] = useState<{ month: string; desktop: number }[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchOrders() {
-      try {
-        if (data) {
-          const transformedData = data.map((monthData) => ({
-            month: new Date(monthData.month).toLocaleString('default', { month: 'long' }),
-            desktop: monthData.totalOrders,
-          }));
-          setChartData(transformedData);
-        }
-      } catch (error) {
-        console.error("Error fetching monthly orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
 
-    fetchOrders();
+  const getMonthRange = () => {
+    const currentDate = new Date();
+    currentDate.setMonth(currentDate.getMonth() - 5); // Start 5 months back
+    const startMonth = monthNames[currentDate.getMonth()];
+    const startYear = currentDate.getFullYear();
+
+    const endMonth = monthNames[new Date().getMonth()];
+    const endYear = new Date().getFullYear();
+
+    return `${startMonth} ${startYear} - ${endMonth} ${endYear}`;
+  };
+
+  useEffect(() => {
+    if (!data) return;
+
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    const lastSixMonthsData = data
+      .map((monthData) => {
+        const [year, month] = monthData.month.split("-").map(Number);
+        const monthName = monthNames[month - 1];
+        return {
+          month: `${monthName} ${year}`,
+          desktop: monthData.totalOrders,
+          date: new Date(year, month - 1),
+        };
+      })
+      .filter((monthData) => {
+        const monthDiff = (currentYear - monthData.date.getFullYear()) * 12 + (currentMonth - monthData.date.getMonth());
+        return monthDiff >= 0 && monthDiff < 6;
+      })
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
+      .map(({ month, desktop }) => ({ month, desktop }));
+
+    setChartData(lastSixMonthsData);
+    setLoading(false);
   }, [data]);
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Bar Chart</CardTitle>
-        <CardDescription>January - December 2024</CardDescription>
+        <CardDescription>{getMonthRange()}</CardDescription>
       </CardHeader>
       <CardContent>
         {loading ? (
@@ -78,7 +103,7 @@ export function OverView({ data }: MonthlyOrderData) {
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
-                tickFormatter={(value) => value.slice(0, 3)}
+                tickFormatter={(value) => value.split(" ")[0].slice(0, 3)}
               />
               <ChartTooltip
                 cursor={false}

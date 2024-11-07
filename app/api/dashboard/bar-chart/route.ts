@@ -1,3 +1,5 @@
+// app/api/orders/route.ts
+
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
@@ -13,14 +15,14 @@ export const GET = async () => {
       },
     });
 
-    const monthlyOrderCountMap = new Map();
+    const monthlyOrderCountMap = new Map<string, number>();
 
     ordersPerMonth.forEach(order => {
       const month = `${order.createdAt.getFullYear()}-${String(order.createdAt.getMonth() + 1).padStart(2, '0')}`;
       const count = order._count.id;
 
       if (monthlyOrderCountMap.has(month)) {
-        monthlyOrderCountMap.set(month, monthlyOrderCountMap.get(month) + count);
+        monthlyOrderCountMap.set(month, monthlyOrderCountMap.get(month)! + count);
       } else {
         monthlyOrderCountMap.set(month, count);
       }

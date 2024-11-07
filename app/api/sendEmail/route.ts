@@ -4,8 +4,8 @@ export async function POST(request: Request) {
   const { clientName, clientEmail } = await request.json();
 
   const sender = {
-    name: "Test",
-    address: "test@gmail.com",
+    name: "DJ Stage",
+    address: "contact@dj-stage.com",
   };
 
   const receipients = [
@@ -14,8 +14,8 @@ export async function POST(request: Request) {
       address: clientEmail,
     },
     {
-      name: process.env.DJSTAGE_NAME,
-      address: process.env.DJSTAGE_MAIL,
+      name: process.env.RECIPIENT_MAIL_NAME,
+      address: process.env.RECIPIENT_MAIL_USER,
     },
   ];
 

@@ -35,7 +35,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Session>{children}</Session>
             <SpeedInsights />
-            <Toaster />
+            <Toaster position="top-right"/>
           </ThemeProvider>
         </Providers>
       </body>

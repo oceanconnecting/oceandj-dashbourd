@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { z } from 'zod';
 
 const StatusSchema = z.object({
-  status: z.enum(['Waiting', 'Cancelled', 'Reserved']).optional(),
+  status: z.enum(['Waiting', 'Cancelled', 'Delivered']).optional(),
 });
 
 export const PUT = async (req: Request, { params }: { params: { id: string } }) => {

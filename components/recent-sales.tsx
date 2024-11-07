@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"
+"use client";
 
 import * as React from "react";
 import { Label, Pie, PieChart } from "recharts";
@@ -23,7 +23,7 @@ export const description = "A donut chart with text";
 const chartConfig = {
   orderCount: {
     label: "Orders",
-  }
+  },
 } satisfies ChartConfig;
 
 interface OrdersPerType {
@@ -33,9 +33,8 @@ interface OrdersPerType {
 }
 
 interface RecentSalesProps {
-  ordersPerType: OrdersPerType[]; 
+  ordersPerType: OrdersPerType[];
 }
-
 
 export function RecentSales({ ordersPerType }: RecentSalesProps) {
   const chartData = React.useMemo(() => {

@@ -3,16 +3,16 @@ import { db } from '@/lib/db';
 
 export const GET = async () => {
   try {
-    const resevedOrders = await db.order.findMany({
+    const deliveredOrders = await db.order.findMany({
       where: {
-        status: 'Reseved',
+        status: 'Delivered',
       },
       include: {
         items: true,
       },
     });
 
-    const totalProducts = resevedOrders.reduce((total, order) => {
+    const totalProducts = deliveredOrders.reduce((total, order) => {
       const orderTotal = order.items.reduce((sum, item) => sum + item.quantity, 0);
       return total + orderTotal;
     }, 0);
@@ -22,9 +22,9 @@ export const GET = async () => {
       totalProducts: totalProducts,
     });
   } catch (error) {
-    console.error('Error fetching reseved orders:', error);
+    console.error('Error fetching Delivered orders:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to fetch reseved orders' },
+      { success: false, message: 'Failed to fetch Delivered orders' },
       { status: 500 }
     );
   }

@@ -17,6 +17,7 @@ interface Order {
   email: string;
   phone: string;
   address: string;
+  status: string;
   items: {
     title: ReactNode; id: number; quantity: number 
 }[];

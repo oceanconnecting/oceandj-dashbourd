@@ -57,6 +57,8 @@ export function OrderDetailsContent({ orderId }: ViewOrderFormProps) {
                     < hr/>
                     <li className="">Address <span className="ml-4 float-right">{currentOrder.address}</span></li>
                     < hr/>
+                    <li className="">Status <span className="ml-4 float-right">{currentOrder.status}</span></li>
+                    < hr/>
                     <li className="flex items-top justify-between">
                       <span>Products</span>
                       <div className="space-y-5">

@@ -84,9 +84,9 @@ export const GET = async (req: Request) => {
       },
     });
 
-    // Filter orders with status "Waiting" or "Reserved" and calculate totalPrice
+    // Filter orders with status "Waiting" or "Delivered" and calculate totalPrice
     const ordersWithTotalPrice = orders.map(order => {
-      // if (order.status === 'Waiting' || order.status === 'Reserved') {
+      // if (order.status === 'Waiting' || order.status === 'Delivered') {
         const totalPrice = order.items.reduce((total: number, item: OrderItem) => {
           const itemTotal = item.price * item.quantity * (1 - item.discount / 100);
           return total + itemTotal;
@@ -98,7 +98,7 @@ export const GET = async (req: Request) => {
         };
       // }
 
-      // // Return the order without totalPrice if status is not "Waiting" or "Reserved"
+      // // Return the order without totalPrice if status is not "Waiting" or "Delivered"
       // return order;
     });
 

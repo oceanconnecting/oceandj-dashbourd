@@ -14,6 +14,12 @@ interface Category {
   type: Type | null;
 }
 
+interface Brand {
+  id: number;
+  title: string;
+  image: string;
+}
+
 interface Product {
   id: number;
   title: string;
@@ -25,6 +31,7 @@ interface Product {
   discount: number;
   stock: number;
   category: Category | null;
+  brand: Brand | null;
   orderCount: number;
 }
 
@@ -88,6 +95,13 @@ export const GET = async (req: Request) => {
         brandId: brandId ? parseInt(brandId, 10) : undefined,
       },
       include: {
+        brand: {
+          select: {
+            id: true,
+            title: true,
+            image: true,
+          },
+        },
         category: {
           select: {
             id: true,
@@ -126,6 +140,11 @@ export const GET = async (req: Request) => {
       price: product.price,
       discount: product.discount,
       stock: product.stock,
+      brand: {
+        id: product.brand?.id || 0,
+        title: product.brand?.title || '',
+        image: product.brand?.image || '',
+      },
       category: {
         id: product.category?.id || 0,
         title: product.category?.title || '',
