@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import axios from 'axios';
@@ -10,6 +11,7 @@ interface FetchOrdersParams {
   limit?: number;
   sort?: string;
 }
+
 interface Order {
   id: number;
   reference: string;
@@ -19,8 +21,10 @@ interface Order {
   address: string;
   status: string;
   items: {
-    title: ReactNode; id: number; quantity: number 
-}[];
+    title: ReactNode;
+    id: number;
+    quantity: number;
+  }[];
 }
 
 export const fetchOrders = createAsyncThunk(
@@ -96,15 +100,39 @@ export const deleteOrder = createAsyncThunk(
   }
 );
 
+export const updateOrder = createAsyncThunk(
+  'orders/updateOrder',
+  async ({ orderId, data }: { orderId: number; data: any }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`/api/orders/update-order/${orderId}`, data);
+      if (response.status >= 400) {
+        throw new Error('Failed to update the order');
+      }
+      return response.data.order;
+    } catch (error) {
+      console.error("Error : ", error);
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error:', error.response?.data);
+        return rejectWithValue(error.response?.data?.message || 'Something went wrong');
+      } else {
+        console.error('Unexpected Error:', error);
+        return rejectWithValue('An unexpected error occurred');
+      }
+    }
+  }
+);
+
 interface OrdersState {
   orders: Order[];
   items: { id: number; title: string }[];
   loading: boolean;
   loading_details: boolean;
   loading_delete: boolean;
+  loading_update: boolean; // For the update loading state
   error: string | null;
   error_details: string | null;
   error_delete: string | null;
+  error_update: string | null; // For the update error state
   total: number;
   page: number;
   limit: number;
@@ -119,9 +147,11 @@ const initialState: OrdersState = {
   loading: false,
   loading_details: false,
   loading_delete: false,
+  loading_update: false, // Initial state for update loading
   error: null,
   error_details: null,
   error_delete: null,
+  error_update: null, // Initial state for update error
   total: 0,
   page: 1,
   limit: 10,
@@ -174,6 +204,20 @@ const ordersSlice = createSlice({
       .addCase(deleteOrder.rejected, (state, action) => {
         state.loading_delete = false;
         state.error_delete = action.payload as string;
+      })
+      .addCase(updateOrder.pending, (state) => {
+        state.loading_update = true;
+        state.error_update = null;
+      })
+      .addCase(updateOrder.fulfilled, (state, action) => {
+        state.orders = state.orders.map((order) =>
+          order.id === action.payload.id ? action.payload : order
+        );
+        state.loading_update = false;
+      })
+      .addCase(updateOrder.rejected, (state, action) => {
+        state.loading_update = false;
+        state.error_update = action.payload as string;
       });
   },
 });

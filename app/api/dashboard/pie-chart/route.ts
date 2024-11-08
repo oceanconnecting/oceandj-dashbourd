@@ -17,6 +17,10 @@ interface OrdersPerType {
 
 export const GET = async () => {
   try {
+    const currentDate = new Date();
+    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59);
+
     const products = await db.product.findMany({
       include: {
         category: {
@@ -24,9 +28,15 @@ export const GET = async () => {
             typeId: true,
           },
         },
-        _count: {
+        orderItems: {
+          where: {
+            createdAt: {
+              gte: startOfMonth,
+              lte: endOfMonth,
+            },
+          },
           select: {
-            orderItems: true,
+            id: true, // or any unique identifier for order items
           },
         },
       },
@@ -42,8 +52,9 @@ export const GET = async () => {
       const typeId = product.category?.typeId;
 
       if (typeId !== null) {
+        const orderCount = product.orderItems.length;
+
         const existingEntry = acc.find(entry => entry.typeId === typeId);
-        const orderCount = product._count.orderItems;
 
         if (existingEntry) {
           existingEntry.orderCount += orderCount;

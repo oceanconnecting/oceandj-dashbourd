@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { OrderSchema } from "@/schemas/order";
@@ -18,6 +19,36 @@ const generateRandomReference = async (length = 4): Promise<string> => {
   }
 
   return reference;
+};
+
+// Stock update function
+const updateStock = async (orderItems: { productId: string; quantity: number }[]) => {
+  try {
+    // Loop through the order items and reduce stock only if the status is "delivered" or "waiting"
+    for (let item of orderItems) {
+      const product = await db.product.findUnique({
+        where: { id: item.productId },
+      });
+
+      if (!product) {
+        throw new Error(`Product with id ${item.productId} not found`);
+      }
+
+      // Ensure there is enough stock
+      if (product.stock >= item.quantity) {
+        product.stock -= item.quantity;
+        await db.product.update({
+          where: { id: product.id },
+          data: { stock: product.stock },
+        });
+      } else {
+        throw new Error(`Not enough stock for product: ${product.title}`);
+      }
+    }
+  } catch (error) {
+    console.error('Error updating stock:', error);
+    throw error; // Re-throw the error to handle it in the main try-catch block
+  }
 };
 
 export const POST = async (req: Request) => {
@@ -49,6 +80,7 @@ export const POST = async (req: Request) => {
 
     const reference = await generateRandomReference();
 
+    // Create the order
     const newOrder = await db.order.create({
       data: {
         reference,
@@ -56,7 +88,7 @@ export const POST = async (req: Request) => {
         phone,
         email,
         address,
-        status: "Waiting",
+        status: "Waiting", // Set initial status to "Waiting"
         items: {
           create: orderItems,
         },
@@ -65,6 +97,11 @@ export const POST = async (req: Request) => {
         items: true,
       },
     });
+
+    // Update stock after the order is created (only if status is "waiting" or "delivered")
+    if (newOrder.status === 'Waiting' || newOrder.status === 'Delivered') {
+      await updateStock(orderItems);
+    }
 
     const sender = {
       name: "Test",

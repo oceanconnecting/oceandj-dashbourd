@@ -47,7 +47,7 @@ export function OverView({ data }: MonthlyOrderData) {
 
   const getMonthRange = () => {
     const currentDate = new Date();
-    currentDate.setMonth(currentDate.getMonth() - 5); // Start 5 months back
+    currentDate.setMonth(currentDate.getMonth() - 5);
     const startMonth = monthNames[currentDate.getMonth()];
     const startYear = currentDate.getFullYear();
 

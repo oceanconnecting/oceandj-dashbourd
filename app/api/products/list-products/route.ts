@@ -40,15 +40,17 @@ export const GET = async (req: Request) => {
 
   const searchQuery = searchParams.get('search') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '10', 10);
-  const offset = (page - 1) * limit;
+  const limitParam = searchParams.get('limit') || '10';
+  const isLimitAll = limitParam === 'all';
+  const limit = isLimitAll ? undefined : parseInt(limitParam, 10);
+  const offset = isLimitAll ? 0 : (page - 1) * (limit ?? 1);
 
   const sortParam = searchParams.get('sort') || 'title.asc';
   const [sortField, sortOrder] = sortParam.split('.');
 
   const typeId = searchParams.get('typeId');
-  const brandId = searchParams.get('brandId'); // Extract the brandId from the query parameters
-  const categoryId = searchParams.get('categoryId'); // Extract the categoryId from the query parameters
+  const brandId = searchParams.get('brandId');
+  const categoryId = searchParams.get('categoryId');
 
   const validSortFields = ['title', 'id'];
   const validSortOrders = ['asc', 'desc'];
@@ -68,6 +70,7 @@ export const GET = async (req: Request) => {
   }
 
   try {
+    // Get the total count of products
     const totalProduct = await db.product.count({
       where: {
         title: {
@@ -78,7 +81,7 @@ export const GET = async (req: Request) => {
         category: {
           type: typeId ? { id: parseInt(typeId, 10) } : undefined,
         },
-        brandId: brandId ? parseInt(brandId, 10) : undefined
+        brandId: brandId ? parseInt(brandId, 10) : undefined,
       },
     });
 
@@ -121,14 +124,14 @@ export const GET = async (req: Request) => {
           },
         },
       },
-      take: limit,
+      take: isLimitAll ? totalProduct : limit,
       skip: offset,
       orderBy: {
         [sortField]: sortOrder,
       },
     });
 
-    const totalPages = Math.ceil(totalProduct / limit);
+    const totalPages = isLimitAll ? 1 : Math.ceil(totalProduct / (limit ?? 1));
 
     const productsWithOrderCount: Product[] = products.map((product: any) => ({
       id: product.id,
@@ -149,10 +152,12 @@ export const GET = async (req: Request) => {
         id: product.category?.id || 0,
         title: product.category?.title || '',
         image: product.category?.image || '',
-        type: product.category?.type ? {
-          id: product.category.type.id,
-          title: product.category.type.title,
-        } : null,
+        type: product.category?.type
+          ? {
+              id: product.category.type.id,
+              title: product.category.type.title,
+            }
+          : null,
       },
       orderCount: product._count.orderItems,
     }));
@@ -162,7 +167,7 @@ export const GET = async (req: Request) => {
       products: productsWithOrderCount,
       total: totalProduct,
       page,
-      limit,
+      limit: isLimitAll ? totalProduct : limit,
       totalPages,
     });
   } catch (error) {

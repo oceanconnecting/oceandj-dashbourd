@@ -1,5 +1,6 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
 import { UpdateOrderContent } from "@/components/content/update-order-content";
 import { ContentLayout } from "@/components/content-layout";
 import {
@@ -10,15 +11,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
-import type { Metadata } from "next";
+import { useParams } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Update Order",
-  description: "Update Order Page",
-};
 export default function AddOrderPage() {
+  const { id } = useParams();
   return (
-    <ContentLayout title="UpdateOrder">
+    <ContentLayout title={`Update Order - ${id}`}>
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -36,7 +34,7 @@ export default function AddOrderPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <UpdateOrderContent />
+      <UpdateOrderContent orderId={Number(id)}/>
     </ContentLayout>
   );
 }

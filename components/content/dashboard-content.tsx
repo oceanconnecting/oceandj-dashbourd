@@ -59,156 +59,93 @@ export const DashboardContent = () => {
   const [ordersPerType, setOrdersPerType] = useState<OrdersPerType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       // Fetch all orders and products in parallel
-  //       const [ordersRes, productsRes] = await Promise.all([
-  //         fetch('/api/orders/list-orders'),
-  //         fetch('/api/products/list-products'),
-  //       ]);
-
-  //       const ordersData = await ordersRes.json();
-  //       const productsData = await productsRes.json();
-
-  //       if (ordersData.success) {
-  //         const allOrders: Order[] = ordersData.orders;
-
-  //         // Calculate bar chart
-  //         const monthlyOrderCountMap = new Map<string, number>();
-
-  //         allOrders.forEach((order) => {
-  //           // console.log(order)
-  //           const orderDate = new Date(order.createdAt);
-  //           const month = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
-
-  //           if (monthlyOrderCountMap.has(month)) {
-  //             monthlyOrderCountMap.set(month, monthlyOrderCountMap.get(month)! + 1);
-  //           } else {
-  //             monthlyOrderCountMap.set(month, 1);
-  //           }
-  //         });
-
-  //         const monthlyOrderCount: MonthlyOrderCount[] = Array.from(monthlyOrderCountMap, ([month, totalOrders]) => ({
-  //           month,
-  //           totalOrders,
-  //         }));
-
-  //         // console.log(monthlyOrderCount);
-  //         setMonthlyOrderCount(monthlyOrderCount);
-
-
-  //         // Calculate total revenue
-  //         const calculatedTotal = allOrders.reduce((sum, order) => {
-  //           const orderTotalPrice = order.items.reduce((total, item) => {
-  //             const discount = item.discount ?? 0;
-  //             const itemTotal = item.price * item.quantity * (1 - discount / 100);
-  //             return total + itemTotal;
-  //           }, 0);
-  //           return sum + orderTotalPrice;
-  //         }, 0);
-  //         setTotalRevenue(parseFloat(calculatedTotal.toFixed(2)));
-
-  //         // Calculate orders Delivered
-  //         const deliveredOrdersCount = allOrders.filter(order => order.status === 'Delivered').length;
-  //         setOrdersDelivered(deliveredOrdersCount);
-
-  //         // Calculate total delivered products
-  //         const totalDeliveredProducts = allOrders
-  //           .filter(order => order.status === 'Delivered')
-  //           .reduce((total, order) => {
-  //             const orderTotal = order.items.reduce((sum, item) => sum + item.quantity, 0);
-  //             return total + orderTotal;
-  //           }, 0);
-  //         setProductsSales(totalDeliveredProducts);
-  //       }
-
-  //       if (productsData.success) {
-  //         const products: Product[] = productsData.products;
-
-  //         // Calculate total stock
-  //         const calculatedTotalStock = products.reduce((sum, product) => sum + (product.stock || 0), 0);
-  //         setYourStock(calculatedTotalStock);
-
-  //         // Calculate orders per type for pie chart
-  //         const calculatedOrdersPerType: OrdersPerType[] = products.reduce((acc: OrdersPerType[], product) => {
-  //           const typeId = product.category?.type?.id ?? null;
-  //           const orderCount = product.orderCount;
-
-  //           if (typeId !== null) {
-  //             const existingEntry = acc.find(entry => entry.typeId === typeId);
-  //             if (existingEntry) {
-  //               existingEntry.orderCount += orderCount;
-  //             } else {
-  //               const colorIndex = acc.length + 1;
-  //               const color = `hsl(var(--color-type-${colorIndex}))`;
-  //               acc.push({ typeId, orderCount, color });
-  //             }
-  //           }
-  //           return acc;
-  //         }, []);
-  //         setOrdersPerType(calculatedOrdersPerType);
-
-  //         // Affiche top products
-  //         // Sort products by orderCount in descending order and select the top 5
-  //         const topProducts = products
-  //           .sort((a, b) => b.orderCount - a.orderCount)
-  //           .slice(0, 5);
-
-  //         // Display the top product(s)
-  //         // console.log("Top Product:", topProducts);
-  //         setTopProducts(topProducts);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
+  // ? Calculating in front-end
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [
-          totalRevenueRes,
-          yourStockRes,
-          ordersDeliveredRes,
-          productsSalesRes,
-          barChartRes,
-          pieChartRes,
-          topProductsRes,
-        ] = await Promise.all([
-          fetch('/api/dashboard/total-revenue'),
-          fetch('/api/dashboard/your-stock'),
-          fetch('/api/dashboard/orders-reseved'),
-          fetch('/api/dashboard/products-sales'),
-          fetch('/api/dashboard/bar-chart'),
-          fetch('/api/dashboard/pie-chart'),
-          fetch('/api/products/top-products'),
+        // Fetch all orders and products in parallel
+        const [ordersRes, productsRes] = await Promise.all([
+          fetch('/api/orders/list-orders?limit=all'),
+          fetch('/api/products/list-products?limit=all'),
         ]);
   
-        // Parse each response and update state
-        const totalRevenueData = await totalRevenueRes.json();
-        const yourStockData = await yourStockRes.json();
-        const ordersDeliveredData = await ordersDeliveredRes.json();
-        const productsSalesData = await productsSalesRes.json();
-        const barChartData = await barChartRes.json();
-        const pieChartData = await pieChartRes.json();
-        const topProductsData = await topProductsRes.json();
+        const ordersData = await ordersRes.json();
+        const productsData = await productsRes.json();
   
-        if (totalRevenueData.success) setTotalRevenue(parseFloat(totalRevenueData.totalSum));
-        if (yourStockData.success) setYourStock(yourStockData.totalStock);
-        if (ordersDeliveredData.success) setOrdersDelivered(ordersDeliveredData.count);
-        if (productsSalesData.success) setProductsSales(productsSalesData.totalProducts);
-        if (barChartData.success) setMonthlyOrderCount(barChartData.monthlyOrderCount);
-        if (pieChartData.success) setOrdersPerType(pieChartData.ordersPerType);
-        if (topProductsData.success) setTopProducts(topProductsData.products);
+        if (ordersData.success) {
+          const allOrders: Order[] = ordersData.orders;
+          console.log(allOrders)
   
+          // Calculate bar chart
+          const monthlyOrderCountMap = new Map<string, number>();
+          allOrders.forEach((order) => {
+            const orderDate = new Date(order.createdAt);
+            const month = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
+  
+            monthlyOrderCountMap.set(month, (monthlyOrderCountMap.get(month) || 0) + 1);
+          });
+  
+          const monthlyOrderCount: MonthlyOrderCount[] = Array.from(monthlyOrderCountMap, ([month, totalOrders]) => ({
+            month,
+            totalOrders,
+          }));
+          setMonthlyOrderCount(monthlyOrderCount);
+  
+          // Calculate total revenue
+          const calculatedTotal = allOrders.reduce((sum, order) => {
+            const orderTotalPrice = order.items.reduce((total: number, item: OrderItem) => {
+              const discount = item.discount ?? 0;
+              const itemTotal = item.price * item.quantity * (1 - discount / 100);
+              return total + itemTotal;
+            }, 0);
+            return sum + orderTotalPrice;
+          }, 0);
+          setTotalRevenue(parseFloat(calculatedTotal.toFixed(2)));
+  
+          // Calculate orders Delivered
+          const deliveredOrdersCount = allOrders.filter(order => order.status === 'Delivered').length;
+          setOrdersDelivered(deliveredOrdersCount);
+  
+          // Calculate total delivered products
+          const totalDeliveredProducts = allOrders
+            .filter(order => order.status === 'Delivered')
+            .reduce((total, order) => total + order.items.reduce((sum, item) => sum + item.quantity, 0), 0);
+          setProductsSales(totalDeliveredProducts);
+        }
+  
+        if (productsData.success) {
+          const products: Product[] = productsData.products;
+  
+          // Calculate total stock
+          const calculatedTotalStock = products.reduce((sum, product) => sum + (product.stock || 0), 0);
+          setYourStock(calculatedTotalStock);
+  
+          // Calculate orders per type for pie chart
+          const calculatedOrdersPerType: OrdersPerType[] = products.reduce((acc: OrdersPerType[], product) => {
+            const typeId = product.category?.type?.id ?? null;
+            const orderCount = product.orderCount ?? 0;
+  
+            if (typeId !== null) {
+              const existingEntry = acc.find(entry => entry.typeId === typeId);
+              if (existingEntry) {
+                existingEntry.orderCount += orderCount;
+              } else {
+                const colorIndex = acc.length + 1;
+                const color = `hsl(var(--color-type-${colorIndex}))`;
+                acc.push({ typeId, orderCount, color });
+              }
+            }
+            return acc;
+          }, []);
+          setOrdersPerType(calculatedOrdersPerType);
+  
+          // Display top products
+          const topProducts = products
+            .sort((a, b) => (b.orderCount || 0) - (a.orderCount || 0))
+            .slice(0, 5);
+          setTopProducts(topProducts);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -219,13 +156,55 @@ export const DashboardContent = () => {
     fetchData();
   }, []);
 
-  console.log(totalRevenue);
-  console.log(yourStock);
-  console.log(ordersDelivered);
-  console.log(productsSales);
-  console.log(monthlyOrderCount);
-  console.log(ordersPerType);
-  console.log(topProducts);
+
+  // ? Calculating in back-end
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const [
+  //         totalRevenueRes,
+  //         yourStockRes,
+  //         ordersDeliveredRes,
+  //         productsSalesRes,
+  //         barChartRes,
+  //         pieChartRes,
+  //         topProductsRes,
+  //       ] = await Promise.all([
+  //         fetch('/api/dashboard/total-revenue'),
+  //         fetch('/api/dashboard/your-stock'),
+  //         fetch('/api/dashboard/orders-reseved'),
+  //         fetch('/api/dashboard/products-sales'),
+  //         fetch('/api/dashboard/bar-chart'),
+  //         fetch('/api/dashboard/pie-chart'),
+  //         fetch('/api/products/top-products'),
+  //       ]);
+  
+  //       const totalRevenueData = await totalRevenueRes.json();
+  //       const yourStockData = await yourStockRes.json();
+  //       const ordersDeliveredData = await ordersDeliveredRes.json();
+  //       const productsSalesData = await productsSalesRes.json();
+  //       const barChartData = await barChartRes.json();
+  //       const pieChartData = await pieChartRes.json();
+  //       const topProductsData = await topProductsRes.json();
+  
+  //       if (totalRevenueData.success) setTotalRevenue(parseFloat(totalRevenueData.totalSum));
+  //       if (yourStockData.success) setYourStock(yourStockData.totalStock);
+  //       if (ordersDeliveredData.success) setOrdersDelivered(ordersDeliveredData.count);
+  //       if (productsSalesData.success) setProductsSales(productsSalesData.totalProducts);
+  //       if (barChartData.success) setMonthlyOrderCount(barChartData.monthlyOrderCount);
+  //       if (pieChartData.success) setOrdersPerType(pieChartData.ordersPerType);
+  //       if (topProductsData.success) setTopProducts(topProductsData.products);
+  
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  
+  //   fetchData();
+  // }, []);
 
   return (
     <div className="flex flex-col">
@@ -299,7 +278,7 @@ export const DashboardContent = () => {
                 </CardContent>
               </Card>
             </div>
-            {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
                 <OverView data={monthlyOrderCount} />
               </div>
@@ -309,7 +288,7 @@ export const DashboardContent = () => {
             </div>
             <div>
               <Table topProducts={topProducts} loading={loading} />
-            </div> */}
+            </div>
           </TabsContent>
         </Tabs>
       </div>

@@ -16,15 +16,17 @@ export const GET = async (req: Request) => {
   
   const searchQuery = searchParams.get('search') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '10', 10);
-  const offset = (page - 1) * limit; // Calculate offset for pagination
+  const limitParam = searchParams.get('limit') || '10';
+  const isLimitAll = limitParam === 'all';
+  const limit = isLimitAll ? undefined : parseInt(limitParam, 10);
+  const offset = isLimitAll ? 0 : (page - 1) * (limit ?? 1);
 
   // Get the sorting parameters
-  const sortParam = searchParams.get('sort') || 'title.asc'; // Default sort by title ascending
-  const [sortField, sortOrder] = sortParam.split('.'); // Split sortParam into field and order
+  const sortParam = searchParams.get('sort') || 'title.asc';
+  const [sortField, sortOrder] = sortParam.split('.');
 
   // Validate sortField and sortOrder
-  const validSortFields = ['title', 'id']; // Remove 'categoryCount' from sorting fields
+  const validSortFields = ['title', 'id'];
   const validSortOrders = ['asc', 'desc'];
 
   if (!validSortFields.includes(sortField)) {
@@ -42,12 +44,22 @@ export const GET = async (req: Request) => {
   }
 
   try {
-    // Fetch types along with their category counts with pagination
+    // Count the total number of records that match the search query
+    const totalTypes = await db.type.count({
+      where: {
+        title: {
+          contains: searchQuery,
+          mode: 'insensitive',
+        },
+      },
+    });
+
+    // Fetch types along with their category counts
     const types: Type[] = await db.type.findMany({
       where: {
         title: {
           contains: searchQuery,
-          mode: 'insensitive', // Optional: make search case-insensitive
+          mode: 'insensitive',
         },
       },
       select: {
@@ -56,46 +68,36 @@ export const GET = async (req: Request) => {
         image: true,
         _count: {
           select: {
-            categories: true, // Change 'categories' to the actual name of the relation
+            categories: true,
           },
         },
       },
-      take: limit, // Limit the number of results returned
-      skip: offset, // Skip the records based on the current page
+      take: isLimitAll ? totalTypes : limit,
+      skip: offset,
       orderBy: {
-        [sortField]: sortOrder, // Dynamic sorting for other fields
-      },
-    });
-
-    // Count the total number of records that match the search query
-    const totalTypes = await db.type.count({
-      where: {
-        title: {
-          contains: searchQuery,
-          mode: 'insensitive', // Optional: make count case-insensitive
-        },
+        [sortField]: sortOrder,
       },
     });
 
     // Calculate total pages
-    const totalPages = Math.ceil(totalTypes / limit); // Calculate total pages
+    const totalPages = isLimitAll ? 1 : Math.ceil(totalTypes / (limit ?? 1));
 
     // Map the types to include categoryCount
     const typesWithCategoryCount = types.map((type: Type) => ({
       id: type.id,
       title: type.title,
       image: type.image,
-      categoryCount: type._count.categories, // Access the count from the fetched data
+      categoryCount: type._count.categories,
     }));
 
     return NextResponse.json({
       success: true,
       types: typesWithCategoryCount,
-      total: totalTypes, // Include total count for pagination
+      total: totalTypes,
       page,
-      limit,
-      totalPages, // Return total pages
-    });    
+      limit: isLimitAll ? totalTypes : limit,
+      totalPages,
+    });
   } catch (error) {
     console.error('Error fetching types:', error);
     return NextResponse.json(

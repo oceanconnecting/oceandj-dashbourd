@@ -15,8 +15,10 @@ export const GET = async (req: Request) => {
   
   const searchQuery = searchParams.get('search') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '10', 10);
-  const offset = (page - 1) * limit;
+  const limitParam = searchParams.get('limit') || '10';
+  const isLimitAll = limitParam === 'all';
+  const limit = isLimitAll ? undefined : parseInt(limitParam, 10);
+  const offset = isLimitAll ? 0 : (page - 1) * (limit ?? 1);
 
   const sortParam = searchParams.get('sort') || 'title.asc';
   const [sortField, sortOrder] = sortParam.split('.'); 
@@ -39,6 +41,15 @@ export const GET = async (req: Request) => {
   }
 
   try {
+    const totalBrands = await db.brand.count({
+      where: {
+        title: {
+          contains: searchQuery,
+          mode: 'insensitive',
+        },
+      },
+    });
+
     const brands: Brand[] = await db.brand.findMany({
       where: {
         title: {
@@ -56,23 +67,14 @@ export const GET = async (req: Request) => {
           },
         },
       },
-      take: limit,
+      take: isLimitAll ? totalBrands : limit,
       skip: offset,
       orderBy: {
         [sortField]: sortOrder,
       },
     });
 
-    const totalBrands = await db.brand.count({
-      where: {
-        title: {
-          contains: searchQuery,
-          mode: 'insensitive',
-        },
-      },
-    });
-
-    const totalPages = Math.ceil(totalBrands / limit);
+    const totalPages = isLimitAll ? 1 : Math.ceil(totalBrands / (limit ?? 1));
 
     const brandsWithProductCount = brands.map((brand: Brand) => ({
       id: brand.id,
@@ -86,7 +88,7 @@ export const GET = async (req: Request) => {
       brands: brandsWithProductCount,
       total: totalBrands,
       page,
-      limit,
+      limit: isLimitAll ? totalBrands : limit,
       totalPages,
     });    
   } catch (error) {

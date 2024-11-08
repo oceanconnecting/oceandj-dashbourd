@@ -21,8 +21,10 @@ export const GET = async (req: Request) => {
 
   const searchQuery = searchParams.get('search') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '10', 10);
-  const offset = (page - 1) * limit;
+  const limitParam = searchParams.get('limit') || '10';
+  const isLimitAll = limitParam === 'all';
+  const limit = isLimitAll ? undefined : parseInt(limitParam, 10);
+  const offset = isLimitAll ? 0 : (page - 1) * (limit ?? 1);
 
   const sortParam = searchParams.get('sort') || 'title.asc';
   const [sortField, sortOrder] = sortParam.split('.');
@@ -79,14 +81,14 @@ export const GET = async (req: Request) => {
           },
         },
       },
-      take: limit,
+      take: isLimitAll ? totalCategory : limit,
       skip: offset,
       orderBy: {
         [sortField]: sortOrder,
       },
     });
 
-    const totalPages = Math.ceil(totalCategory / limit);
+    const totalPages = isLimitAll ? 1 : Math.ceil(totalCategory / (limit ?? 1));
 
     const categoriesWithProductCount = categories.map((category: Category) => ({
       id: category.id,
@@ -102,7 +104,7 @@ export const GET = async (req: Request) => {
       categories: categoriesWithProductCount,
       total: totalCategory,
       page,
-      limit,
+      limit: isLimitAll ? totalCategory : limit,
       totalPages,
     });
   } catch (error) {

@@ -26,8 +26,10 @@ export const GET = async (req: Request) => {
 
   const searchQuery = searchParams.get('search') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '10', 10);
-  const offset = (page - 1) * limit;
+  const limitParam = searchParams.get('limit') || '10';
+  const isLimitAll = limitParam === 'all';
+  const limit = isLimitAll ? undefined : parseInt(limitParam, 10);
+  const offset = isLimitAll ? 0 : (page - 1) * (limit ?? 1);
 
   const sortParam = searchParams.get('sort') || 'name.asc';
   const [sortField, sortOrder] = sortParam.split('.');
@@ -50,6 +52,7 @@ export const GET = async (req: Request) => {
   }
 
   try {
+    // Get the total count of orders
     const totalOrders = await db.order.count({
       where: {
         name: {
@@ -77,39 +80,33 @@ export const GET = async (req: Request) => {
         items: true,
         createdAt: true,
       },
-      take: limit,
+      take: isLimitAll ? totalOrders : limit,
       skip: offset,
       orderBy: {
         [sortField]: sortOrder,
       },
     });
 
-    // Filter orders with status "Waiting" or "Delivered" and calculate totalPrice
     const ordersWithTotalPrice = orders.map(order => {
-      // if (order.status === 'Waiting' || order.status === 'Delivered') {
-        const totalPrice = order.items.reduce((total: number, item: OrderItem) => {
-          const itemTotal = item.price * item.quantity * (1 - item.discount / 100);
-          return total + itemTotal;
-        }, 0);
+      const totalPrice = order.items.reduce((total: number, item: OrderItem) => {
+        const itemTotal = item.price * item.quantity * (1 - item.discount / 100);
+        return total + itemTotal;
+      }, 0);
 
-        return {
-          ...order,
-          totalPrice: totalPrice.toFixed(2), // Round to 2 decimal places
-        };
-      // }
-
-      // // Return the order without totalPrice if status is not "Waiting" or "Delivered"
-      // return order;
+      return {
+        ...order,
+        totalPrice: totalPrice.toFixed(2),
+      };
     });
 
-    const totalPages = Math.ceil(totalOrders / limit);
+    const totalPages = isLimitAll ? 1 : Math.ceil(totalOrders / (limit ?? 1));
 
     return NextResponse.json({
       success: true,
       orders: ordersWithTotalPrice,
       total: totalOrders,
       page,
-      limit,
+      limit: isLimitAll ? totalOrders : limit,
       totalPages,
     });
   } catch (error) {
