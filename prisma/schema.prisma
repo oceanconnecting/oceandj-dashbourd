@@ -8,12 +8,12 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
+  id       Int      @id
+  email    String   @unique
   password String
 }
 model Order {
-  id          Int         @id @default(autoincrement())
+  id          Int         @id
   name        String
   reference   String      @unique
   phone       String
@@ -26,7 +26,7 @@ model Order {
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
+  id          Int         @id
   title       String      @unique
   description String
   images      String[]
@@ -43,7 +43,7 @@ model Product {
 }
 
 model OrderItem {
-  id          Int         @id @default(autoincrement())
+  id          Int         @id
   orderId     Int
   productId   Int
 
@@ -61,7 +61,7 @@ model OrderItem {
 }
 
 model Category {
-  id         Int       @id @default(autoincrement())
+  id         Int       @id
   title      String    @unique
   image      String
   createdAt  DateTime  @default(now())
@@ -74,7 +74,7 @@ model Category {
 }
 
 model Type {
-  id         Int       @id @default(autoincrement())
+  id         Int       @id
   title      String    @unique
   image      String
   createdAt  DateTime  @default(now())
@@ -84,7 +84,7 @@ model Type {
 }
 
 model Brand {
-  id         Int       @id @default(autoincrement())
+  id         Int       @id
   title      String    @unique
   image      String
   createdAt  DateTime  @default(now())

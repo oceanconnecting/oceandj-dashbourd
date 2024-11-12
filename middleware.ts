@@ -4,14 +4,15 @@ import { getToken } from 'next-auth/jwt';
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  // Get the pathname of the request (e.g. /dashboard)
   const { pathname } = req.nextUrl;
 
-  // If the user is not logged in and they are trying to access a protected route
   if (!token && pathname !== '/') {
-    // Redirect them to the homepage ("/")
-    const url = new URL('/', req.url); // Create a new URL based on the request URL
+    const url = new URL('/', req.url);
+    return NextResponse.redirect(url);
+  }
+
+  if (token && pathname === '/') {
+    const url = new URL('/dashboard', req.url);
     return NextResponse.redirect(url);
   }
 
