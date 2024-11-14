@@ -3,14 +3,14 @@ import { db } from '@/lib/db';
 import { CategorySchema } from '@/schemas/category';
 
 export const PUT = async (req: Request, { params }: { params: { id: string } }) => {
-  const categoryId = parseInt(params.id, 10);
+  const categoryId = params.id;
 
   try {
     const body = await req.json();
     const data = CategorySchema.parse(body);
 
     const updatedCategory = await db.category.update({
-      where: { id: categoryId },
+      where: { title: categoryId },
       data,
     });
 

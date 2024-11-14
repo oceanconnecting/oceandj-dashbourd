@@ -3,29 +3,29 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 interface Type {
-  id: number;
+  id: string;
   title: string;
 }
 
 interface Category {
-  id: number;
+  id: string;
   title: string;
   image: string;
   type: Type | null;
 }
 
 interface Brand {
-  id: number;
+  id: string;
   title: string;
   image: string;
 }
 
 interface Product {
-  id: number;
+  id: string;
   title: string;
   images: string[];
-  categoryId: number;
-  brandId: number;
+  categoryId: string;
+  brandId: string;
   description: string;
   price: number;
   discount: number;
@@ -77,11 +77,11 @@ export const GET = async (req: Request) => {
           contains: searchQuery,
           mode: 'insensitive',
         },
-        categoryId: categoryId ? parseInt(categoryId, 10) : undefined,
+        categoryId: categoryId ? categoryId : undefined,
         category: {
-          type: typeId ? { id: parseInt(typeId, 10) } : undefined,
+          type: typeId ? { id: typeId } : undefined,
         },
-        brandId: brandId ? parseInt(brandId, 10) : undefined,
+        brandId: brandId ? brandId : undefined,
       },
     });
 
@@ -91,11 +91,11 @@ export const GET = async (req: Request) => {
           contains: searchQuery,
           mode: 'insensitive',
         },
-        categoryId: categoryId ? parseInt(categoryId, 10) : undefined,
+        categoryId: categoryId ? categoryId : undefined,
         category: {
-          type: typeId ? { id: parseInt(typeId, 10) } : undefined,
+          type: typeId ? { id: typeId } : undefined,
         },
-        brandId: brandId ? parseInt(brandId, 10) : undefined,
+        brandId: brandId ? brandId : undefined,
       },
       include: {
         brand: {
@@ -144,12 +144,12 @@ export const GET = async (req: Request) => {
       discount: product.discount,
       stock: product.stock,
       brand: {
-        id: product.brand?.id || 0,
+        id: product.brand?.id || '',
         title: product.brand?.title || '',
         image: product.brand?.image || '',
       },
       category: {
-        id: product.category?.id || 0,
+        id: product.category?.id || '',
         title: product.category?.title || '',
         image: product.category?.image || '',
         type: product.category?.type

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 interface Type {
-  id: number;
+  id: string;
   title: string;
   image: string;
   _count: {

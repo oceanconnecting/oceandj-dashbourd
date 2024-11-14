@@ -7,7 +7,5 @@ export const CategorySchema = z.object({
   image: z.string().min(1, {
     message: "Image is required",
   }),
-  typeId: z.number().positive({
-    message: "typeId must be a positive number",
-  }),
+  typeId: z.string()
 });

@@ -8,13 +8,13 @@ import { DataTableViewOptions } from "./data-table-view-options";
 import { PlusIcon } from "@radix-ui/react-icons";
 import Link from "next/link"
 
-interface DataTableToolbarProps<TData extends { id: number }> {
+interface DataTableToolbarProps<TData extends { id: string }> {
   table: Table<TData>;
   searchTerm: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function DataTableToolbar<TData extends { id: number }>({ table, searchTerm, onChange }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData extends { id: string }>({ table, searchTerm, onChange }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (

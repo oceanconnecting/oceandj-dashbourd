@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 
 // Define an interface for the type object
 interface Type {
-  id: number;
+  id: string;
   title: string;
   image: string;
   _count: {

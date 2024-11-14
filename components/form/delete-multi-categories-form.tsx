@@ -15,7 +15,7 @@ export function DeleteMultiCategoriesForm({
   onClose,
   onDeleteSuccess, // New prop
 }: {
-  categoryIds: number[];
+  categoryIds: string[];
   onClose: () => void;
   onDeleteSuccess: () => void; // Callback for successful deletion
 }) {

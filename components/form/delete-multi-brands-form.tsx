@@ -15,7 +15,7 @@ export function DeleteMultiBrandsForm({
   onClose,
   onDeleteSuccess, // New prop
 }: {
-  brandIds: number[];
+  brandIds: string[];
   onClose: () => void;
   onDeleteSuccess: () => void; // Callback for successful deletion
 }) {

@@ -18,7 +18,7 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import Image from "next/image";
 
 interface UpdateProductFormProps {
-  productId: number;
+  productId: string;
 }
 
 export function UpdateProductContent({ productId }: UpdateProductFormProps) {
@@ -43,8 +43,8 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
   const [images, setImages] = useState<string[]>([]);
   const [imagesFB, setImagesFB] = useState<File[]>([]);
   const [orderCount, setOrderCount] = useState<number | null>(null);
-  const [categoryId, setCategoryId] = useState<number | null>(null);
-  const [brandId, setBrandId] = useState<number | null>(null);
+  const [categoryId, setCategoryId] = useState<string>("");
+  const [brandId, setBrandId] = useState<string>("");
   // const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState(false);
@@ -239,7 +239,7 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     <div className="grid gap-2">
                       <Label htmlFor="category">Category</Label>
-                      <Select onValueChange={(value) => setCategoryId(Number(value))}>
+                      <Select onValueChange={(value) => setCategoryId(value)}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder={categoryId ? categories.find((cat) => cat.id === categoryId)?.title : "Select a category"} />
                         </SelectTrigger>
@@ -255,7 +255,7 @@ export function UpdateProductContent({ productId }: UpdateProductFormProps) {
 
                     <div className="grid gap-2">
                       <Label htmlFor="brand">Brand</Label>
-                      <Select onValueChange={(value) => setBrandId(Number(value))}>
+                      <Select onValueChange={(value) => setBrandId(value)}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder={brandId ? brands.find((brand) => brand.id === brandId)?.title : "Select a brand"} />
                         </SelectTrigger>

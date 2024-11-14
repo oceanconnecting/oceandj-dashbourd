@@ -5,14 +5,14 @@ import { DataTableColumnHeader } from "./data-table-column-header";
 import Image from "next/image"
 
 interface Product {
-  id: number;
+  id: string;
   images: string[];
   title: string;
   description: string;
   price: number;
   discount: number;
   stock: number;
-  categoryId: number;
+  categoryId: string;
 }
 
 export const columns: ColumnDef<Product>[] = [
@@ -20,14 +20,14 @@ export const columns: ColumnDef<Product>[] = [
     id: "select",
     enableSorting: false,
   },
-  {
-    accessorKey: "id",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
-    ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
-    enableSorting: false,
-  },
+  // {
+  //   accessorKey: "id",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="ID" />
+  //   ),
+  //   cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+  //   enableSorting: false,
+  // },
   {
     accessorKey: "images",
     header: ({ column }) => (

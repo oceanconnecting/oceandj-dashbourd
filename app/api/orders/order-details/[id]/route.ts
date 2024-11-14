@@ -7,7 +7,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
 
     const order = await db.order.findUnique({
       where: {
-        id: Number(id),
+        reference: id,
       },
       include: {
         items: true,

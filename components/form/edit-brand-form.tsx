@@ -14,7 +14,7 @@ import { storage } from "../../firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Image from "next/image";
 
-export function EditBrandForm({ brandId, currentTitle, currentImage, onClose }: { brandId: number, currentTitle: string, currentImage: string, onClose: () => void }) {
+export function EditBrandForm({ brandId, currentTitle, currentImage, onClose }: { brandId: string, currentTitle: string, currentImage: string, onClose: () => void }) {
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState(currentTitle || "");
   const [imageFile, setImageFile] = useState<File | null>(null);

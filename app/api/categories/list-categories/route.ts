@@ -2,15 +2,15 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 interface Category {
-  id: number;
+  id: string;
   title: string;
   image: string;
-  typeId: number;
+  typeId: string;
   _count: {
     products: number;
   };
   type: {
-    id: number;
+    id: string;
     title: string;
     image: string;
   } | null;
@@ -55,7 +55,7 @@ export const GET = async (req: Request) => {
           contains: searchQuery,
           mode: 'insensitive',
         },
-        typeId: typeId ? parseInt(typeId, 10) : undefined, // Apply typeId filter if present
+        typeId: typeId ? typeId : undefined, // Apply typeId filter if present
       },
     });
 
@@ -65,7 +65,7 @@ export const GET = async (req: Request) => {
           contains: searchQuery,
           mode: 'insensitive',
         },
-        typeId: typeId ? parseInt(typeId, 10) : undefined, // Apply typeId filter if present
+        typeId: typeId ? typeId : undefined, 
       },
       include: {
         type: {

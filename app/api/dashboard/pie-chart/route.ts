@@ -4,13 +4,13 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 interface Product {
-  id: number;
-  categoryId: number;
-  typeId: number | null;
+  id: string;
+  categoryId: string;
+  typeId: string;
 }
 
 interface OrdersPerType {
-  typeId: number;
+  typeId: string;
   orderCount: number;
   color: string;
 }

@@ -3,22 +3,22 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 interface Product {
-  id: number;
+  id: string;
   title: string;
   images: string[];
-  categoryId: number;
-  brandId: number;
+  categoryId: string;
+  brandId: string;
   description: string;
   price: number;
   discount: number;
   stock: number;
   category: {
-    id: number;
+    id: string;
     title: string;
     image: string;
   } | null;
   brand: {
-    id: number;
+    id: string;
     title: string;
     image: string;
   } | null;

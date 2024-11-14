@@ -7,7 +7,7 @@ import { DeleteProductForm } from "@/components/form/delete-product-form";
 import Link from "next/link"
 
 
-const CellActions = ({ id }: { id: number }) => {
+const CellActions = ({ id }: { id: string }) => {
   const [isDialogOpenDelete, setIsDialogOpenDelete] = useState(false);
 
   const handleOpenDialogDelete = () => setIsDialogOpenDelete(true);

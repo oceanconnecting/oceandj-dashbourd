@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db'; // Adjust the path to your db config
+import { db } from '@/lib/db'; 
 
 export const DELETE = async (req: Request) => {
   try {
@@ -13,8 +13,7 @@ export const DELETE = async (req: Request) => {
       );
     }
 
-    // Convert ids to numbers and filter out invalid values
-    const validIds = ids.map(Number).filter((id) => !isNaN(id));
+    const validIds = ids.map(String).filter((id) => id);
 
     if (validIds.length === 0) {
       return NextResponse.json(
@@ -26,7 +25,7 @@ export const DELETE = async (req: Request) => {
     // Find the existing brands
     const existingBrands = await db.brand.findMany({
       where: {
-        id: { in: validIds },
+        title: { in: validIds },
       },
     });
 
@@ -40,7 +39,7 @@ export const DELETE = async (req: Request) => {
     // Delete the brands
     await db.brand.deleteMany({
       where: {
-        id: { in: validIds },
+        title: { in: validIds },
       },
     });
 

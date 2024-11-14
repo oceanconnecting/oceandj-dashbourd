@@ -26,7 +26,7 @@ import { DataTableToolbar } from "./data-table-toolbar";
 import { Spinner } from "@/components/ui/spinner";
 
 interface Identifiable {
-  id: number;
+  id: string;
 }
 
 interface DataTableProps<TData extends Identifiable, TValue> {

@@ -32,7 +32,7 @@ const CellActions = ({ row }: { row: Row<TypeSchemaType> }) => {
       </button>
       {isDialogOpenView && (
         <Dialog open={isDialogOpenView} onOpenChange={setIsDialogOpenView}>
-          <ViewTypeForm typeId={row.getValue("id")} />
+          <ViewTypeForm typeId={row.getValue("title")} />
         </Dialog>
       )}
 
@@ -42,7 +42,7 @@ const CellActions = ({ row }: { row: Row<TypeSchemaType> }) => {
       </button>
       <Dialog open={isDialogOpenEdit} onOpenChange={setIsDialogOpenEdit}>
         <EditTypeForm
-          typeId={row.getValue("id")}
+          typeId={row.getValue("title")}
           currentTitle={row.getValue("title")}
           currentImage={row.getValue("image")}
           onClose={handleCloseDialogEdit}
@@ -54,7 +54,7 @@ const CellActions = ({ row }: { row: Row<TypeSchemaType> }) => {
         <TrashIcon className="w-5 h-5 text-red-500 dark:text-red-700" />
       </button>
       <Dialog open={isDialogOpenDelete} onOpenChange={setIsDialogOpenDelete}>
-        <DeleteTypeForm typeId={row.getValue("id")} onClose={handleCloseDialogDelete} />
+        <DeleteTypeForm typeId={row.getValue("title")} onClose={handleCloseDialogDelete} />
       </Dialog>
     </div>
   );

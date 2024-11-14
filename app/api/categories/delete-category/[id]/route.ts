@@ -5,14 +5,14 @@ export const DELETE = async (req: Request, { params }: { params: { id: string } 
   try {
     const { id } = params;
 
-    const category = await db.category.findUnique({ where: { id: Number(id) } });
+    const category = await db.category.findUnique({ where: { title: id } });
     if (!category) {
       return NextResponse.json({ success: false, message: 'Category not found' }, { status: 404 });
     }
 
     await db.category.delete({
       where: {
-        id: Number(id),
+        title: id,
       },
     });
 

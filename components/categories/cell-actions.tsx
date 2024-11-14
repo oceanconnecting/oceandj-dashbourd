@@ -32,7 +32,7 @@ const CellActions = ({ row }: { row: Row<CategorySchemaCategory> }) => {
       </button>
       {isDialogOpenView && (
         <Dialog open={isDialogOpenView} onOpenChange={setIsDialogOpenView}>
-          <ViewCategoryForm categoryId={row.getValue("id")} />
+          <ViewCategoryForm categoryId={row.getValue("title")} />
         </Dialog>
       )}
 
@@ -42,7 +42,7 @@ const CellActions = ({ row }: { row: Row<CategorySchemaCategory> }) => {
       </button>
       <Dialog open={isDialogOpenEdit} onOpenChange={setIsDialogOpenEdit}>
         <EditCategoryForm
-          categoryId={row.getValue("id")}
+          categoryId={row.getValue("title")}
           currentTitle={row.getValue("title")}
           currentImage={row.getValue("image")}
           currentTypeId={row.getValue("typeId")}
@@ -55,7 +55,7 @@ const CellActions = ({ row }: { row: Row<CategorySchemaCategory> }) => {
         <TrashIcon className="w-5 h-5 text-red-500 dark:text-red-700" />
       </button>
       <Dialog open={isDialogOpenDelete} onOpenChange={setIsDialogOpenDelete}>
-        <DeleteCategoryForm categoryId={row.getValue("id")} onClose={handleCloseDialogDelete} />
+        <DeleteCategoryForm categoryId={row.getValue("title")} onClose={handleCloseDialogDelete} />
       </Dialog>
     </div>
   );

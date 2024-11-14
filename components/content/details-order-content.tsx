@@ -8,7 +8,7 @@ import { fetchOrderDetails } from "@/app/redux/features/orders/ordersSlice";
 import { RootState } from "@/app/redux/store";
 
 interface ViewOrderFormProps {
-  orderId: number;
+  orderId: string;
 }
 
 export function OrderDetailsContent({ orderId }: ViewOrderFormProps) {

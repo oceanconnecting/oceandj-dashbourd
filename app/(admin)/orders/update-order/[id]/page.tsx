@@ -15,6 +15,8 @@ import { useParams } from "next/navigation";
 
 export default function AddOrderPage() {
   const { id } = useParams();
+  const orderId = Array.isArray(id) ? id[0] : id;
+
   return (
     <ContentLayout title={`Update Order - ${id}`}>
       <Breadcrumb>
@@ -34,7 +36,7 @@ export default function AddOrderPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <UpdateOrderContent orderId={Number(id)}/>
+      <UpdateOrderContent orderId={orderId}/>
     </ContentLayout>
   );
 }

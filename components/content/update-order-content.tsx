@@ -9,7 +9,7 @@ import { RootState } from '@/app/redux/store';
 import { useRouter } from 'next/navigation';
 
 interface ViewOrderFormProps {
-  orderId: number;
+  orderId: string;
 }
 
 export function UpdateOrderContent({ orderId }: ViewOrderFormProps) {

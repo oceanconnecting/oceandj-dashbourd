@@ -7,6 +7,6 @@ export const ProductSchema = z.object({
   price: z.number().int().nonnegative(),
   discount: z.number().optional(),
   stock: z.number().int().nonnegative(),
-  categoryId: z.number().int(),
-  brandId: z.number().int(),
+  categoryId: z.string(),
+  brandId: z.string(),
 });

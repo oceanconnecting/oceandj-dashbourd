@@ -4,13 +4,12 @@ import { TrashIcon, InfoCircledIcon, Pencil2Icon } from "@radix-ui/react-icons";
 import { ViewBrandForm } from "@/components/form/view-brand-form";
 import { EditBrandForm } from "@/components/form/edit-brand-form";
 import { DeleteBrandForm } from "@/components/form/delete-brand-form";
-import { Row } from "@tanstack/react-table"; // Import the Row brand
-import { BrandSchema } from "@/schemas/brand"; // Assuming brandSchemabrand is the inferred brand from your Zod schema
+import { Row } from "@tanstack/react-table";
+import { BrandSchema } from "@/schemas/brand";
 import { z } from "zod"
 
 type BrandSchemaBrand = z.infer<typeof BrandSchema>
 
-// This is the new component for the cell
 const CellActions = ({ row }: { row: Row<BrandSchemaBrand> }) => {
   const [isDialogOpenView, setIsDialogOpenView] = useState(false);
   const [isDialogOpenEdit, setIsDialogOpenEdit] = useState(false);
@@ -32,7 +31,7 @@ const CellActions = ({ row }: { row: Row<BrandSchemaBrand> }) => {
       </button>
       {isDialogOpenView && (
         <Dialog open={isDialogOpenView} onOpenChange={setIsDialogOpenView}>
-          <ViewBrandForm brandId={row.getValue("id")} />
+          <ViewBrandForm brandId={row.getValue("title")} />
         </Dialog>
       )}
 
@@ -42,7 +41,7 @@ const CellActions = ({ row }: { row: Row<BrandSchemaBrand> }) => {
       </button>
       <Dialog open={isDialogOpenEdit} onOpenChange={setIsDialogOpenEdit}>
         <EditBrandForm
-          brandId={row.getValue("id")}
+          brandId={row.getValue("title")}
           currentTitle={row.getValue("title")}
           currentImage={row.getValue("image")}
           onClose={handleCloseDialogEdit}
@@ -54,7 +53,7 @@ const CellActions = ({ row }: { row: Row<BrandSchemaBrand> }) => {
         <TrashIcon className="w-5 h-5 text-red-500 dark:text-red-700" />
       </button>
       <Dialog open={isDialogOpenDelete} onOpenChange={setIsDialogOpenDelete}>
-        <DeleteBrandForm brandId={row.getValue("id")} onClose={handleCloseDialogDelete} />
+        <DeleteBrandForm brandId={row.getValue("title")} onClose={handleCloseDialogDelete} />
       </Dialog>
     </div>
   );

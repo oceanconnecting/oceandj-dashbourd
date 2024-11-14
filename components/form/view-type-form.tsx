@@ -9,7 +9,7 @@ import { RootState } from "@/app/redux/store";
 import Image from "next/image";
 
 interface ViewTypeFormProps {
-  typeId: number;
+  typeId: string;
 }
 
 export function ViewTypeForm({ typeId }: ViewTypeFormProps) {

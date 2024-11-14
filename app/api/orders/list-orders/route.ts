@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 
 interface Order {
   items: any;
-  id: number;
+  id: string;
   name: string;
   reference: string;
   phone: string;

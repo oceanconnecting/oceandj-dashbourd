@@ -15,7 +15,7 @@ export function DeleteTypeForm({
   typeId,
   onClose,
 }: {
-  typeId: number;
+  typeId: string;
   onClose: () => void;
 }) {
   const dispatch = useAppDispatch();

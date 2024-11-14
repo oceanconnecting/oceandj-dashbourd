@@ -22,10 +22,10 @@ export function EditCategoryForm({
   currentTypeId,
   onClose,
 }: {
-  categoryId: number;
+  categoryId: string;
   currentTitle: string;
   currentImage: string;
-  currentTypeId: number;
+  currentTypeId: string;
   onClose: () => void;
 }) {
   const dispatch = useAppDispatch();
@@ -34,7 +34,7 @@ export function EditCategoryForm({
   const [imageUrl, setImageUrl] = useState(currentImage || "");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [sizeError, setSizeError] = useState<string | null>(null);
-  const [typeId, setTypeId] = useState<number | null>(currentTypeId || null);
+  const [typeId, setTypeId] = useState<string>(currentTypeId || "");
   const loading = useAppSelector((state: RootState) => state.categories.loading_update);
   const error = useAppSelector((state: RootState) => state.categories.error_update);
   const types = useAppSelector((state: RootState) => state.categories.types); 
@@ -140,7 +140,7 @@ export function EditCategoryForm({
 
         <div className="grid gap-3">
           <Label htmlFor="type">Category Type</Label>
-          <Select onValueChange={(value) => setTypeId(Number(value))}>
+          <Select onValueChange={(value) => setTypeId(value)}>
             <SelectTrigger className="w-full">
               <SelectValue
                 placeholder={typeId ? types.find((type) => type.id === typeId)?.title : "Select a type"}

@@ -7,11 +7,11 @@ import CellActions from '@/components/categories/cell-actions';
 import Image from "next/image"
 
 interface Category {
-  id: number;
+  id: string;
   image: string;
   title: string;
   productCount: number;
-  typeId: number;
+  typeId: string;
 }
 
 export const columns: ColumnDef<Category>[] = [
@@ -44,15 +44,15 @@ export const columns: ColumnDef<Category>[] = [
   //   enableSorting: false,
   //   enableHiding: false,
   // },
-  {
-    accessorKey: "id",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
-    ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
-    enableSorting: false,
-    enableHiding: true,
-  },
+  // {
+  //   accessorKey: "id",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="ID" />
+  //   ),
+  //   cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
+  //   enableSorting: false,
+  //   enableHiding: true,
+  // },
   {
     accessorKey: "image",
     header: ({ column }) => (

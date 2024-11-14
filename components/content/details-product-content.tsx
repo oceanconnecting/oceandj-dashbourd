@@ -8,7 +8,7 @@ import { RootState } from "@/app/redux/store";
 import Image from "next/image";
 
 interface ViewProductFormProps {
-  productId: number;
+  productId: string;
 }
 
 export function ProductDetailsContent({ productId }: ViewProductFormProps) {

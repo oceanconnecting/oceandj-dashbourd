@@ -9,7 +9,7 @@ import { RootState } from "@/app/redux/store";
 import Image from "next/image";
 
 interface ViewBrandFormProps {
-  brandId: number;
+  brandId: string;
 }
 
 export function ViewBrandForm({ brandId }: ViewBrandFormProps) {

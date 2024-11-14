@@ -13,7 +13,7 @@ interface FetchOrdersParams {
 }
 
 interface Order {
-  id: number;
+  id: string;
   reference: string;
   name: string;
   email: string;
@@ -58,7 +58,7 @@ export const fetchOrders = createAsyncThunk(
 
 export const fetchOrderDetails = createAsyncThunk(
   'orders/fetchOrderDetails',
-  async (orderId: number, { rejectWithValue }) => {
+  async (orderId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(`/api/orders/order-details/${orderId}`);
       if (response.status >= 400) {
@@ -80,7 +80,7 @@ export const fetchOrderDetails = createAsyncThunk(
 
 export const deleteOrder = createAsyncThunk(
   'orders/deleteOrder',
-  async (orderId: number, { rejectWithValue }) => {
+  async (orderId: string, { rejectWithValue }) => {
     try {
       const response = await axios.delete(`/api/orders/delete-order/${orderId}`);
       if (response.status !== 200) {
@@ -102,7 +102,7 @@ export const deleteOrder = createAsyncThunk(
 
 export const updateOrder = createAsyncThunk(
   'orders/updateOrder',
-  async ({ orderId, data }: { orderId: number; data: any }, { rejectWithValue }) => {
+  async ({ orderId, data }: { orderId: string; data: any }, { rejectWithValue }) => {
     try {
       const response = await axios.put(`/api/orders/update-order/${orderId}`, data);
       if (response.status >= 400) {
@@ -198,7 +198,7 @@ const ordersSlice = createSlice({
         state.error_delete = null;
       })
       .addCase(deleteOrder.fulfilled, (state, action) => {
-        state.orders = state.orders.filter((order) => order.id !== action.payload);
+        state.orders = state.orders.filter((order) => order.reference !== action.payload);
         state.loading_delete = false;
       })
       .addCase(deleteOrder.rejected, (state, action) => {
@@ -211,7 +211,7 @@ const ordersSlice = createSlice({
       })
       .addCase(updateOrder.fulfilled, (state, action) => {
         state.orders = state.orders.map((order) =>
-          order.id === action.payload.id ? action.payload : order
+          order.reference === action.payload.reference ? action.payload : order
         );
         state.loading_update = false;
       })

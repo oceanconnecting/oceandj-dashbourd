@@ -13,7 +13,7 @@ export const DELETE = async (req: Request) => {
       );
     }
 
-    const validIds = ids.map(Number).filter((id) => !isNaN(id));
+    const validIds = ids.map(String).filter((id) => id);
 
     if (validIds.length === 0) {
       return NextResponse.json(

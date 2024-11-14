@@ -16,7 +16,7 @@ export const OrderSchema = z.object({
     message: "Address is required",
   }),
   products: z.array(z.object({
-    id: z.number(),
+    id: z.string(),
     quantity: z.number().min(1)
   })).min(1, {
     message: "At least one product is required",

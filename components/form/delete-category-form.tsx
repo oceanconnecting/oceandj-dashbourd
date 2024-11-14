@@ -15,7 +15,7 @@ export function DeleteCategoryForm({
   categoryId,
   onClose,
 }: {
-  categoryId: number;
+  categoryId: string;
   onClose: () => void;
 }) {
   const dispatch = useAppDispatch();

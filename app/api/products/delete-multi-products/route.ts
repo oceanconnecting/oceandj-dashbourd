@@ -13,7 +13,7 @@ export const DELETE = async (req: Request) => {
       );
     }
 
-    const validIds = ids.map(Number).filter((id) => !isNaN(id));
+    const validIds = ids.map(String).filter((id) => id);
 
     if (validIds.length === 0) {
       return NextResponse.json(
@@ -24,7 +24,7 @@ export const DELETE = async (req: Request) => {
 
     const existingProducts = await db.product.findMany({
       where: {
-        id: { in: validIds },
+        title: { in: validIds },
       },
     });
 
@@ -37,7 +37,7 @@ export const DELETE = async (req: Request) => {
 
     await db.product.deleteMany({
       where: {
-        id: { in: validIds },
+        title: { in: validIds },
       },
     });
 

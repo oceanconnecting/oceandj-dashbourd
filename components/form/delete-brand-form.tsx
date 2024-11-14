@@ -15,7 +15,7 @@ export function DeleteBrandForm({
   brandId,
   onClose,
 }: {
-  brandId: number;
+  brandId: string;
   onClose: () => void;
 }) {
   const dispatch = useAppDispatch();

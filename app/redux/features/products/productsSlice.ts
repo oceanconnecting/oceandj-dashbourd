@@ -14,11 +14,11 @@ interface FetchProductsParams {
 interface Product {
   category: any;
   brand: any;
-  id: number;
+  id: string;
   title: string;
   images: string[];
-  categoryId: number;
-  brandId: number;
+  categoryId: string;
+  brandId: string;
   description: string;
   price: number;
   discount: number;
@@ -61,8 +61,8 @@ export const addProduct = createAsyncThunk(
   async ({title, images, categoryId, brandId, description, price, discount, stock}: { 
     title: string;
     images: string[];
-    categoryId: number;
-    brandId: number;
+    categoryId: string;
+    brandId: string;
     description: string;
     price: number;
     discount: number;
@@ -151,7 +151,7 @@ export const updateProduct = createAsyncThunk(
 
 export const fetchProductDetails = createAsyncThunk(
   'products/fetchProductDetails',
-  async (productId: number, { rejectWithValue }) => {
+  async (productId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(`/api/products/product-details/${productId}`);
       if (response.status >= 400) {
@@ -173,7 +173,7 @@ export const fetchProductDetails = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
   'products/deleteProduct',
-  async (productId: number, { rejectWithValue }) => {
+  async (productId: string, { rejectWithValue }) => {
     try {
       const response = await axios.delete(`/api/products/delete-product/${productId}`);
       if (response.status !== 200) {
@@ -195,7 +195,7 @@ export const deleteProduct = createAsyncThunk(
 
 export const deleteMultiProducts = createAsyncThunk(
   'products/deleteMultiProducts',
-  async (productIds: number[], { rejectWithValue }) => {
+  async (productIds: string[], { rejectWithValue }) => {
     try {
       const response = await axios.delete('/api/products/delete-multi-products', {
         data: { ids: productIds },
@@ -279,12 +279,12 @@ export const fetchProductBrands = createAsyncThunk(
 
 
 interface ProductCategory {
-  id: number; 
+  id: string; 
   title: string;
 }
 
 interface ProductBrand {
-  id: number; 
+  id: string; 
   title: string;
 }
 
@@ -379,7 +379,7 @@ const productsSlice = createSlice({
       })
       .addCase(updateProduct.fulfilled, (state, action) => {
         const updatedProduct = action.payload;
-        const existingProductIndex = state.products.findIndex((product) => product.id === updatedProduct.id);
+        const existingProductIndex = state.products.findIndex((product) => product.title === updatedProduct.title);
         if (existingProductIndex >= 0) {
           state.products[existingProductIndex] = updatedProduct;
         }
@@ -406,7 +406,7 @@ const productsSlice = createSlice({
         state.error_delete = null;
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
-        state.products = state.products.filter((product) => product.id !== action.payload);
+        state.products = state.products.filter((product) => product.title !== action.payload);
         state.loading_delete = false;
       })
       .addCase(deleteProduct.rejected, (state, action) => {
@@ -418,7 +418,7 @@ const productsSlice = createSlice({
         state.error_delete = null;
       })
       .addCase(deleteMultiProducts.fulfilled, (state, action) => {
-        state.products = state.products.filter((product) => !action.payload.includes(product.id));
+        state.products = state.products.filter((product) => !action.payload.includes(product.title));
         state.loading_delete = false;
       })
       .addCase(deleteMultiProducts.rejected, (state, action) => {

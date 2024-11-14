@@ -14,7 +14,7 @@ export const DELETE = async (req: Request) => {
     }
 
     // Convert ids to numbers and filter out invalid values
-    const validIds = ids.map(Number).filter((id) => !isNaN(id));
+    const validIds = ids.map(String).filter((id) => id);
 
     if (validIds.length === 0) {
       return NextResponse.json(
@@ -26,7 +26,7 @@ export const DELETE = async (req: Request) => {
     // Find the existing types
     const existingTypes = await db.type.findMany({
       where: {
-        id: { in: validIds },
+        title: { in: validIds },
       },
     });
 
@@ -40,7 +40,7 @@ export const DELETE = async (req: Request) => {
     // Delete the types
     await db.type.deleteMany({
       where: {
-        id: { in: validIds },
+        title: { in: validIds },
       },
     });
 

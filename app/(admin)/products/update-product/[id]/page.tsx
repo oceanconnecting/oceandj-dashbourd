@@ -15,6 +15,7 @@ import {
 
 export default function UpdateProductPage() {
   const { id } = useParams();
+  const productId = Array.isArray(id) ? id[0] : id;
 
   return (
     <ContentLayout title={`Update Product - ${id}`}>
@@ -39,7 +40,7 @@ export default function UpdateProductPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <UpdateProductContent productId={Number(id)} />
+      <UpdateProductContent productId={productId} />
     </ContentLayout>
   );
 }

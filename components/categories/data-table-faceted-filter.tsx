@@ -25,7 +25,7 @@ interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>
   title?: string
   categories: {
-    typeId: number
+    typeId: string
   }[]
 }
 
@@ -35,7 +35,7 @@ export function DataTableFacetedFilter<TData, TValue>({
   categories,
 }: DataTableFacetedFilterProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues()
-  const selectedValues = new Set(column?.getFilterValue() as number[])
+  const selectedValues = new Set(column?.getFilterValue() as string[])
 
   return (
     <Popover>

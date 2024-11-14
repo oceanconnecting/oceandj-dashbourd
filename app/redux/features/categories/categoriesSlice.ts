@@ -11,10 +11,10 @@ interface FetchCategoriesParams {
 }
 
 interface Category {
-  id: number;
+  id: string;
   title: string;
   image: string;
-  typeId: number;
+  typeId: string;
   productCount: number;
 }
 
@@ -46,7 +46,7 @@ export const fetchCategories = createAsyncThunk(
 
 export const addCategory = createAsyncThunk(
   'categories/addCategory',
-  async ({ title, image, typeId }: { title: string; image: string; typeId: number }, { rejectWithValue }) => {
+  async ({ title, image, typeId }: { title: string; image: string; typeId: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post('/api/categories/add-category', {
         title,
@@ -56,7 +56,7 @@ export const addCategory = createAsyncThunk(
       if (response.status >= 400) {
         throw new Error('Failed to add the category');
       }
-      return response.data.category;
+      return { ...response.data.category, productCount: 0 };
     } catch (error) {
       console.error('Error:', error);
       if (axios.isAxiosError(error)) {
@@ -72,7 +72,7 @@ export const addCategory = createAsyncThunk(
 
 export const updateCategory = createAsyncThunk(
   'categories/updateCategory',
-  async ({ categoryId, title, image, typeId }: { categoryId: number; title: string; image: string; typeId: number }, { rejectWithValue }) => {
+  async ({ categoryId, title, image, typeId }: { categoryId: string; title: string; image: string; typeId: string }, { rejectWithValue }) => {
     try {
       const response = await axios.put(`/api/categories/update-category/${categoryId}`, {
         title,
@@ -98,7 +98,7 @@ export const updateCategory = createAsyncThunk(
 
 export const fetchCategoryDetails = createAsyncThunk(
   'categories/fetchCategoryDetails',
-  async (categoryId: number, { rejectWithValue }) => {
+  async (categoryId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(`/api/categories/category-details/${categoryId}`);
       if (response.status >= 400) {
@@ -120,7 +120,7 @@ export const fetchCategoryDetails = createAsyncThunk(
 
 export const deleteCategory = createAsyncThunk(
   'categories/deleteCategory',
-  async (categoryId: number, { rejectWithValue }) => {
+  async (categoryId: string, { rejectWithValue }) => {
     try {
       const response = await axios.delete(`/api/categories/delete-category/${categoryId}`);
       if (response.status !== 200) {
@@ -161,7 +161,7 @@ export const fetchCategoryTypes = createAsyncThunk(
 // Delete multiple categories
 export const deleteMultiCategories = createAsyncThunk(
   'categories/deleteMultiCategories',
-  async (categoryIds: number[], { rejectWithValue }) => {
+  async (categoryIds: string[], { rejectWithValue }) => {
     try {
       const response = await axios.delete('/api/categories/delete-multi-categories', {
         data: { ids: categoryIds },
@@ -186,15 +186,15 @@ export const deleteMultiCategories = createAsyncThunk(
 
 
 interface CategoryType {
-  id: number; 
+  id: string; 
   title: string;
 }
 
 interface Category {
-  id: number;
+  id: string;
   title: string;
   image: string;
-  typeId: number; 
+  typeId: string; 
   countProduct: number;
 }
 
@@ -285,7 +285,7 @@ const categoriesSlice = createSlice({
       })
       .addCase(updateCategory.fulfilled, (state, action) => {
         const { categoryId, title, image, typeId } = action.payload;
-        const existingCategory = state.categories.find((category) => category.id === categoryId);
+        const existingCategory = state.categories.find((category) => category.title === categoryId);
         if (existingCategory) {
           existingCategory.title = title;
           existingCategory.image = image;
@@ -314,7 +314,7 @@ const categoriesSlice = createSlice({
         state.error_delete = null;
       })
       .addCase(deleteCategory.fulfilled, (state, action) => {
-        state.categories = state.categories.filter(category => category.id !== action.payload);
+        state.categories = state.categories.filter(category => category.title !== action.payload);
         state.loading_delete = false;
       })
       .addCase(deleteCategory.rejected, (state, action) => {

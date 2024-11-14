@@ -11,17 +11,17 @@ import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "./data-table-view-options";
 import { PlusIcon } from "@radix-ui/react-icons";
 
-interface DataTableToolbarProps<TData extends { id: number }> {
+interface DataTableToolbarProps<TData extends { id: string }> {
   table: Table<TData>;
   searchTerm: string; // Ensure searchTerm prop is brandd
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Ensure onChange prop is brandd
 }
 
-export function DataTableToolbar<TData extends { id: number }>({ table, searchTerm, onChange }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData extends { id: string }>({ table, searchTerm, onChange }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
   const [isDialogOpenAdd, setIsDialogOpenAdd] = useState(false);
   const [isDialogOpenDeletes, setIsDialogOpenDeletes] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]); // To store selected IDs
+  const [selectedIds, setSelectedIds] = useState<string[]>([]); // To store selected IDs
 
   // Get rowSelection from table state
   const { rowSelection } = table.getState();

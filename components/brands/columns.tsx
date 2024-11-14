@@ -6,7 +6,7 @@ import CellActions from "@/components/brands/cell-actions";
 import Image from "next/image";
 
 interface Brand {
-  id: number;
+  id: string;
   image: string;
   title: string;
   productCount: number;
@@ -18,17 +18,17 @@ export const columns: ColumnDef<Brand>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: "id",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-[40px]">{row.getValue<number>("id")}</div>
-    ),
-    enableSorting: false,
-    enableHiding: true,
-  },
+  // {
+  //   accessorKey: "id",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="ID"/>
+  //   ),
+  //   cell: ({ row }) => (
+  //     <div className="w-[40px]">{row.getValue<string>("id")}</div>
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: true,
+  // },
   {
     accessorKey: "image",
     header: ({ column }) => (

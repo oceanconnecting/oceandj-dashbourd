@@ -15,7 +15,7 @@ export function DeleteProductForm({
   productId,
   onClose,
 }: {
-  productId: number;
+  productId: string;
   onClose: () => void;
 }) {
   const dispatch = useAppDispatch();

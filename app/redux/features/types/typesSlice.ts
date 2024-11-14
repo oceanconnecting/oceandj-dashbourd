@@ -11,7 +11,7 @@ interface FetchTypesParams {
 }
 
 interface Type {
-  id: number;
+  id: string;
   title: string;
   image: string;
   categoryCount: number;
@@ -72,7 +72,7 @@ export const addType = createAsyncThunk(
 // Update a type
 export const updateType = createAsyncThunk(
   'types/updateType',
-  async ({ typeId, title, image }: { typeId: number; title: string; image: string }, { rejectWithValue }) => {
+  async ({ typeId, title, image }: { typeId: string; title: string; image: string }, { rejectWithValue }) => {
     try {
       const response = await axios.put(`/api/types/update-type/${typeId}`, {
         title,
@@ -97,7 +97,7 @@ export const updateType = createAsyncThunk(
 
 export const fetchTypeDetails = createAsyncThunk(
   'types/fetchTypeDetails',
-  async (typeId: number, { rejectWithValue }) => {
+  async (typeId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(`/api/types/type-details/${typeId}`);
       if (response.status >= 400) {
@@ -121,7 +121,7 @@ export const fetchTypeDetails = createAsyncThunk(
 // Delete a type
 export const deleteType = createAsyncThunk(
   'types/deleteType',
-  async (typeId: number, { rejectWithValue }) => {
+  async (typeId: string, { rejectWithValue }) => {
     try {
       const response = await axios.delete(`/api/types/delete-type/${typeId}`);
       if (response.status !== 200) {
@@ -144,7 +144,7 @@ export const deleteType = createAsyncThunk(
 // Delete multiple types
 export const deleteMultiTypes = createAsyncThunk(
   'types/deleteMultiTypes',
-  async (typeIds: number[], { rejectWithValue }) => {
+  async (typeIds: string[], { rejectWithValue }) => {
     try {
       const response = await axios.delete('/api/types/delete-multi-types', {
         data: { ids: typeIds }, // Send the array of IDs in the request body
@@ -167,7 +167,7 @@ export const deleteMultiTypes = createAsyncThunk(
   }
 );
 interface Type {
-  id: number;
+  id: string;
   title: string;
   image: string;
   categoryCount: number;
@@ -254,7 +254,7 @@ const typesSlice = createSlice({
       })
       .addCase(updateType.fulfilled, (state, action) => {
         const { typeId, title, image } = action.payload;
-        const existingType = state.types.find((type) => type.id === typeId);
+        const existingType = state.types.find((type) => type.title === typeId);
         if (existingType) {
           existingType.title = title;
           existingType.image = image;
@@ -282,7 +282,7 @@ const typesSlice = createSlice({
         state.error_delete = null;
       })
       .addCase(deleteType.fulfilled, (state, action) => {
-        state.types = state.types.filter(type => type.id !== action.payload);
+        state.types = state.types.filter(type => type.title !== action.payload);
         state.loading_delete = false;
       })
       .addCase(deleteType.rejected, (state, action) => {

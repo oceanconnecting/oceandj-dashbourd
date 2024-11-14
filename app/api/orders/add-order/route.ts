@@ -21,10 +21,8 @@ const generateRandomReference = async (length = 4): Promise<string> => {
   return reference;
 };
 
-// Stock update function
 const updateStock = async (orderItems: { productId: string; quantity: number }[]) => {
   try {
-    // Loop through the order items and reduce stock only if the status is "delivered" or "waiting"
     for (let item of orderItems) {
       const product = await db.product.findUnique({
         where: { id: item.productId },
@@ -34,7 +32,6 @@ const updateStock = async (orderItems: { productId: string; quantity: number }[]
         throw new Error(`Product with id ${item.productId} not found`);
       }
 
-      // Ensure there is enough stock
       if (product.stock >= item.quantity) {
         product.stock -= item.quantity;
         await db.product.update({
@@ -88,7 +85,7 @@ export const POST = async (req: Request) => {
         phone,
         email,
         address,
-        status: "Waiting", // Set initial status to "Waiting"
+        status: "Waiting", 
         items: {
           create: orderItems,
         },
@@ -98,7 +95,6 @@ export const POST = async (req: Request) => {
       },
     });
 
-    // Update stock after the order is created (only if status is "waiting" or "delivered")
     if (newOrder.status === 'Waiting' || newOrder.status === 'Delivered') {
       await updateStock(orderItems);
     }

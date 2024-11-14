@@ -9,7 +9,7 @@ import { RootState } from "@/app/redux/store";
 import Image from "next/image";
 
 interface ViewCategoryFormProps {
-  categoryId: number;
+  categoryId: string;
 }
 
 export function ViewCategoryForm({ categoryId }: ViewCategoryFormProps) {

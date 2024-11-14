@@ -39,7 +39,7 @@ export function AddCategoryForm({ onClose }: { onClose: () => void }) {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [sizeError, setSizeError] = useState<string | null>(null);
-  const [typeId, setTypeId] = useState<number | null>(null);
+  const [typeId, setTypeId] = useState<string>("");
 
   useEffect(() => {
     dispatch(fetchCategoryTypes());
@@ -51,7 +51,7 @@ export function AddCategoryForm({ onClose }: { onClose: () => void }) {
     setUploadProgress(0);
     setUploadedImageUrl(null);
     setSizeError(null);
-    setTypeId(null);
+    setTypeId("");
   };
 
   const generateImageName = (fileName: string) => {
@@ -123,7 +123,7 @@ export function AddCategoryForm({ onClose }: { onClose: () => void }) {
     try {
       const urlToUse = uploadedImageUrl || await uploadImage();
       
-      const action = await dispatch(addCategory({ title, image: urlToUse, typeId: Number(typeId) }));
+      const action = await dispatch(addCategory({ title, image: urlToUse, typeId: typeId }));
 
       if (addCategory.fulfilled.match(action)) {
         toast.success("The Category has been successfully added.");
@@ -165,7 +165,7 @@ export function AddCategoryForm({ onClose }: { onClose: () => void }) {
 
         <div className="grid gap-3">
           <Label htmlFor="type">Category Type</Label>
-          <Select onValueChange={(value) => setTypeId(Number(value))}>
+          <Select onValueChange={(value) => setTypeId(value)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder={typeId ? types.find(type => type.id === typeId)?.title : "Select a type"} />
             </SelectTrigger>

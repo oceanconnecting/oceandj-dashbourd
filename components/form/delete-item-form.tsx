@@ -9,7 +9,7 @@ export function DeleteItemForm({
   orderId,
   onClose,
 }: {
-  orderId: number;
+  orderId: string;
   onClose: () => void;
 }) {
   const dispatch = useAppDispatch();

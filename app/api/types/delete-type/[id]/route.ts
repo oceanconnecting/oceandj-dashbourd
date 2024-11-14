@@ -5,14 +5,14 @@ export const DELETE = async (req: Request, { params }: { params: { id: string } 
   try {
     const { id } = params;
 
-    const type = await db.type.findUnique({ where: { id: Number(id) } });
+    const type = await db.type.findUnique({ where: { title: id } });
     if (!type) {
       return NextResponse.json({ success: false, message: 'Type not found' }, { status: 404 });
     }
 
     await db.type.delete({
       where: {
-        id: Number(id),
+        title: id,
       },
     });
 

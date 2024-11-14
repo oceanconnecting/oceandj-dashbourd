@@ -15,6 +15,7 @@ import {
 
 export default function OrderDetailsPage() {
   const { id } = useParams();
+  const orderId = Array.isArray(id) ? id[0] : id;
 
   return (
     <ContentLayout title={`Order Details - ${id}`}>
@@ -39,7 +40,7 @@ export default function OrderDetailsPage() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <OrderDetailsContent orderId={Number(id)} />
+      <OrderDetailsContent orderId={orderId} />
     </ContentLayout>
   );
 }

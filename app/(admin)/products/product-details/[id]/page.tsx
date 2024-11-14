@@ -15,9 +15,9 @@ import {
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
-
+  const productId = Array.isArray(id) ? id[0] : id;
   return (
-    <ContentLayout title={`Product Details - ${id}`}>
+    <ContentLayout title={`Product Details - ${productId}`}>
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -27,7 +27,9 @@ export default function ProductDetailsPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <Link href="/products">Products</Link>
+            <BreadcrumbLink asChild>
+              <Link href="/products">Products</Link>
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -35,11 +37,11 @@ export default function ProductDetailsPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>{id}</BreadcrumbPage>
+            <BreadcrumbPage>{productId}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <ProductDetailsContent productId={Number(id)} />
+      <ProductDetailsContent productId={productId} />
     </ContentLayout>
   );
 }

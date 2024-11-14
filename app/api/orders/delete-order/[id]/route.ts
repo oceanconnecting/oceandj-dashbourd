@@ -7,7 +7,7 @@ export const DELETE = async (req: Request, { params }: { params: { id: string } 
 
     // Find the order by its ID and include its items
     const order = await db.order.findUnique({
-      where: { id: Number(id) },
+      where: { reference: id },
       include: { items: true }, // Include related order items
     });
 
@@ -35,7 +35,7 @@ export const DELETE = async (req: Request, { params }: { params: { id: string } 
     // Delete the order
     await db.order.delete({
       where: {
-        id: Number(id),
+        id: id,
       },
     });
 

@@ -11,7 +11,7 @@ interface FetchBrandsParams {
 }
 
 interface Brand {
-  id: number;
+  id: string;
   title: string;
   image: string;
   productCount: number;
@@ -72,7 +72,7 @@ export const addBrand = createAsyncThunk(
 // Update a brand
 export const updateBrand = createAsyncThunk(
   'brands/updateBrand',
-  async ({ brandId, title, image }: { brandId: number; title: string; image: string }, { rejectWithValue }) => {
+  async ({ brandId, title, image }: { brandId: string; title: string; image: string }, { rejectWithValue }) => {
     try {
       const response = await axios.put(`/api/brands/update-brand/${brandId}`, {
         title,
@@ -97,7 +97,7 @@ export const updateBrand = createAsyncThunk(
 
 export const fetchBrandDetails = createAsyncThunk(
   'brands/fetchBrandDetails',
-  async (brandId: number, { rejectWithValue }) => {
+  async (brandId: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(`/api/brands/brand-details/${brandId}`);
       if (response.status >= 400) {
@@ -121,7 +121,7 @@ export const fetchBrandDetails = createAsyncThunk(
 // Delete a brand
 export const deleteBrand = createAsyncThunk(
   'brands/deleteBrand',
-  async (brandId: number, { rejectWithValue }) => {
+  async (brandId: string, { rejectWithValue }) => {
     try {
       const response = await axios.delete(`/api/brands/delete-brand/${brandId}`);
       if (response.status !== 200) {
@@ -144,7 +144,7 @@ export const deleteBrand = createAsyncThunk(
 // Delete multiple brands
 export const deleteMultiBrands = createAsyncThunk(
   'brands/deleteMultiBrands',
-  async (brandIds: number[], { rejectWithValue }) => {
+  async (brandIds: string[], { rejectWithValue }) => {
     try {
       const response = await axios.delete('/api/brands/delete-multi-brands', {
         data: { ids: brandIds }, // Send the array of IDs in the request body
@@ -167,7 +167,7 @@ export const deleteMultiBrands = createAsyncThunk(
   }
 );
 interface Brand {
-  id: number;
+  id: string;
   title: string;
   image: string;
   productCount: number;
@@ -254,7 +254,7 @@ const brandsSlice = createSlice({
       })
       .addCase(updateBrand.fulfilled, (state, action) => {
         const { brandId, title, image } = action.payload;
-        const existingBrand = state.brands.find((brand) => brand.id === brandId);
+        const existingBrand = state.brands.find((brand) => brand.title === brandId);
         if (existingBrand) {
           existingBrand.title = title;
           existingBrand.image = image;
@@ -282,7 +282,7 @@ const brandsSlice = createSlice({
         state.error_delete = null;
       })
       .addCase(deleteBrand.fulfilled, (state, action) => {
-        state.brands = state.brands.filter(brand => brand.id !== action.payload);
+        state.brands = state.brands.filter(brand => brand.title !== action.payload);
         state.loading_delete = false;
       })
       .addCase(deleteBrand.rejected, (state, action) => {

@@ -6,7 +6,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
     const { id } = params;
     const brand = await db.brand.findUnique({
       where: {
-        id: Number(id),
+        title: id,
       },
       include: {
         products: true,

@@ -15,7 +15,7 @@ export function DeleteMultiTypesForm({
   onClose,
   onDeleteSuccess, // New prop
 }: {
-  typeIds: number[];
+  typeIds: string[];
   onClose: () => void;
   onDeleteSuccess: () => void; // Callback for successful deletion
 }) {

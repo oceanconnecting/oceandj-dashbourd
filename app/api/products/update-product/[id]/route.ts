@@ -10,7 +10,7 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
     const { title, images, categoryId, brandId, description, price, discount, stock } = ProductSchema.parse(body);
 
     const updatedProduct = await db.product.update({
-      where: { id: Number(id) },
+      where: { title: id },
       data: {
         title,
         images,

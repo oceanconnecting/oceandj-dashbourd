@@ -11,7 +11,7 @@ import { RootState } from "@/app/redux/store";
 import { toast } from "sonner";
 import { FormError } from "@/components/form/form-error";
 
-export function EditOrderForm({ orderId, currentTitle, onClose }: { orderId: number, currentTitle: string, onClose: () => void }) {
+export function EditOrderForm({ orderId, currentTitle, onClose }: { orderId: string, currentTitle: string, onClose: () => void }) {
   const dispatch = useAppDispatch();
   const [title, setTitle] = useState(currentTitle || "");
 
@@ -27,9 +27,12 @@ export function EditOrderForm({ orderId, currentTitle, onClose }: { orderId: num
     if (!title) return;
 
     try {
-      const resultAction = await dispatch(updateorder({ orderId, title }));
+      const resultAction = await dispatch(updateOrder({
+        orderId,
+        data: undefined
+      }));
 
-      if (updateorder.fulfilled.match(resultAction)) {
+      if (updateOrder.fulfilled.match(resultAction)) {
         toast.success("The order has been successfully updated.");
         resetForm();
       } else {
@@ -55,7 +58,7 @@ export function EditOrderForm({ orderId, currentTitle, onClose }: { orderId: num
           <Label htmlFor="title">order Title</Label>
           <Input
             id="title"
-            order="text"
+            type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
@@ -77,7 +80,7 @@ export function EditOrderForm({ orderId, currentTitle, onClose }: { orderId: num
           >
             Cancel
           </Button>
-          <Button variant="edit" order="submit" disabled={loading} onClick={handleSubmit}>
+          <Button variant="edit" type="submit" disabled={loading} onClick={handleSubmit}>
             {loading ? "Updating..." : "Update"}
           </Button>
         </DialogFooter>
