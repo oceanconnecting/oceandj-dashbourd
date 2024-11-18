@@ -93,6 +93,12 @@ model Brand {
   products Product[]
 }
 
+model HeroImages {
+  id      String   @id @default(cuid())
+  url     String     @unique
+  addedAt DateTime @default(now())
+}
+
 enum Status {
   Waiting 
   Cancelled 

@@ -91,11 +91,16 @@ CREATE TABLE "Brand" (
     CONSTRAINT "Brand_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+-- CreateTable
+CREATE TABLE "HeroImages" (
+    "id" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+
+    CONSTRAINT "HeroImages_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Order_name_key" ON "Order"("name");
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Order_reference_key" ON "Order"("reference");
@@ -114,6 +119,9 @@ CREATE UNIQUE INDEX "Type_title_key" ON "Type"("title");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Brand_title_key" ON "Brand"("title");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "HeroImages_url_key" ON "HeroImages"("url");
 
 -- AddForeignKey
 ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;

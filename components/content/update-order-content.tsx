@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -36,29 +38,26 @@ export function UpdateOrderContent({ orderId }: ViewOrderFormProps) {
   const handleStatusChange = (newStatus: string) => {
     setStatus(newStatus);
 
-    // Update action for order items if needed
     const updatedItems = orderItems.map(item => ({
       ...item,
-      action: item.action || 'update', // Default to 'update' or use logic to set 'add'/'delete'
+      action: item.action || 'update',
     }));
-    setOrderItems(updatedItems); // Update orderItems state
+    setOrderItems(updatedItems);
   };
 
   const handleSubmit = () => {
     if (currentOrder?.id) {
-      // Ensure each item in orderItems has an action property
       const updatedItems = orderItems.map(item => ({
         ...item,
-        action: item.action || 'update', // Set action based on item logic
+        action: item.action || 'update',
       }));
 
       dispatch(updateOrder({ orderId: currentOrder.id, data: { status, orderItems: updatedItems } }))
         .then(() => {
-          // Directly update current order's status without page refresh
           if (currentOrder) {
             currentOrder.status = status;
           }
-          router.push('/orders'); // Navigate back to orders page
+          router.push('/orders');
         })
         .catch((error) => {
           console.error('Error updating order:', error);
@@ -103,7 +102,7 @@ export function UpdateOrderContent({ orderId }: ViewOrderFormProps) {
                     <Button
                       onClick={handleSubmit}
                       variant="edit"
-                      disabled={loading_update} // Disable button while loading
+                      disabled={loading_update}
                     >
                       {loading_update ? 'Updating...' : 'Submit'}
                     </Button>
