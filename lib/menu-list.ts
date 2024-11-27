@@ -6,7 +6,7 @@ import {
   LucideIcon,
   ShoppingBag,
   Building2,
-  Images,
+  // Images,
 } from "lucide-react";
 
 type Submenu = {
@@ -82,17 +82,17 @@ export function getMenuList(pathname: string): Group[] {
         },
       ]
     },
-    {
-      groupLabel: "User Interface",
-      menus: [
-        {
-          href: "/hero-images",
-          label: "Hero Images",
-          active: pathname.includes("/hero-images"),
-          icon: Images,
-          submenus: []
-        },
-      ]
-    },
+    // {
+    //   groupLabel: "User Interface",
+    //   menus: [
+    //     {
+    //       href: "/hero-images",
+    //       label: "Hero Images",
+    //       active: pathname.includes("/hero-images"),
+    //       icon: Images,
+    //       submenus: []
+    //     },
+    //   ]
+    // },
   ];
 }
