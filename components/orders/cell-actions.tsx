@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { DeleteOrderForm } from "@/components/form/delete-order-form";
-import { TrashIcon, InfoCircledIcon, Pencil2Icon } from "@radix-ui/react-icons";
+import { TrashIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import Link from "next/link"
 
 
@@ -19,9 +19,9 @@ const CellActions = ({ id }: { id: string }) => {
       </Link>
 
       {/* Edit Button */}
-      <Link href={`/orders/update-order/${id}`} className="p-1.5">
+      {/* <Link href={`/orders/update-order/${id}`} className="p-1.5">
         <Pencil2Icon className="w-5 h-5 text-green-500 dark:text-green-700" />
-      </Link>
+      </Link> */}
 
       {/* Delete Button */}
 
