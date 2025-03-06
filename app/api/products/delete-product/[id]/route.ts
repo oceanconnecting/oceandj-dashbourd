@@ -5,14 +5,14 @@ export const DELETE = async (req: Request, { params }: { params: { id: string } 
   try {
     const { id } = params;
 
-    const product = await db.product.findUnique({ where: { id: id } });
+    const product = await db.product.findUnique({ where: { title: id } });
     if (!product) {
       return NextResponse.json({ success: false, message: 'Product not found' }, { status: 404 });
     }
 
     await db.product.delete({
       where: {
-        id: id,
+        title: id,
       },
     });
 
