@@ -7,8 +7,8 @@ export const POST = async (req: Request) => {
     const body = await req.json();
     const { title, images, categoryId, brandId, description, price, discount, stock } = ProductSchema.parse(body);
 
-    if (!title || !images || !categoryId || !brandId || !description || !price || !discount || !stock) {
-      return NextResponse.json({ success: false, message: 'Title, images, categoryId, description, price, discount, and stock are required' }, { status: 400 });
+    if (!title || !images || !categoryId || !brandId || !description || !price  || !stock) {
+      return NextResponse.json({ success: false, message: 'Title, images, categoryId, description, price, and stock are required' }, { status: 400 });
     }
 
     const newProduct = await db.product.create({
