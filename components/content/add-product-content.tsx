@@ -21,7 +21,7 @@ export function AddProductContent() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const loading = useAppSelector((state: RootState) => state.products.loading_add);
-  // const error = useAppSelector((state: RootState) => state.products.error_add);
+
   const categories = useAppSelector((state: RootState) => state.products.categories);
   const brands = useAppSelector((state: RootState) => state.products.brands);
   
