@@ -183,9 +183,9 @@ export function AddProductContent() {
                         id="discount"
                         type="number"
                         placeholder="Enter discount"
-                        value={discount > 0 ? discount : ""}
+                        value={discount >= 0 ? discount : 0}
                         onChange={(e) => setDiscount(Number(e.target.value))}
-                        min={0}
+                        min={-1}
                       />
                     </div>
                     <div className="grid gap-2">
