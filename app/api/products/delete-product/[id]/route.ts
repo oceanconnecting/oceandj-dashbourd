@@ -12,7 +12,7 @@ export const DELETE = async (req: Request, { params }: { params: { id: string } 
 
     await db.product.delete({
       where: {
-        title: id,
+        id: id,
       },
     });
 
