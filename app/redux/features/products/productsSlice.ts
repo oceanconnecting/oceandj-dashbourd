@@ -221,7 +221,7 @@ export const fetchProductCategories = createAsyncThunk(
   'products/fetchProductCategories',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('/api/categories/list-categories');
+      const response = await axios.get('/api/categories/list-categories?limit=all');
       return response.data.categories;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -239,7 +239,7 @@ export const fetchProductBrands = createAsyncThunk(
   'products/fetchProductBrands',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('/api/brands/list-brands');
+      const response = await axios.get('/api/brands/list-brands?limit=all');
       return response.data.brands;
     } catch (error) {
       if (axios.isAxiosError(error)) {
