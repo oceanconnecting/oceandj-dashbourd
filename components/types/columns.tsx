@@ -10,6 +10,7 @@ interface Type {
   image: string;
   title: string;
   categoryCount: number;
+  productCount: number;
 }
 
 export const columns: ColumnDef<Type>[] = [
@@ -72,6 +73,21 @@ export const columns: ColumnDef<Type>[] = [
       <div className="flex space-x-2">
         <span className="max-w-[600px] truncate font-medium">
           {row.getValue<number>("categoryCount")}
+        </span>
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "productCount",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Product Count" />
+    ),
+    cell: ({ row }) => (
+      <div className="flex space-x-2">
+        <span className="max-w-[600px] truncate font-medium">
+          {row.getValue<number>("productCount")}
         </span>
       </div>
     ),

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
-// Define an interface for the type object
 interface Type {
   id: string;
   title: string;
@@ -9,6 +8,11 @@ interface Type {
   _count: {
     categories: number;
   };
+  categories: {
+    _count: {
+      products: number;
+    };
+  }[];
 }
 
 export const GET = async (req: Request) => {
@@ -21,11 +25,9 @@ export const GET = async (req: Request) => {
   const limit = isLimitAll ? undefined : parseInt(limitParam, 10);
   const offset = isLimitAll ? 0 : (page - 1) * (limit ?? 1);
 
-  // Get the sorting parameters
   const sortParam = searchParams.get('sort') || 'title.asc';
   const [sortField, sortOrder] = sortParam.split('.');
 
-  // Validate sortField and sortOrder
   const validSortFields = ['title', 'id'];
   const validSortOrders = ['asc', 'desc'];
 
@@ -44,7 +46,6 @@ export const GET = async (req: Request) => {
   }
 
   try {
-    // Count the total number of records that match the search query
     const totalTypes = await db.type.count({
       where: {
         title: {
@@ -54,7 +55,6 @@ export const GET = async (req: Request) => {
       },
     });
 
-    // Fetch types along with their category counts
     const types: Type[] = await db.type.findMany({
       where: {
         title: {
@@ -71,6 +71,15 @@ export const GET = async (req: Request) => {
             categories: true,
           },
         },
+        categories: {
+          select: {
+            _count: {
+              select: {
+                products: true,
+              },
+            },
+          },
+        },
       },
       take: isLimitAll ? totalTypes : limit,
       skip: offset,
@@ -79,20 +88,25 @@ export const GET = async (req: Request) => {
       },
     });
 
-    // Calculate total pages
     const totalPages = isLimitAll ? 1 : Math.ceil(totalTypes / (limit ?? 1));
 
-    // Map the types to include categoryCount
-    const typesWithCategoryCount = types.map((type: Type) => ({
-      id: type.id,
-      title: type.title,
-      image: type.image,
-      categoryCount: type._count.categories,
-    }));
+    const typesWithCounts = types.map((type: Type) => {
+      const productCount = type.categories.reduce((sum, category) => {
+        return sum + category._count.products;
+      }, 0);
+
+      return {
+        id: type.id,
+        title: type.title,
+        image: type.image,
+        categoryCount: type._count.categories,
+        productCount: productCount,
+      };
+    });
 
     return NextResponse.json({
       success: true,
-      types: typesWithCategoryCount,
+      types: typesWithCounts,
       total: totalTypes,
       page,
       limit: isLimitAll ? totalTypes : limit,

@@ -171,6 +171,7 @@ interface Type {
   title: string;
   image: string;
   categoryCount: number;
+  productCount: number;
 }
 
 interface TypesState {

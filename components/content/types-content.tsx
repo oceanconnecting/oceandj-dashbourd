@@ -60,6 +60,9 @@ export function TypesContent() {
     setPage(1); 
   };
 
+  console.log(types);
+  
+
   // const handleSortChange = (key: string) => {
   //   setSortKey(key);
   //   setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
