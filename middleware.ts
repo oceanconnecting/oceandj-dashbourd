@@ -3,6 +3,8 @@ import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 export async function middleware(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for') || req.ip;
+  console.log('User IP:', ip);
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
 
